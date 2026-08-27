@@ -198,12 +198,18 @@ function Navbar() {
             href="/"
             className="flex items-center gap-2.5 shrink-0"
             aria-label="MediVoice home"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
           >
             <Image
               src="/logo.png"
               alt="MediVoice"
-              width={150}
-              height={150}
+              width={180}
+              height={180}
               className="rounded-xl"
             />
             {/* <span className="font-extrabold text-charcoal text-xl tracking-tight">
@@ -820,7 +826,16 @@ function Footer() {
 
         {/* Center — logo */}
         <div className="flex justify-center">
-          <Link href="/" aria-label="MediVoice AI home">
+          <Link
+            href="/"
+            aria-label="MediVoice AI home"
+            onClick={(e) => {
+              if (window.location.pathname === "/") {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+          >
             <Image
               src="/logo.png"
               alt="MediVoice AI"
