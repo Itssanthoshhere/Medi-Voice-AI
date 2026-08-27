@@ -1,0 +1,12 @@
+# Project Setup Commands
+
+The following commands were used to initialize and set up the medi-voice-ai project:
+
+1. Initialize Next.js project:
+   npx create-next-app@latest
+
+2. Initialize shadcn/ui:
+   npx shadcn@latest init
+
+3. Add base UI components:
+   npx shadcn@latest add button
