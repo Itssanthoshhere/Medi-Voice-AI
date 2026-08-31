@@ -2,11 +2,38 @@
 
 The following commands were used to initialize and set up the medi-voice-ai project:
 
-1. Initialize Next.js project:
+1. **Initialize Next.js project:**
+   ```bash
    npx create-next-app@latest
+   ```
 
-2. Initialize shadcn/ui:
+2. **Initialize shadcn/ui:**
+   ```bash
    npx shadcn@latest init
+   ```
 
-3. Add base UI components:
+3. **Add base UI components:**
+   ```bash
    npx shadcn@latest add button
+   ```
+
+4. **Install Drizzle ORM and Neon dependencies:**
+   ```bash
+   npm i drizzle-orm@rc @neondatabase/serverless dotenv
+   npm i -D drizzle-kit@rc tsx
+   ```
+
+5. **Initialize Neon Postgres:**
+   ```bash
+   npx neon@latest init
+   ```
+
+6. **Push the database schema:**
+   ```bash
+   npx drizzle-kit push
+   ```
+
+7. **Open Drizzle Studio:**
+   ```bash
+   npx drizzle-kit studio
+   ```

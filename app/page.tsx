@@ -177,6 +177,29 @@ const ArrowRightIcon = () => (
   </svg>
 );
 
+const AlertTriangleIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+    <path d="M12 9v4"/>
+    <path d="M12 17h.01"/>
+  </svg>
+);
+const LightbulbIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M15 14c.2-1 .7-1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5"/>
+    <path d="M9 18h6"/>
+    <path d="M10 22h4"/>
+  </svg>
+);
+const ActivityIcon = () => (
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+  </svg>
+);
+
 const NAV_LINKS = [
   { label: "Product", href: "/product", hasDropdown: true },
   { label: "Pricing", href: "/pricing" },
@@ -431,19 +454,29 @@ function StatBar() {
    ═══════════════════════════════════════════════════════════════ */
 const FEATURES = [
   {
-    Icon: ClockIcon,
-    heading: "24/7 Coverage",
-    body: "Answer every inbound call before it hits voicemail — nights, weekends, holidays, and peak overflow — so no patient is ever turned away.",
+    Icon: MicIcon,
+    heading: "AI Medical Transcription",
+    body: "Convert doctor-patient conversations into accurate medical transcripts in real-time.",
   },
   {
-    Icon: UsersIcon,
-    heading: "Human Handoff",
-    body: "When a situation requires real judgment, MediVoice escalates to your staff instantly — with full call context already packaged and attached.",
+    Icon: AlertTriangleIcon,
+    heading: "Clinical Error Detection",
+    body: "AI flags inconsistencies and possible medical errors in transcribed content.",
+  },
+  {
+    Icon: LightbulbIcon,
+    heading: "Context-Aware Recommendations",
+    body: "Provide contextual treatment or diagnosis suggestions based on conversations.",
+  },
+  {
+    Icon: ActivityIcon,
+    heading: "Patient Sentiment Monitoring",
+    body: "Analyze patient tone and emotion to assist doctors with empathetic communication.",
   },
   {
     Icon: FileTextIcon,
-    heading: "Reviewable Records",
-    body: "Every call is logged, transcribed, and summarised in a structured format. Nothing falls through the cracks — and every interaction is auditable.",
+    heading: "Summarized Case Notes",
+    body: "Automatically generate brief, actionable summaries of medical discussions.",
   },
 ];
 
