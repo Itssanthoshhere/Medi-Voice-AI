@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useUser, UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
 
 /* ═══════════════════════════════════════════════════════════════
    ICONS — inline SVG, no extra dependency
@@ -178,25 +180,49 @@ const ArrowRightIcon = () => (
 );
 
 const AlertTriangleIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
-    <path d="M12 9v4"/>
-    <path d="M12 17h.01"/>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+    <path d="M12 9v4" />
+    <path d="M12 17h.01" />
   </svg>
 );
 const LightbulbIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M15 14c.2-1 .7-1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5"/>
-    <path d="M9 18h6"/>
-    <path d="M10 22h4"/>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M15 14c.2-1 .7-1.5 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.2 1.5 1.5 2.5" />
+    <path d="M9 18h6" />
+    <path d="M10 22h4" />
   </svg>
 );
 const ActivityIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-    strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
   </svg>
 );
 
@@ -211,6 +237,7 @@ const NAV_LINKS = [
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const { user } = useUser();
 
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-200">
@@ -234,6 +261,7 @@ function Navbar() {
               width={180}
               height={180}
               className="rounded-xl"
+              style={{ width: "auto", height: "auto" }}
             />
             {/* <span className="font-extrabold text-charcoal text-xl tracking-tight">
               MediVoice
@@ -260,19 +288,33 @@ function Navbar() {
 
           {/* Desktop actions */}
           <div className="hidden md:flex items-center gap-5 shrink-0">
-            <Link
-              href="/login"
-              className="text-[15px] font-bold text-charcoal hover:text-primary transition-colors"
-            >
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              id="nav-get-started"
-              className="inline-flex items-center gap-1.5 px-6 py-2.5 text-[15px] font-semibold !text-white bg-primary hover:bg-primary-dark rounded-full transition-colors"
-            >
-              Get started
-            </Link>
+            {!user ? (
+              <>
+                <Link
+                  href="/sign-in"
+                  className="text-[15px] font-bold text-charcoal hover:text-primary transition-colors"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/sign-up"
+                  id="nav-get-started"
+                  className="inline-flex items-center gap-1.5 px-6 py-2.5 text-[15px] font-semibold !text-white bg-primary hover:bg-primary-dark rounded-full transition-colors"
+                >
+                  Get started
+                </Link>
+              </>
+            ) : (
+              <div className="flex gap-4 items-center">
+                <Button
+                  variant="outline"
+                  className="rounded-full font-semibold"
+                >
+                  <Link href="/dashboard">Dashboard</Link>
+                </Button>
+                <UserButton />
+              </div>
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -304,18 +346,32 @@ function Navbar() {
               </Link>
             ))}
             <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2">
-              <Link
-                href="/login"
-                className="px-2 py-2.5 text-sm font-bold text-charcoal"
-              >
-                Sign in
-              </Link>
-              <Link
-                href="/signup"
-                className="px-4 py-2.5 text-sm font-bold !text-white bg-primary hover:bg-primary-dark rounded-full text-center transition-colors"
-              >
-                Get started
-              </Link>
+              {!user ? (
+                <>
+                  <Link
+                    href="/sign-in"
+                    className="px-2 py-2.5 text-sm font-bold text-charcoal"
+                  >
+                    Sign in
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    className="px-4 py-2.5 text-sm font-bold !text-white bg-primary hover:bg-primary-dark rounded-full text-center transition-colors"
+                  >
+                    Get started
+                  </Link>
+                </>
+              ) : (
+                <div className="px-2 py-2 flex items-center justify-between">
+                  <Button
+                    variant="outline"
+                    className="rounded-full font-semibold w-full mr-4"
+                  >
+                    <Link href="/dashboard">Dashboard</Link>
+                  </Button>
+                  <UserButton />
+                </div>
+              )}
             </div>
           </nav>
         )}
@@ -368,7 +424,7 @@ function Hero() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
           <Link
-            href="/signup"
+            href="/sign-up"
             id="hero-cta-primary"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2
               px-6 py-3 text-base font-semibold !text-white bg-primary
@@ -829,7 +885,7 @@ function CTABand() {
           can cover years of platform cost.
         </p>
         <Link
-          href="/signup"
+          href="/sign-up"
           id="final-cta"
           className="inline-flex items-center gap-2 px-7 py-3.5 text-base font-bold
             text-primary bg-white hover:bg-gray-50 rounded-lg transition-colors"
@@ -875,6 +931,7 @@ function Footer() {
               width={150}
               height={150}
               className="rounded-xl opacity-85 hover:opacity-100 transition-opacity"
+              style={{ width: "auto", height: "auto" }}
             />
           </Link>
         </div>

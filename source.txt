@@ -37,3 +37,9 @@ The following commands were used to initialize and set up the medi-voice-ai proj
    ```bash
    npx drizzle-kit studio
    ```
+
+   npm install @clerk/nextjs
+
+   npm i axios
+
+   
