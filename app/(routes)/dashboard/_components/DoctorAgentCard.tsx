@@ -8,7 +8,11 @@ export type DoctorAgent = {
   description: string;
   image: string;
   agentPrompt: string;
+  voiceId?: string;
+  subscriptionRequired?: boolean;
 };
+
+export type doctorAgent = DoctorAgent;
 
 type DoctorAgentCardProps = {
   doctorAgent: DoctorAgent;
