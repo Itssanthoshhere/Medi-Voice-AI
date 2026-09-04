@@ -33,12 +33,35 @@ export async function POST(req: NextRequest) {
           credits: 10,
         })
         .returning();
-      
+
       return NextResponse.json(result[0]);
     }
 
     return NextResponse.json(existingUsers[0]);
   } catch (e) {
-    return NextResponse.json(e);
+    return NextResponse.json(e, { status: 500 });
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+
+    if (!userEmail) {
+      return NextResponse.json(
+        { error: "User email not found" },
+        { status: 400 },
+      );
+    }
+
+    const result = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, userEmail));
+
+    return NextResponse.json(result[0]);
+  } catch (e) {
+    return NextResponse.json(e, { status: 500 });
   }
 }

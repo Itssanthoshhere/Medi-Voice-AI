@@ -1,8 +1,8 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useState } from "react";
+import AddNewSessionDialog from "./AddNewSessionDialog";
 
 function HistoryList() {
   const [historyList, setHistoryList] = useState<any[]>([]);
@@ -24,9 +24,10 @@ function HistoryList() {
             It looks like you haven&apos;t consulted with any doctors yet.
           </p>
 
-          <Button className="mt-4 text-white font-medium">
-            + Start a Consultation
-          </Button>
+          <AddNewSessionDialog
+            btnText="+ Start a Consultation"
+            className="mt-4 text-white font-medium"
+          />
         </div>
       ) : (
         <div>List</div>

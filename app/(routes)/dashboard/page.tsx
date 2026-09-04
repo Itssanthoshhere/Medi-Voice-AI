@@ -1,6 +1,6 @@
+import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import DoctorsAgentList from "./_components/DoctorsAgentList";
 import HistoryList from "./_components/HistoryList";
-import { Button } from "@/components/ui/button";
 
 function Dashboard() {
   return (
@@ -8,9 +8,10 @@ function Dashboard() {
       <div className="flex justify-between items-center">
         <h2 className="font-bold text-2xl">My Dashboard</h2>
 
-        <Button className="text-white font-medium">
-          + Consult With Doctor
-        </Button>
+        <AddNewSessionDialog
+          btnText="+ Consult With Doctor"
+          className="text-white font-medium"
+        />
       </div>
 
       <HistoryList />
