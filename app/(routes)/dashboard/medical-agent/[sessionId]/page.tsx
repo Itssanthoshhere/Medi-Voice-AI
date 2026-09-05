@@ -74,6 +74,7 @@ export default function MedicalVoiceAgentPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
+  const [speakingMessageIndex, setSpeakingMessageIndex] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -153,41 +154,64 @@ export default function MedicalVoiceAgentPage() {
   };
 
   const [isDoctorSpeaking, setIsDoctorSpeaking] = useState(false);
+  const voicesRef = useRef<SpeechSynthesisVoice[]>([]);
 
-  const speakText = (text: string) => {
-    if (!isAudioEnabled || typeof window === "undefined") return;
-    if ("speechSynthesis" in window) {
-      window.speechSynthesis.cancel(); // stop previous speech
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 1.0;
-      utterance.pitch = 1.0;
+  // Preload TTS voices — they load asynchronously in Chrome/Safari
+  useEffect(() => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+    const loadVoices = () => {
+      voicesRef.current = window.speechSynthesis.getVoices();
+    };
+    loadVoices();
+    window.speechSynthesis.addEventListener("voiceschanged", loadVoices);
+    return () => {
+      window.speechSynthesis.removeEventListener("voiceschanged", loadVoices);
+    };
+  }, []);
 
-      const voices = window.speechSynthesis.getVoices();
-      const preferredVoice = voices.find(
-        (v) =>
-          v.lang.startsWith("en") &&
-          (v.name.includes("Natural") ||
-            v.name.includes("Google") ||
-            v.name.includes("Samantha") ||
-            v.name.includes("Karen") ||
-            v.name.includes("Daniel"))
-      );
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
-      }
+  const speakText = (text: string, messageIndex?: number) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
 
-      utterance.onstart = () => {
-        setIsDoctorSpeaking(true);
-      };
-      utterance.onend = () => {
-        setIsDoctorSpeaking(false);
-      };
-      utterance.onerror = () => {
-        setIsDoctorSpeaking(false);
-      };
+    window.speechSynthesis.cancel(); // stop previous speech
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 1.0;
+    utterance.pitch = 1.0;
 
-      window.speechSynthesis.speak(utterance);
+    const preferredVoice = voicesRef.current.find(
+      (v) =>
+        v.lang.startsWith("en") &&
+        (v.name.includes("Natural") ||
+          v.name.includes("Google") ||
+          v.name.includes("Samantha") ||
+          v.name.includes("Karen") ||
+          v.name.includes("Daniel"))
+    );
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
     }
+
+    utterance.onstart = () => {
+      setIsDoctorSpeaking(true);
+      if (messageIndex !== undefined) setSpeakingMessageIndex(messageIndex);
+    };
+    utterance.onend = () => {
+      setIsDoctorSpeaking(false);
+      setSpeakingMessageIndex(null);
+    };
+    utterance.onerror = () => {
+      setIsDoctorSpeaking(false);
+      setSpeakingMessageIndex(null);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopDoctorSpeech = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
+    setIsDoctorSpeaking(false);
+    setSpeakingMessageIndex(null);
   };
 
   const saveConversation = async (newMessages: Message[]) => {
@@ -202,6 +226,7 @@ export default function MedicalVoiceAgentPage() {
   };
 
   const handleSendMessage = async (userText?: string) => {
+    stopDoctorSpeech();
     const textToSend = userText || inputMessage;
     if (!textToSend.trim() || isSending) return;
 
@@ -502,7 +527,9 @@ export default function MedicalVoiceAgentPage() {
             message={msg}
             doctorImage={doctor.image}
             doctorSpecialist={doctor.specialist}
-            onSpeak={speakText}
+            onSpeak={(text) => speakText(text, index)}
+            onStopSpeaking={stopDoctorSpeech}
+            isSpeaking={speakingMessageIndex === index}
           />
         ))}
 

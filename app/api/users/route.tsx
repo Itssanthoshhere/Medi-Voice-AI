@@ -5,9 +5,8 @@ import { usersTable as users } from "@/config/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
-  const user = await currentUser();
-
   try {
+    const user = await currentUser();
     // Check if user already exists
     const userEmail = user?.primaryEmailAddress?.emailAddress;
 
@@ -39,7 +38,9 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json(existingUsers[0]);
   } catch (e) {
-    return NextResponse.json(e, { status: 500 });
+    console.error("POST /api/users error:", e);
+    const message = e instanceof Error ? e.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -62,6 +63,8 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json(result[0]);
   } catch (e) {
-    return NextResponse.json(e, { status: 500 });
+    console.error("GET /api/users error:", e);
+    const message = e instanceof Error ? e.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -1,7 +1,7 @@
 "use client";
-import React from "react";
+
 import Image from "next/image";
-import { User, Bot, Volume2 } from "lucide-react";
+import { User, Bot, Volume2, Square } from "lucide-react";
 
 export type Message = {
   role: "user" | "assistant";
@@ -14,6 +14,8 @@ interface ChatMessageProps {
   doctorImage?: string | null;
   doctorSpecialist?: string;
   onSpeak?: (text: string) => void;
+  onStopSpeaking?: () => void;
+  isSpeaking?: boolean;
 }
 
 export default function ChatMessage({
@@ -21,8 +23,18 @@ export default function ChatMessage({
   doctorImage,
   doctorSpecialist = "AI Specialist",
   onSpeak,
+  onStopSpeaking,
+  isSpeaking = false,
 }: ChatMessageProps) {
   const isUser = message.role === "user";
+
+  const handleSpeakerClick = () => {
+    if (isSpeaking) {
+      onStopSpeaking?.();
+    } else {
+      onSpeak?.(message.content);
+    }
+  };
 
   return (
     <div
@@ -67,14 +79,22 @@ export default function ChatMessage({
           >
             {isUser ? "You (Patient)" : doctorSpecialist}
           </span>
-          {!isUser && onSpeak && (
+          {!isUser && (onSpeak || onStopSpeaking) && (
             <button
-              onClick={() => onSpeak(message.content)}
-              className="text-gray-500 hover:text-primary transition-colors p-1 rounded-full hover:bg-gray-100"
-              title="Listen to response"
+              onClick={handleSpeakerClick}
+              className={`transition-colors p-1 rounded-full ${
+                isSpeaking
+                  ? "text-red-500 hover:text-red-700 hover:bg-red-50 animate-pulse"
+                  : "text-gray-500 hover:text-primary hover:bg-gray-100"
+              }`}
+              title={isSpeaking ? "Stop speaking" : "Listen to response"}
               type="button"
             >
-              <Volume2 className="w-4 h-4 text-gray-600 hover:text-primary" />
+              {isSpeaking ? (
+                <Square className="w-3.5 h-3.5 fill-current" />
+              ) : (
+                <Volume2 className="w-4 h-4" />
+              )}
             </button>
           )}
         </div>
@@ -89,3 +109,4 @@ export default function ChatMessage({
     </div>
   );
 }
+

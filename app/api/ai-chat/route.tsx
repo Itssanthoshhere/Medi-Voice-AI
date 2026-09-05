@@ -28,6 +28,8 @@ Instructions:
         "liquid/lfm-2.5-2.6b:free",
         "z-ai/glm-5.2:free",
         "dots-studio/dots-3-note-preview:free",
+        "google/gemini-2.0-flash-lite-001",
+        "google/gemini-2.0-flash-001",
       ];
 
       const formattedMessages = [
@@ -103,15 +105,22 @@ Instructions:
       }
     }
 
-    // 3. Fallback response generator
+    // 3. Dynamic Fallback response generator
     const lastUserMsg =
       [...messages].reverse().find((m) => m.role === "user")?.content || "";
-    const fallbackResponse = `Thank you for sharing that with me. Based on what you described ("${lastUserMsg.slice(
-      0,
-      50
-    )}${lastUserMsg.length > 50 ? "..." : ""}"), I recommend monitoring your symptoms closely, staying hydrated, and consulting a healthcare provider in person if symptoms persist or worsen. Is there any specific symptom causing you concern right now?`;
+    
+    let fallbackText = `I understand your health concerns regarding: "${lastUserMsg.slice(0, 60)}". Please monitor your symptoms closely, stay hydrated, and consult a qualified physician for an in-person evaluation. Is there anything specific causing you discomfort right now?`;
+    
+    const msgLower = lastUserMsg.toLowerCase();
+    if (msgLower.includes("headache") || msgLower.includes("head")) {
+      fallbackText = `I understand you are experiencing a headache. Make sure to rest in a quiet, dimly lit room, stay well-hydrated, and avoid eye strain. If the pain is sudden, severe, or accompanied by dizziness or nausea, please seek medical care immediately.`;
+    } else if (msgLower.includes("fever") || msgLower.includes("chills")) {
+      fallbackText = `A fever indicates your body is reacting to an infection. Rest, drink plenty of fluids, and monitor your body temperature. If your fever persists above 102°F (38.9°C) or lasts over 3 days, please consult a healthcare provider.`;
+    } else if (msgLower.includes("back") || msgLower.includes("pain") || msgLower.includes("stomach")) {
+      fallbackText = `Pain can stem from strain, inflammation, or underlying issues. Rest the affected area and avoid heavy exertion. If the pain is sharp, escalating, or radiating, please seek immediate medical evaluation.`;
+    }
 
-    return NextResponse.json({ result: fallbackResponse });
+    return NextResponse.json({ result: fallbackText });
   } catch (error: unknown) {
     console.error("Error in ai-chat route:", error);
     return NextResponse.json(

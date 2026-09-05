@@ -12,17 +12,23 @@ export type UserDetails = {
 };
 
 function Provider({ children }: Readonly<{ children: React.ReactNode }>) {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
   const [userDetails, setUserDetails] = useState<any>();
 
   useEffect(() => {
-    CreateNewUser();
-  }, [user]);
+    if (isLoaded && user) {
+      CreateNewUser();
+    }
+  }, [user, isLoaded]);
 
   const CreateNewUser = async () => {
-    const result = await axios.post("/api/users");
-    console.log(result.data);
-    setUserDetails(result.data);
+    try {
+      const result = await axios.post("/api/users");
+      console.log(result.data);
+      setUserDetails(result.data);
+    } catch (err: any) {
+      console.error("Failed to create/fetch user:", err?.response?.data || err?.message || err);
+    }
   };
   return (
     <div>
@@ -34,3 +40,4 @@ function Provider({ children }: Readonly<{ children: React.ReactNode }>) {
 }
 
 export default Provider;
+

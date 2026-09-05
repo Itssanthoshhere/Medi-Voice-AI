@@ -26,7 +26,7 @@ export default function VoiceRecorder({
   }, [onTranscript]);
 
   useEffect(() => {
-    if ((disabled || isProcessing) && isListening) {
+    if (isProcessing && isListening) {
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
@@ -36,7 +36,7 @@ export default function VoiceRecorder({
       }
       setIsListening(false);
     }
-  }, [disabled, isProcessing, isListening]);
+  }, [isProcessing, isListening]);
 
   useEffect(() => {
     // Check Web Speech API availability
@@ -129,6 +129,9 @@ export default function VoiceRecorder({
   };
 
   const toggleListening = () => {
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     if (isListening) {
       stopListening();
     } else {
