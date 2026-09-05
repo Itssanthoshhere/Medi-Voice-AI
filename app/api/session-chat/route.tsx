@@ -1,29 +1,23 @@
 import { db } from "@/config/db";
+import { SessionChatTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { SessionChatTable } from "@/config/schema";
+import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
+  const { notes, selectedDoctor } = await req.json();
+  const user = await currentUser();
   try {
-    const user = await currentUser();
-    const { sessionId, notes, doctorAgent, selectedDoctor } = await req.json();
-
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
-    if (!userEmail) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
-    const currentSessionId = sessionId || crypto.randomUUID();
-
+    const sessionId = uuidv4();
     const result = await db
       .insert(SessionChatTable)
       .values({
-        sessionId: currentSessionId,
+        sessionId: sessionId,
+        createdBy: user?.primaryEmailAddress?.emailAddress,
         notes: notes,
-        doctorAgent: doctorAgent || selectedDoctor,
-        createdBy: userEmail,
-        createdOn: new Date().toISOString(),
+        selectedDoctor: selectedDoctor,
+        createdOn: new Date().toString(),
       })
       .returning();
 
@@ -41,7 +35,7 @@ export async function GET(req: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: "Session ID is required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 
@@ -63,7 +57,7 @@ export async function PUT(req: NextRequest) {
     if (!sessionId) {
       return NextResponse.json(
         { error: "Session ID is required" },
-        { status: 400 },
+        { status: 400 }
       );
     }
 

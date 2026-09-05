@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -12,6 +12,8 @@ import {
   Loader2,
   Volume2,
   VolumeX,
+  Mic,
+  MicOff,
   Sparkles,
   FileText,
 } from "lucide-react";
@@ -19,6 +21,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ChatMessage, { Message } from "./_components/ChatMessage";
 import VoiceRecorder from "./_components/VoiceRecorder";
+import Vapi from "@vapi-ai/web";
 
 type DoctorData = {
   id?: number;
@@ -52,6 +55,21 @@ export default function MedicalVoiceAgentPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputMessage, setInputMessage] = useState("");
   const [isCallActive, setIsCallActive] = useState(false);
+  const [callStarted, setCallStarted] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
+  const [activeTranscript, setActiveTranscript] = useState<{
+    role: "user" | "assistant";
+    transcript: string;
+  } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const vapiRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && process.env.NEXT_PUBLIC_VAPI_API_KEY) {
+      vapiRef.current = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY);
+    }
+  }, []);
   const [callDuration, setCallDuration] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -101,7 +119,7 @@ export default function MedicalVoiceAgentPage() {
       if (res.data) {
         setSession(res.data);
         const doctorInfo =
-          res.data.doctorAgent || res.data.selectedDocter || {};
+          res.data.selectedDoctor || res.data.doctorAgent || res.data.selectedDocter || {};
         setDoctor({
           id: doctorInfo.id,
           specialist: doctorInfo.specialist || "AI Medical Specialist",
@@ -134,6 +152,8 @@ export default function MedicalVoiceAgentPage() {
     }
   };
 
+  const [isDoctorSpeaking, setIsDoctorSpeaking] = useState(false);
+
   const speakText = (text: string) => {
     if (!isAudioEnabled || typeof window === "undefined") return;
     if ("speechSynthesis" in window) {
@@ -141,6 +161,31 @@ export default function MedicalVoiceAgentPage() {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.rate = 1.0;
       utterance.pitch = 1.0;
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(
+        (v) =>
+          v.lang.startsWith("en") &&
+          (v.name.includes("Natural") ||
+            v.name.includes("Google") ||
+            v.name.includes("Samantha") ||
+            v.name.includes("Karen") ||
+            v.name.includes("Daniel"))
+      );
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.onstart = () => {
+        setIsDoctorSpeaking(true);
+      };
+      utterance.onend = () => {
+        setIsDoctorSpeaking(false);
+      };
+      utterance.onerror = () => {
+        setIsDoctorSpeaking(false);
+      };
+
       window.speechSynthesis.speak(utterance);
     }
   };
@@ -198,24 +243,102 @@ export default function MedicalVoiceAgentPage() {
 
   const handleVoiceTranscript = (transcriptText: string) => {
     if (transcriptText) {
-      handleSendMessage(transcriptText);
+      setInputMessage((prev) => {
+        const trimmedNew = transcriptText.trim();
+        if (!prev) return trimmedNew;
+        if (prev.toLowerCase().includes(trimmedNew.toLowerCase())) return prev;
+        return `${prev} ${trimmedNew}`;
+      });
     }
   };
 
-  const startCall = () => {
-    setIsCallActive(true);
-    if (messages.length > 0 && isAudioEnabled) {
-      const lastDoctorMsg = [...messages]
-        .reverse()
-        .find((m) => m.role === "assistant");
-      if (lastDoctorMsg) {
-        speakText(lastDoctorMsg.content);
+  const StartCall = () => {
+    const assistantId = process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID;
+    if (vapiRef.current && assistantId) {
+      setIsConnecting(true);
+      try {
+        vapiRef.current.start(assistantId);
+      } catch (err) {
+        console.error("Error starting Vapi call:", err);
+        setIsConnecting(false);
+      }
+
+      vapiRef.current.on("call-start", () => {
+        console.log("Call started");
+        setIsConnecting(false);
+        setCallStarted(true);
+        setIsCallActive(true);
+        setActiveTranscript(null);
+      });
+
+      vapiRef.current.on("call-end", () => {
+        console.log("Call ended");
+        setIsConnecting(false);
+        setCallStarted(false);
+        setIsCallActive(false);
+        setActiveTranscript(null);
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      vapiRef.current.on("message", (message: any) => {
+        if (message.type === "transcript") {
+          const role: "user" | "assistant" =
+            message.role === "user" ? "user" : "assistant";
+          const text = message.transcript;
+
+          if (!text) return;
+
+          if (message.transcriptType === "partial") {
+            setActiveTranscript({ role, transcript: text });
+          } else if (
+            message.transcriptType === "final" ||
+            !message.transcriptType
+          ) {
+            setActiveTranscript(null);
+            setMessages((prev) => {
+              const lastMsg = prev[prev.length - 1];
+              if (lastMsg && lastMsg.role === role && lastMsg.content === text) {
+                return prev;
+              }
+              const updated: Message[] = [...prev, { role, content: text }];
+              saveConversation(updated);
+              return updated;
+            });
+          }
+        }
+      });
+    } else {
+      setIsConnecting(false);
+      setCallStarted(true);
+      setIsCallActive(true);
+    }
+  };
+
+  const toggleMute = () => {
+    const nextMute = !isMuted;
+    setIsMuted(nextMute);
+    if (vapiRef.current) {
+      try {
+        vapiRef.current.setMuted(nextMute);
+      } catch (err) {
+        console.error("Error setting Vapi mute state:", err);
       }
     }
   };
 
-  const stopCall = () => {
+  const endCall = () => {
+    if (vapiRef.current) {
+      try {
+        vapiRef.current.stop();
+      } catch (err) {
+        console.error("Error stopping Vapi call:", err);
+      }
+    }
+    setIsConnecting(false);
+    setCallStarted(false);
     setIsCallActive(false);
+    setIsMuted(false);
+    setActiveTranscript(null);
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
     }
@@ -289,7 +412,14 @@ export default function MedicalVoiceAgentPage() {
 
           {/* Call timer status badge */}
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full border text-xs font-semibold shadow-2xs bg-slate-100 text-slate-700 border-slate-200">
-            {isCallActive ? (
+            {isConnecting ? (
+              <>
+                <Loader2 className="w-3.5 h-3.5 text-amber-600 animate-spin" />
+                <span className="text-amber-700 font-medium animate-pulse">
+                  Connecting...
+                </span>
+              </>
+            ) : isCallActive ? (
               <>
                 <Circle className="w-2.5 h-2.5 fill-emerald-500 text-emerald-500 animate-pulse" />
                 <span className="text-emerald-700 font-mono font-bold">
@@ -304,22 +434,49 @@ export default function MedicalVoiceAgentPage() {
             )}
           </div>
 
-          {/* Call toggle */}
-          {!isCallActive ? (
+          {/* Call toggle & Mic Mute button */}
+          {isConnecting ? (
             <Button
-              onClick={startCall}
+              disabled
+              className="bg-amber-600 text-white font-semibold shadow-xs flex items-center gap-2 px-4 cursor-not-allowed opacity-90"
+            >
+              <Loader2 className="w-4 h-4 animate-spin" /> Connecting...
+            </Button>
+          ) : !callStarted && !isCallActive ? (
+            <Button
+              onClick={StartCall}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold shadow-xs flex items-center gap-2 px-4"
             >
-              <PhoneCall className="w-4 h-4" /> Start Voice Session
+              <PhoneCall className="w-4 h-4" /> Start Call
             </Button>
           ) : (
-            <Button
-              onClick={stopCall}
-              variant="destructive"
-              className="flex items-center gap-2 px-4 font-semibold shadow-xs"
-            >
-              <PhoneOff className="w-4 h-4" /> End Voice Session
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={isMuted ? "destructive" : "outline"}
+                size="icon"
+                onClick={toggleMute}
+                className={
+                  isMuted
+                    ? "bg-red-600 hover:bg-red-700 text-white shadow-xs"
+                    : "border-gray-300 text-gray-700 hover:bg-gray-100 shadow-xs"
+                }
+                title={isMuted ? "Unmute Microphone" : "Mute Microphone"}
+              >
+                {isMuted ? (
+                  <MicOff className="w-4 h-4" />
+                ) : (
+                  <Mic className="w-4 h-4 text-emerald-600" />
+                )}
+              </Button>
+
+              <Button
+                onClick={endCall}
+                variant="destructive"
+                className="flex items-center gap-2 px-4 font-semibold shadow-xs"
+              >
+                <PhoneOff className="w-4 h-4" /> Disconnect
+              </Button>
+            </div>
           )}
         </div>
       </div>
@@ -355,6 +512,48 @@ export default function MedicalVoiceAgentPage() {
             {doctor.specialist} is thinking...
           </div>
         )}
+        {/* Real-time partial transcript preview during Vapi call */}
+        {activeTranscript && (
+          <div
+            className={`flex items-start gap-3 my-3 ${
+              activeTranscript.role === "user" ? "flex-row-reverse" : "flex-row"
+            }`}
+          >
+            <div className="flex-shrink-0">
+              {activeTranscript.role === "user" ? (
+                <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-xs border border-primary/40">
+                  You
+                </div>
+              ) : (
+                <Image
+                  src={doctor.image || "/doctor1.png"}
+                  alt={doctor.specialist || "Doctor"}
+                  width={32}
+                  height={32}
+                  className="w-8 h-8 rounded-full object-cover border border-emerald-400 shadow-2xs"
+                />
+              )}
+            </div>
+            <div
+              className={`max-w-[80%] md:max-w-[70%] rounded-2xl px-4 py-2.5 text-xs shadow-xs border transition-all ${
+                activeTranscript.role === "user"
+                  ? "bg-primary text-white border-primary rounded-tr-none"
+                  : "bg-emerald-50 text-emerald-950 border-emerald-200/90 rounded-tl-none"
+              }`}
+            >
+              <div className="flex items-center gap-1.5 font-bold mb-1 text-[11px] opacity-90">
+                <span>
+                  {activeTranscript.role === "user"
+                    ? "You (Speaking...)"
+                    : `${doctor.specialist} (Speaking...)`}
+                </span>
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping inline-block" />
+              </div>
+              <p className="italic font-medium">{activeTranscript.transcript}</p>
+            </div>
+          </div>
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
@@ -362,7 +561,7 @@ export default function MedicalVoiceAgentPage() {
       <div className="mt-4 pt-3 border-t border-gray-200 flex items-center gap-2.5">
         <VoiceRecorder
           onTranscript={handleVoiceTranscript}
-          disabled={isSending}
+          disabled={isSending || isDoctorSpeaking}
           isProcessing={isSending}
         />
 

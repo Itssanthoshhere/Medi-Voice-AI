@@ -1,45 +1,44 @@
+import React from "react";
 import Image from "next/image";
 import { DoctorAgent } from "./DoctorAgentCard";
 
-type SuggestedDoctorCardProps = {
+export type Doctor = DoctorAgent;
+
+type Props = {
   doctorAgent: DoctorAgent;
-  selectedDoctor?: DoctorAgent;
-  setSelectedDoctor?: (doctor: DoctorAgent) => void;
+  selectedDoctor?: DoctorAgent | null;
+  setSelectedDoctor: (doctor: DoctorAgent) => void;
 };
 
-function SuggestedDoctorCard({
+export default function SuggestedDoctorCard({
   doctorAgent,
   selectedDoctor,
   setSelectedDoctor,
-}: SuggestedDoctorCardProps) {
+}: Props) {
   const isSelected = selectedDoctor?.id === doctorAgent?.id;
 
   return (
     <div
-      onClick={() => setSelectedDoctor?.(doctorAgent)}
-      className={`cursor-pointer p-3 rounded-xl border transition-all flex items-center gap-3 ${
+      onClick={() => setSelectedDoctor(doctorAgent)}
+      className={`flex flex-col items-center border rounded-2xl shadow-xs p-4 hover:border-primary cursor-pointer transition-all ${
         isSelected
-          ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary"
-          : "border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+          : "border-gray-200 bg-white hover:bg-gray-50"
       }`}
     >
       <Image
-        src={doctorAgent.image}
-        alt={doctorAgent.specialist}
-        width={50}
-        height={50}
-        className="w-12 h-12 rounded-full object-cover shrink-0"
+        src={doctorAgent.image || "/doctor1.png"}
+        alt={doctorAgent.specialist || "Doctor"}
+        width={70}
+        height={70}
+        className="w-[50px] h-[50px] rounded-full object-cover shadow-xs"
       />
-      <div className="flex-1 min-w-0">
-        <h3 className="font-semibold text-sm text-gray-900 truncate">
-          {doctorAgent.specialist}
-        </h3>
-        <p className="line-clamp-1 text-xs text-gray-500">
-          {doctorAgent.description}
-        </p>
-      </div>
+      <h2 className="font-bold text-sm text-center text-gray-900 mt-2">
+        {doctorAgent.name || doctorAgent.specialist}
+      </h2>
+      <p className="text-xs text-center text-gray-500 mt-0.5 line-clamp-1">
+        {doctorAgent.specialist}
+      </p>
     </div>
   );
 }
-
-export default SuggestedDoctorCard;

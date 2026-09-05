@@ -19,6 +19,24 @@ export default function VoiceRecorder({
   const [interimText, setInterimText] = useState("");
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const recognitionRef = useRef<any>(null);
+  const onTranscriptRef = useRef(onTranscript);
+
+  useEffect(() => {
+    onTranscriptRef.current = onTranscript;
+  }, [onTranscript]);
+
+  useEffect(() => {
+    if ((disabled || isProcessing) && isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {
+          // ignore
+        }
+      }
+      setIsListening(false);
+    }
+  }, [disabled, isProcessing, isListening]);
 
   useEffect(() => {
     // Check Web Speech API availability
@@ -58,14 +76,15 @@ export default function VoiceRecorder({
 
         if (finalTranscript) {
           setInterimText("");
-          onTranscript(finalTranscript.trim());
-          stopListening();
+          onTranscriptRef.current(finalTranscript.trim());
         }
       };
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       recognition.onerror = (event: any) => {
-        console.error("Speech recognition error:", event.error);
+        if (event.error !== "aborted" && event.error !== "no-speech") {
+          console.error("Speech recognition error:", event.error);
+        }
         setIsListening(false);
       };
 
@@ -75,8 +94,16 @@ export default function VoiceRecorder({
       };
 
       recognitionRef.current = recognition;
+
+      return () => {
+        try {
+          recognition.abort();
+        } catch {
+          // ignore
+        }
+      };
     }
-  }, [onTranscript]);
+  }, []);
 
   const startListening = () => {
     if (recognitionRef.current && !isListening) {

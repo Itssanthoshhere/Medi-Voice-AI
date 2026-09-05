@@ -3,13 +3,14 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 
 export type DoctorAgent = {
-  id: number;
+  id: number | string;
   specialist: string;
-  description: string;
+  description?: string;
   image: string;
-  agentPrompt: string;
+  agentPrompt?: string;
   voiceId?: string;
   subscriptionRequired?: boolean;
+  name?: string;
 };
 
 export type doctorAgent = DoctorAgent;
