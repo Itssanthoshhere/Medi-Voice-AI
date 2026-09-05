@@ -18,6 +18,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { DoctorAgent } from "./DoctorAgentCard";
 import SuggestedDoctorCard from "./SuggestedDoctorCard";
+import { AIDoctorAgents } from "@/shared/list";
 
 type AddNewSessionDialogProps = {
   btnText?: string;
@@ -41,10 +42,33 @@ function AddNewSessionDialog({
         notes: note,
       });
 
-      console.log(result.data);
-      setSuggestedDoctors(result.data);
+      console.log("Suggested doctors API response:", result.data);
+      let doctorsList: DoctorAgent[] = [];
+
+      if (Array.isArray(result.data)) {
+        doctorsList = result.data;
+      } else if (result.data && typeof result.data === "object") {
+        doctorsList =
+          result.data.doctors ||
+          result.data.suggestedDoctors ||
+          result.data.suggested_doctors ||
+          [];
+      }
+
+      if (!doctorsList || doctorsList.length === 0) {
+        doctorsList = AIDoctorAgents;
+      }
+
+      setSuggestedDoctors(doctorsList);
+      if (doctorsList.length > 0) {
+        setSelectedDoctor(doctorsList[0]);
+      }
     } catch (e) {
       console.error("Error suggesting doctors:", e);
+      setSuggestedDoctors(AIDoctorAgents);
+      if (AIDoctorAgents.length > 0) {
+        setSelectedDoctor(AIDoctorAgents[0]);
+      }
     } finally {
       setLoading(false);
     }

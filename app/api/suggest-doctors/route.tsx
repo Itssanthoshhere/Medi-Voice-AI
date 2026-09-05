@@ -1,44 +1,61 @@
-import { NextRequest, NextResponse } from "next/server";
+import { openai } from "@/config/OpenAiModel";
 import { AIDoctorAgents } from "@/shared/list";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   try {
     const { notes } = await req.json();
 
-    if (!notes || typeof notes !== "string") {
-      return NextResponse.json(AIDoctorAgents.slice(0, 3));
-    }
+    const prompt = `Based on the following user symptoms/notes: "${notes}", select the most relevant doctor specialists from the provided list of AI doctor agents.
+Return ONLY a valid JSON array containing the full doctor object(s) from the provided list. Do not include markdown code blocks or extra conversational text.
 
-    const lowerNotes = notes.toLowerCase();
+List of available AI Doctor Agents:
+${JSON.stringify(AIDoctorAgents)}`;
 
-    // Match keywords against doctor specialists and descriptions
-    const matchedDoctors = AIDoctorAgents.filter((doctor) => {
-      const specialistLower = doctor.specialist.toLowerCase();
-      const descriptionLower = doctor.description.toLowerCase();
-
-      const words = lowerNotes.split(/\s+/).filter((w: string) => w.length > 3);
-      return (
-        specialistLower.includes(lowerNotes) ||
-        descriptionLower.includes(lowerNotes) ||
-        words.some(
-          (w: string) =>
-            specialistLower.includes(w) || descriptionLower.includes(w),
-        )
-      );
+    const completion = await openai.chat.completions.create({
+      model: "nvidia/nemotron-3.5-lightning:free",
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
     });
 
-    // Return matched doctors or default to top specialists
-    const results =
-      matchedDoctors.length > 0
-        ? matchedDoctors.slice(0, 4)
-        : [
-            AIDoctorAgents[0], // General Physician
-            AIDoctorAgents[5], // Cardiologist
-            AIDoctorAgents[2], // Dermatologist
-          ];
+    const content = completion.choices[0]?.message?.content || "";
+    const cleanJson = content.replace(/```json|```/g, "").trim();
 
-    return NextResponse.json(results);
+    let doctors: any[] = [];
+    try {
+      const parsed = JSON.parse(cleanJson);
+      if (Array.isArray(parsed)) {
+        doctors = parsed;
+      } else if (parsed && typeof parsed === "object") {
+        doctors =
+          parsed.doctors ||
+          parsed.suggestedDoctors ||
+          parsed.suggested_doctors ||
+          Object.values(parsed).find(Array.isArray) ||
+          [];
+      }
+    } catch {
+      const match = cleanJson.match(/\[[\s\S]*\]/);
+      if (match) {
+        try {
+          doctors = JSON.parse(match[0]);
+        } catch {
+          doctors = [];
+        }
+      }
+    }
+
+    if (!Array.isArray(doctors) || doctors.length === 0) {
+      doctors = AIDoctorAgents;
+    }
+
+    return NextResponse.json(doctors);
   } catch (e) {
-    return NextResponse.json(AIDoctorAgents.slice(0, 3));
+    console.error("Error in suggest-doctors API:", e);
+    return NextResponse.json(AIDoctorAgents);
   }
 }

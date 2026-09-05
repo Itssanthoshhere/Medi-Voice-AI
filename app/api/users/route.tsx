@@ -1,7 +1,7 @@
 import { db } from "@/config/db";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { users } from "@/config/schema";
+import { usersTable as users } from "@/config/schema";
 import { eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
