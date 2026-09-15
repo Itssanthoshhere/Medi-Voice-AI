@@ -22,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import ChatMessage, { Message } from "./_components/ChatMessage";
 import VoiceRecorder from "./_components/VoiceRecorder";
 import Vapi from "@vapi-ai/web";
+import { AIDoctorAgents } from "@/shared/list";
 
 type DoctorData = {
   id?: number;
@@ -74,7 +75,9 @@ export default function MedicalVoiceAgentPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [speakingMessageIndex, setSpeakingMessageIndex] = useState<number | null>(null);
+  const [speakingMessageIndex, setSpeakingMessageIndex] = useState<
+    number | null
+  >(null);
   const [error, setError] = useState<string | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -120,13 +123,44 @@ export default function MedicalVoiceAgentPage() {
       if (res.data) {
         setSession(res.data);
         const doctorInfo =
-          res.data.selectedDoctor || res.data.doctorAgent || res.data.selectedDocter || {};
+          res.data.selectedDoctor ||
+          res.data.doctorAgent ||
+          res.data.selectedDocter ||
+          {};
+        const matched = AIDoctorAgents.find(
+          (d) =>
+            d.id === doctorInfo.id ||
+            d.specialist?.toLowerCase() ===
+              doctorInfo.specialist?.toLowerCase(),
+        );
+        const validVapiVoices = [
+          "Elliot",
+          "Savannah",
+          "Clara",
+          "Layla",
+          "Emma",
+          "Sid",
+          "Nico",
+          "Neil",
+          "Naina",
+          "Kai",
+        ];
+
+        const candidateVoice = doctorInfo.voiceId?.trim();
+        const validMatch = validVapiVoices.find(
+          (v) => v.toLowerCase() === candidateVoice?.toLowerCase(),
+        );
+        const resolvedVoice = validMatch || matched?.voiceId || "Elliot";
+
         setDoctor({
-          id: doctorInfo.id,
-          specialist: doctorInfo.specialist || "AI Medical Specialist",
-          image: doctorInfo.image || "/doctor1.png",
-          agentPrompt: doctorInfo.agentPrompt,
-          voiceId: doctorInfo.voiceId,
+          id: doctorInfo.id ?? matched?.id,
+          specialist:
+            doctorInfo.specialist ||
+            matched?.specialist ||
+            "AI Medical Specialist",
+          image: doctorInfo.image || matched?.image || "/doctor1.png",
+          agentPrompt: doctorInfo.agentPrompt || matched?.agentPrompt,
+          voiceId: resolvedVoice,
         });
 
         if (
@@ -138,9 +172,9 @@ export default function MedicalVoiceAgentPage() {
           // Default greeting
           const initialGreeting: Message = {
             role: "assistant",
-            content: `Hello! I am your ${
+            content: `Hello, thank you for connecting! I am your ${
               doctorInfo.specialist || "AI Doctor"
-            }. I have reviewed your notes. How can I assist you with your health today?`,
+            }. Could you please tell me your name and age before we begin?`,
           };
           setMessages([initialGreeting]);
         }
@@ -184,7 +218,7 @@ export default function MedicalVoiceAgentPage() {
           v.name.includes("Google") ||
           v.name.includes("Samantha") ||
           v.name.includes("Karen") ||
-          v.name.includes("Daniel"))
+          v.name.includes("Daniel")),
     );
     if (preferredVoice) {
       utterance.voice = preferredVoice;
@@ -277,65 +311,169 @@ export default function MedicalVoiceAgentPage() {
     }
   };
 
-  const StartCall = () => {
-    const assistantId = process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID;
-    if (vapiRef.current && assistantId) {
-      setIsConnecting(true);
+  const StartCall = async () => {
+    setIsConnecting(true);
+
+    // Stop any existing call before starting a new one
+    if (vapiRef.current) {
       try {
-        vapiRef.current.start(assistantId);
-      } catch (err) {
-        console.error("Error starting Vapi call:", err);
-        setIsConnecting(false);
+        vapiRef.current.stop();
+      } catch {}
+    }
+
+    // Ensure microphone permission is granted before connecting to Daily/Vapi
+    if (
+      typeof window !== "undefined" &&
+      navigator?.mediaDevices?.getUserMedia
+    ) {
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (micErr) {
+        console.warn("Microphone permission check:", micErr);
       }
+    }
 
-      vapiRef.current.on("call-start", () => {
-        console.log("Call started");
-        setIsConnecting(false);
-        setCallStarted(true);
-        setIsCallActive(true);
-        setActiveTranscript(null);
-      });
+    const vapi = new Vapi(process.env.NEXT_PUBLIC_VAPI_API_KEY!);
+    vapiRef.current = vapi;
 
-      vapiRef.current.on("call-end", () => {
-        console.log("Call ended");
-        setIsConnecting(false);
-        setCallStarted(false);
-        setIsCallActive(false);
-        setActiveTranscript(null);
-      });
+    const validVapiVoices = [
+      "Elliot",
+      "Savannah",
+      "Clara",
+      "Layla",
+      "Emma",
+      "Sid",
+      "Nico",
+      "Neil",
+      "Naina",
+      "Kai",
+    ];
+    const candidateVoice = doctor?.voiceId?.trim();
+    const doctorVoiceId =
+      validVapiVoices.find(
+        (v) => v.toLowerCase() === candidateVoice?.toLowerCase(),
+      ) || "Elliot";
+    const specialistName = doctor?.specialist || "Medical Specialist";
 
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      vapiRef.current.on("message", (message: any) => {
-        if (message.type === "transcript") {
-          const role: "user" | "assistant" =
-            message.role === "user" ? "user" : "assistant";
-          const text = message.transcript;
+    const promptContent = `You are a friendly and empathetic AI ${specialistName}.
+CONVERSATION FLOW:
+1. Greet the user warmly and first ask for their name and age if not yet provided.
+2. Acknowledge their name and age politely.
+3. Once their name and age are established, ask about the symptoms or health concerns they are experiencing.
+4. Provide safe, concise, clear, and reassuring guidance appropriate for a ${specialistName}.
+5. Keep answers short and natural for a voice conversation.${
+      doctor?.agentPrompt
+        ? `\nSpecialist guidelines: ${doctor.agentPrompt}`
+        : ""
+    }${session?.notes ? `\nPatient initial notes: ${session.notes}` : ""}`;
 
-          if (!text) return;
+    const VapiAgentConfig = {
+      name: `AI ${specialistName} Voice Agent`,
+      firstMessage: `Hello, thank you for connecting! I am your AI ${specialistName}. Could you please tell me your name and age before we begin?`,
+      transcriber: {
+        provider: "assembly-ai",
+        language: "en",
+      },
+      voice: {
+        provider: "vapi",
+        voiceId: doctorVoiceId,
+      },
+      model: {
+        provider: "anthropic",
+        model: "claude-sonnet-4-6",
+        messages: [
+          {
+            role: "system",
+            content: promptContent,
+          },
+        ],
+      },
+      variableValues: {
+        specialist: specialistName,
+        patientNotes: session?.notes || "",
+      },
+    };
 
-          if (message.transcriptType === "partial") {
-            setActiveTranscript({ role, transcript: text });
-          } else if (
-            message.transcriptType === "final" ||
-            !message.transcriptType
-          ) {
-            setActiveTranscript(null);
-            setMessages((prev) => {
-              const lastMsg = prev[prev.length - 1];
-              if (lastMsg && lastMsg.role === role && lastMsg.content === text) {
-                return prev;
-              }
-              const updated: Message[] = [...prev, { role, content: text }];
-              saveConversation(updated);
-              return updated;
-            });
-          }
-        }
-      });
-    } else {
+    const assistantId = process.env.NEXT_PUBLIC_VAPI_VOICE_ASSISTANT_ID;
+
+    // Attach call listeners
+    vapi.on("call-start", () => {
+      console.log("Call started");
       setIsConnecting(false);
       setCallStarted(true);
       setIsCallActive(true);
+      setActiveTranscript(null);
+    });
+
+    vapi.on("call-end", () => {
+      console.log("Call ended");
+      setIsConnecting(false);
+      setCallStarted(false);
+      setIsCallActive(false);
+      setActiveTranscript(null);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vapi.on("message", (message: any) => {
+      console.log("Vapi message:", message);
+      if (message.type === "transcript") {
+        const role: "user" | "assistant" =
+          message.role === "user" ? "user" : "assistant";
+        const text = message.transcript;
+
+        if (!text) return;
+
+        if (message.transcriptType === "partial") {
+          setActiveTranscript({ role, transcript: text });
+        } else if (
+          message.transcriptType === "final" ||
+          !message.transcriptType
+        ) {
+          setActiveTranscript(null);
+          setMessages((prev) => {
+            const lastMsg = prev[prev.length - 1];
+            if (lastMsg && lastMsg.role === role && lastMsg.content === text) {
+              return prev;
+            }
+            const updated: Message[] = [...prev, { role, content: text }];
+            saveConversation(updated);
+            return updated;
+          });
+        }
+      }
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vapi.on("call-start-failed", (event: any) => {
+      console.error("Vapi call-start-failed:", event);
+      setIsConnecting(false);
+      setIsCallActive(false);
+      setCallStarted(false);
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vapi.on("error", (err: any) => {
+      const errorMsg =
+        err?.error?.message ||
+        err?.message ||
+        (typeof err === "object" ? JSON.stringify(err) : String(err));
+      console.error("Vapi call error:", errorMsg, err);
+      setIsConnecting(false);
+      setIsCallActive(false);
+      setCallStarted(false);
+    });
+
+    try {
+      if (assistantId) {
+        // @ts-ignore
+        await vapi.start(assistantId, VapiAgentConfig);
+      } else {
+        // @ts-ignore
+        await vapi.start(VapiAgentConfig);
+      }
+    } catch (err) {
+      console.error("Error starting Vapi call:", err);
+      setIsConnecting(false);
     }
   };
 
@@ -576,7 +714,9 @@ export default function MedicalVoiceAgentPage() {
                 </span>
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping inline-block" />
               </div>
-              <p className="italic font-medium">{activeTranscript.transcript}</p>
+              <p className="italic font-medium">
+                {activeTranscript.transcript}
+              </p>
             </div>
           </div>
         )}
