@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useUser, UserButton } from "@clerk/nextjs";
@@ -162,8 +162,142 @@ const RELATED_LINKS = [
 ];
 
 /* ═══════════════════════════════════════════════════════════════
-   1. NAVBAR
+   1. NAVBAR & INTERACTIVE EYES
    ═══════════════════════════════════════════════════════════════ */
+function NavbarInteractiveEyes() {
+  const leftEyeRef = useRef<HTMLDivElement>(null);
+  const rightEyeRef = useRef<HTMLDivElement>(null);
+  const [blinking, setBlinking] = useState(false);
+  const [winking, setWinking] = useState(false);
+  const [leftPupil, setLeftPupil] = useState({ x: 0, y: 0 });
+  const [rightPupil, setRightPupil] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    // Natural periodic blinking
+    let blinkTimeout: NodeJS.Timeout;
+    const blinkInterval = setInterval(() => {
+      setBlinking(true);
+      blinkTimeout = setTimeout(() => setBlinking(false), 140);
+    }, 3800);
+
+    const updatePupils = (targetX: number, targetY: number) => {
+      const calcOffset = (eyeEl: HTMLDivElement | null) => {
+        if (!eyeEl) return { x: 0, y: 0 };
+        const rect = eyeEl.getBoundingClientRect();
+        const cx = rect.left + rect.width / 2;
+        const cy = rect.top + rect.height / 2;
+        const dx = targetX - cx;
+        const dy = targetY - cy;
+        const dist = Math.hypot(dx, dy);
+        const maxOffset = 3.8;
+        const r = Math.min(dist / 16, maxOffset);
+        const angle = Math.atan2(dy, dx);
+        return {
+          x: Math.cos(angle) * r,
+          y: Math.sin(angle) * r,
+        };
+      };
+
+      setLeftPupil(calcOffset(leftEyeRef.current));
+      setRightPupil(calcOffset(rightEyeRef.current));
+    };
+
+    let lastX = typeof window !== "undefined" ? window.innerWidth / 2 : 500;
+    let lastY = typeof window !== "undefined" ? window.innerHeight / 2 : 500;
+
+    const onMouseMove = (e: MouseEvent) => {
+      lastX = e.clientX;
+      lastY = e.clientY;
+      updatePupils(lastX, lastY);
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (e.touches[0]) {
+        lastX = e.touches[0].clientX;
+        lastY = e.touches[0].clientY;
+        updatePupils(lastX, lastY);
+      }
+    };
+
+    const onScroll = () => {
+      // Dynamic vertical tracking as user scrolls down through page content
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollFraction = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0;
+      const gazeY = window.innerHeight * (0.35 + scrollFraction * 0.55);
+      updatePupils(lastX, gazeY);
+    };
+
+    window.addEventListener("mousemove", onMouseMove, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    return () => {
+      clearInterval(blinkInterval);
+      clearTimeout(blinkTimeout);
+      window.removeEventListener("mousemove", onMouseMove);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+  const handleWink = () => {
+    setWinking(true);
+    setTimeout(() => setWinking(false), 380);
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={handleWink}
+      title="Interactive eye tracker — watching your symptoms & scroll!"
+      aria-label="Interactive eyes tracking cursor and scroll"
+      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full bg-rose-50/80 border border-rose-200/80 cursor-pointer select-none transition-transform hover:scale-105 active:scale-95 shadow-sm"
+    >
+      {/* Left eye */}
+      <div
+        ref={leftEyeRef}
+        className="relative w-5 h-5 rounded-full bg-white border border-gray-300/80 shadow-inner flex items-center justify-center overflow-hidden"
+        style={{
+          transform: blinking || winking ? "scaleY(0.1)" : "scaleY(1)",
+          transition: "transform 100ms ease",
+        }}
+      >
+        <div
+          className="w-2.5 h-2.5 rounded-full bg-charcoal relative"
+          style={{
+            transform: `translate(${leftPupil.x}px, ${leftPupil.y}px)`,
+            transition: "transform 70ms ease-out",
+          }}
+        >
+          {/* Glint reflection */}
+          <div className="absolute top-0.5 right-0.5 w-0.5 h-0.5 rounded-full bg-white" />
+        </div>
+      </div>
+
+      {/* Right eye */}
+      <div
+        ref={rightEyeRef}
+        className="relative w-5 h-5 rounded-full bg-white border border-gray-300/80 shadow-inner flex items-center justify-center overflow-hidden"
+        style={{
+          transform: blinking ? "scaleY(0.1)" : "scaleY(1)",
+          transition: "transform 100ms ease",
+        }}
+      >
+        <div
+          className="w-2.5 h-2.5 rounded-full bg-charcoal relative"
+          style={{
+            transform: `translate(${rightPupil.x}px, ${rightPupil.y}px)`,
+            transition: "transform 70ms ease-out",
+          }}
+        >
+          {/* Glint reflection */}
+          <div className="absolute top-0.5 right-0.5 w-0.5 h-0.5 rounded-full bg-white" />
+        </div>
+      </div>
+    </button>
+  );
+}
+
 function Navbar() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
@@ -175,28 +309,31 @@ function Navbar() {
     >
       <div className="max-w-[1120px] mx-auto px-6">
         <div className="flex items-center justify-between h-[72px] gap-6">
-          {/* Brand */}
-          <Link
-            href="/"
-            className="flex items-center gap-3 shrink-0"
-            aria-label="MediVoice home"
-            onClick={(e) => {
-              if (window.location.pathname === "/") {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }
-            }}
-          >
-            <Image
-              src="/logo.png"
-              alt="MediVoice AI"
-              width={160}
-              height={160}
-              className="rounded-xl"
-              style={{ width: "auto", height: "auto" }}
-              priority
-            />
-          </Link>
+          {/* Brand + Interactive Eye Tracker */}
+          <div className="flex items-center gap-3 shrink-0">
+            <Link
+              href="/"
+              className="flex items-center gap-3"
+              aria-label="MediVoice home"
+              onClick={(e) => {
+                if (window.location.pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+            >
+              <Image
+                src="/logo.png"
+                alt="MediVoice AI"
+                width={160}
+                height={160}
+                className="rounded-xl"
+                style={{ width: "auto", height: "auto" }}
+                priority
+              />
+            </Link>
+            <NavbarInteractiveEyes />
+          </div>
 
           {/* Desktop centre nav */}
           <nav className="hidden md:flex items-center gap-6 flex-1 justify-center" aria-label="Primary">
