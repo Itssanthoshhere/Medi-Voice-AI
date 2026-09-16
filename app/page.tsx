@@ -44,9 +44,9 @@ const CheckIcon = () => (
    DATA
    ═══════════════════════════════════════════════════════════════ */
 const NAV_LINKS = [
-  { label: "Product", href: "#features" },
-  { label: "Specialists", href: "#specialists" },
+  { label: "Features", href: "#features" },
   { label: "How It Works", href: "#how-it-works" },
+  { label: "Specialists", href: "#specialists" },
   { label: "Pricing", href: "/billing" },
   { label: "About", href: "/about" },
 ];
@@ -300,7 +300,46 @@ function NavbarInteractiveEyes() {
 
 function Navbar() {
   const [open, setOpen] = useState(false);
+  const [activeHash, setActiveHash] = useState<string>("");
   const { user } = useUser();
+
+  useEffect(() => {
+    const hashLinks = NAV_LINKS.filter((l) => l.href.startsWith("#")).map((l) => l.href.slice(1));
+
+    const onScroll = () => {
+      const scrollPos = window.scrollY + 140;
+      let current = "";
+
+      for (const id of hashLinks) {
+        const el = document.getElementById(id);
+        if (el) {
+          const top = el.offsetTop;
+          const height = el.offsetHeight;
+          if (scrollPos >= top && scrollPos < top + height) {
+            current = `#${id}`;
+          }
+        }
+      }
+      setActiveHash(current);
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    if (href.startsWith("#")) {
+      e.preventDefault();
+      const id = href.slice(1);
+      const el = document.getElementById(id);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.pageYOffset - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+        setActiveHash(href);
+      }
+    }
+  };
 
   return (
     <header
@@ -336,16 +375,24 @@ function Navbar() {
           </div>
 
           {/* Desktop centre nav */}
-          <nav className="hidden md:flex items-center gap-6 flex-1 justify-center" aria-label="Primary">
-            {NAV_LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-[0.95rem] text-gray-600 hover:text-charcoal transition-colors duration-150"
-              >
-                {l.label}
-              </Link>
-            ))}
+          <nav className="hidden md:flex items-center gap-2 flex-1 justify-center" aria-label="Primary">
+            {NAV_LINKS.map((l) => {
+              const isActive = activeHash === l.href;
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  onClick={(e) => handleNavClick(e, l.href)}
+                  className={`text-[0.95rem] font-medium transition-all duration-200 px-3.5 py-1.5 rounded-full ${
+                    isActive
+                      ? "text-primary font-bold bg-rose-50 border border-rose-200/80 shadow-sm"
+                      : "text-gray-600 hover:text-charcoal hover:bg-gray-100/60"
+                  }`}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
           </nav>
 
           {/* Desktop actions */}
@@ -387,16 +434,26 @@ function Navbar() {
         {/* Mobile dropdown */}
         {open && (
           <nav className="md:hidden pb-4 border-t border-gray-100 flex flex-col" aria-label="Mobile navigation">
-            {NAV_LINKS.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="flex items-center gap-2 px-2 py-3 text-sm font-medium text-gray-700 hover:text-primary hover:bg-gray-50 rounded-md transition-colors"
-                onClick={() => setOpen(false)}
-              >
-                {l.label}
-              </Link>
-            ))}
+            {NAV_LINKS.map((l) => {
+              const isActive = activeHash === l.href;
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`flex items-center gap-2 px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                    isActive
+                      ? "text-primary font-bold bg-rose-50 border border-rose-100"
+                      : "text-gray-700 hover:text-primary hover:bg-gray-50"
+                  }`}
+                  onClick={(e) => {
+                    handleNavClick(e, l.href);
+                    setOpen(false);
+                  }}
+                >
+                  {l.label}
+                </Link>
+              );
+            })}
             <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2">
               {!user ? (
                 <>
