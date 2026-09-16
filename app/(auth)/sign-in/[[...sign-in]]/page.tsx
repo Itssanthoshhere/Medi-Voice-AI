@@ -1,9 +1,10 @@
 import { SignIn } from "@clerk/nextjs";
+import { clerkAppearance } from "@/config/clerk-theme";
 
-export default function Page() {
+export default function SignInPage() {
   return (
-    <div className="flex items-center justify-center min-h-screen">
-      <SignIn />
+    <div className="w-full flex flex-col items-center">
+      <SignIn appearance={clerkAppearance} />
     </div>
   );
 }
