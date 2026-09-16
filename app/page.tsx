@@ -887,8 +887,11 @@ function HowItWorks() {
         >
           How it works
         </p>
-        <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
-          From first call to clinical report — in 3 steps
+        <h2 className="text-3xl md:text-5xl font-extrabold text-charcoal tracking-tight leading-tight">
+          From first call to clinical report —{" "}
+          <span className="italic font-serif font-normal text-[#a4161a]">
+            in 3 steps
+          </span>
         </h2>
         <p className="text-sm text-gray-500 max-w-xl mx-auto">
           No sign-up friction, no waiting rooms. Just speak, and let MediVoice
@@ -1173,8 +1176,11 @@ function SpecialistRoster() {
         >
           Specialist Network
         </p>
-        <h2 className="text-3xl font-extrabold text-charcoal tracking-tight mb-3">
-          10+ Specialized AI Medical Agents
+        <h2 className="text-3xl md:text-5xl font-extrabold text-charcoal tracking-tight leading-tight mb-3">
+          10+ Specialized AI{" "}
+          <span className="italic font-serif font-normal text-[#a4161a]">
+            Medical Agents
+          </span>
         </h2>
         <p className="text-gray-500 text-sm max-w-xl mx-auto">
           Tap any doctor agent card below to view their full clinical profile,
@@ -1260,8 +1266,11 @@ function ClinicalSOAPSection() {
           >
             Clinical Documentation
           </p>
-          <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
-            Hospital-Grade SOAP Reports Generated Automatically
+          <h2 className="text-3xl md:text-5xl font-extrabold text-charcoal tracking-tight leading-tight">
+            Hospital-Grade SOAP Reports{" "}
+            <span className="italic font-serif font-normal text-[#a4161a]">
+              Generated Automatically
+            </span>
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed">
             Every voice consultation automatically compiles into an
