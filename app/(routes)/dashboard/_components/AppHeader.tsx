@@ -62,20 +62,24 @@ function AppHeader() {
         />
       </Link>
 
-      <div className="hidden md:flex gap-10 items-center">
-        {menuOptions.map((option) => (
-          <Link
-            key={option.id}
-            href={option.path}
-            className={`text-sm transition-colors hover:text-primary ${
-              pathname === option.path
-                ? "text-primary font-bold"
-                : "text-gray-600 font-medium"
-            }`}
-          >
-            {option.name}
-          </Link>
-        ))}
+      <div className="hidden md:flex gap-2 items-center">
+        {menuOptions.map((option) => {
+          const isActive = pathname === option.path;
+          return (
+            <Link
+              key={option.id}
+              href={option.path}
+              className={`px-3.5 py-1.5 rounded-full text-xs transition-all duration-200 ${
+                isActive
+                  ? "bg-[#a4161a] !text-white font-bold shadow-xs"
+                  : "text-gray-600 hover:text-[#a4161a] hover:bg-gray-100/70 font-semibold"
+              }`}
+              style={isActive ? { color: "#ffffff" } : undefined}
+            >
+              {option.name}
+            </Link>
+          );
+        })}
       </div>
 
       <div className="flex items-center gap-3">
