@@ -9,7 +9,7 @@ function Dashboard() {
       <section className="bg-gradient-to-b from-gray-50/90 via-white to-gray-50/40 p-6 sm:p-8 rounded-3xl border border-gray-200/60 shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="font-extrabold text-2xl sm:text-3xl text-gray-900 tracking-tight">
-            My Dashboard
+            My <span className="italic font-serif font-normal text-[#a4161a]">Dashboard</span>
           </h1>
           <p className="text-xs sm:text-sm text-gray-500 mt-1">
             Manage your AI medical consultations, doctor specialists, and clinical SOAP reports.
