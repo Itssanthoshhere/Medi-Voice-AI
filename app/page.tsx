@@ -8,6 +8,7 @@ import { useUser, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { AIDoctorAgents, DoctorAgent } from "@/shared/list";
 import DoctorProfileModal from "@/components/DoctorProfileModal";
+import AppFooter from "@/components/AppFooter";
 import {
   Mic,
   FileText,
@@ -1197,53 +1198,7 @@ function BodyGrid() {
    7. FOOTER
    ═══════════════════════════════════════════════════════════════ */
 function Footer() {
-  return (
-    <footer className="border-t border-gray-200">
-      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-7 flex flex-wrap items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Link
-            href="/"
-            aria-label="MediVoice AI home"
-            onClick={(e) => {
-              if (window.location.pathname === "/") {
-                e.preventDefault();
-                window.scrollTo({ top: 0, behavior: "smooth" });
-              }
-            }}
-          >
-            <Image
-              src="/logo.png"
-              alt="MediVoice AI"
-              width={120}
-              height={120}
-              className="rounded-xl opacity-85 hover:opacity-100 transition-opacity"
-              style={{ width: "auto", height: "auto" }}
-            />
-          </Link>
-          <span className="text-gray-400 text-[0.92rem]">
-            &copy; {new Date().getFullYear()} MediVoice AI
-          </span>
-        </div>
-        <nav className="flex flex-wrap gap-5" aria-label="Footer">
-          {[
-            { label: "Features", href: "#features" },
-            { label: "Specialists", href: "#specialists" },
-            { label: "About", href: "/about" },
-            { label: "Pricing", href: "/billing" },
-            { label: "Privacy", href: "/privacy" },
-          ].map((l) => (
-            <Link
-              key={l.label}
-              href={l.href}
-              className="text-gray-400 text-[0.92rem] hover:text-charcoal transition-colors"
-            >
-              {l.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </footer>
-  );
+  return <AppFooter />;
 }
 
 /* ═══════════════════════════════════════════════════════════════

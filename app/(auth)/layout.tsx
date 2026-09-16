@@ -140,31 +140,44 @@ export default function AuthLayout({
         </main>
 
         {/* ── Footer ─────────────────────────────────────────────── */}
-        <footer className="flex items-center justify-center gap-6 py-6 border-t border-gray-100/80 px-6 bg-white/70 backdrop-blur-md relative z-10">
-          <Link
-            href="/about"
-            className="text-xs text-muted-foreground hover:text-charcoal transition-colors"
-          >
-            About
-          </Link>
-          <span className="text-xs text-gray-300">·</span>
-          <Link
-            href="/billing"
-            className="text-xs text-muted-foreground hover:text-charcoal transition-colors"
-          >
-            Pricing
-          </Link>
-          <span className="text-xs text-gray-300">·</span>
-          <Link
-            href="/privacy"
-            className="text-xs text-muted-foreground hover:text-charcoal transition-colors"
-          >
-            Privacy & Terms
-          </Link>
-          <span className="text-xs text-gray-300">·</span>
-          <span className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} MediVoice AI
-          </span>
+        <footer className="flex flex-col sm:flex-row items-center justify-center gap-3 py-6 border-t border-gray-200/80 px-6 bg-white/70 backdrop-blur-md relative z-10 text-center">
+          <div className="flex items-center gap-2">
+            <Image
+              src="/logo.png"
+              alt="MediVoice AI"
+              width={22}
+              height={22}
+              className="rounded-lg object-contain w-5.5 h-5.5"
+            />
+            <span className="font-bold text-gray-900 text-xs tracking-tight">
+              MediVoice AI
+            </span>
+            <span className="text-xs text-muted-foreground">
+              &copy; {new Date().getFullYear()} MediVoice AI
+            </span>
+          </div>
+          <div className="flex items-center justify-center gap-4">
+            <Link
+              href="/about"
+              className="text-xs text-muted-foreground hover:text-charcoal transition-colors"
+            >
+              About
+            </Link>
+            <span className="text-xs text-gray-300">·</span>
+            <Link
+              href="/billing"
+              className="text-xs text-muted-foreground hover:text-charcoal transition-colors"
+            >
+              Pricing
+            </Link>
+            <span className="text-xs text-gray-300">·</span>
+            <Link
+              href="/privacy"
+              className="text-xs text-muted-foreground hover:text-charcoal transition-colors"
+            >
+              Privacy
+            </Link>
+          </div>
         </footer>
       </div>
     </>
