@@ -145,18 +145,22 @@ function HistoryPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Page Header */}
+    <div className="space-y-8 pb-16">
+      {/* Back link */}
       <div>
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary font-medium transition-colors mb-4"
+          className="inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-primary font-medium transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           Back to Dashboard
         </Link>
-        <div className="flex items-center gap-3 mb-1">
-          <div className="p-2 rounded-xl bg-primary/10">
+      </div>
+
+      {/* Section 1: Header & Stats Canvas (Soft Ambient Light Shading) */}
+      <section className="bg-gradient-to-b from-gray-50/90 via-white to-gray-50/40 p-6 sm:p-8 rounded-3xl border border-gray-200/60 shadow-xs space-y-6">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
             <History className="w-6 h-6 text-primary" />
           </div>
           <div>
@@ -168,68 +172,70 @@ function HistoryPage() {
             </p>
           </div>
         </div>
-      </div>
 
-      {/* Stats Bar */}
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-xs">
-          <CalendarDays className="w-4 h-4 text-gray-400" />
-          <span className="text-sm font-semibold text-gray-800">
-            {historyList.length}
-          </span>
-          <span className="text-xs text-gray-500">Total</span>
+        {/* Stats Bar */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-xl shadow-xs">
+            <CalendarDays className="w-4 h-4 text-gray-400" />
+            <span className="text-sm font-semibold text-gray-800">
+              {historyList.length}
+            </span>
+            <span className="text-xs text-gray-500">Total</span>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl shadow-xs">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+            <span className="text-sm font-semibold text-emerald-800">
+              {reportCount}
+            </span>
+            <span className="text-xs text-emerald-600">With Reports</span>
+          </div>
+          <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl shadow-xs">
+            <Clock className="w-4 h-4 text-slate-500" />
+            <span className="text-sm font-semibold text-slate-700">
+              {inProgressCount}
+            </span>
+            <span className="text-xs text-slate-500">In Progress</span>
+          </div>
         </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-xl shadow-xs">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span className="text-sm font-semibold text-emerald-800">
-            {reportCount}
-          </span>
-          <span className="text-xs text-emerald-600">With Reports</span>
-        </div>
-        <div className="flex items-center gap-2 px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl shadow-xs">
-          <Clock className="w-4 h-4 text-slate-500" />
-          <span className="text-sm font-semibold text-slate-700">
-            {inProgressCount}
-          </span>
-          <span className="text-xs text-slate-500">In Progress</span>
-        </div>
-      </div>
+      </section>
 
-      {/* Search & Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by doctor, notes, complaint, or session ID..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-gray-400"
-          />
+      {/* Section 2: Search, Filters & History Cards Canvas (Soft Slate Shading) */}
+      <section className="bg-[#f8fafc] p-6 sm:p-8 rounded-3xl border border-gray-200/60 shadow-xs space-y-6">
+        {/* Search & Filter Bar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by doctor, notes, complaint, or session ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 text-sm bg-white border border-gray-200 rounded-xl shadow-xs focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all placeholder:text-gray-400"
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <Filter className="w-4 h-4 text-gray-400 hidden sm:block" />
+            {(["all", "with-report", "in-progress"] as FilterType[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-2 text-xs font-semibold rounded-lg border transition-all ${
+                  filter === f
+                    ? "bg-primary text-white border-primary shadow-sm"
+                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
+                }`}
+              >
+                {f === "all"
+                  ? "All"
+                  : f === "with-report"
+                    ? "With Report"
+                    : "In Progress"}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-gray-400 hidden sm:block" />
-          {(["all", "with-report", "in-progress"] as FilterType[]).map((f) => (
-            <button
-              key={f}
-              onClick={() => setFilter(f)}
-              className={`px-3 py-2 text-xs font-semibold rounded-lg border transition-all ${
-                filter === f
-                  ? "bg-primary text-white border-primary shadow-sm"
-                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50 hover:border-gray-300"
-              }`}
-            >
-              {f === "all"
-                ? "All"
-                : f === "with-report"
-                  ? "With Report"
-                  : "In Progress"}
-            </button>
-          ))}
-        </div>
-      </div>
 
-      {/* Results */}
+        {/* Results */}
       {filteredList.length === 0 ? (
         <div className="flex items-center flex-col justify-center p-10 border-2 border-dashed border-gray-200 rounded-2xl bg-gray-50/50 text-center">
           <Image
@@ -375,6 +381,7 @@ function HistoryPage() {
           })}
         </div>
       )}
+      </section>
 
       {/* Report Modal */}
       <MedicalReportDialog
