@@ -30,6 +30,11 @@ const menuOptions = [
     name: "Profile",
     path: "/profile",
   },
+  {
+    id: 5,
+    name: "About",
+    path: "/about",
+  },
 ];
 
 function AppHeader() {
