@@ -9,6 +9,7 @@ export type UserDetails = {
   name: string;
   email: string;
   credits: number;
+  plan: string;
 };
 
 function Provider({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -30,9 +31,21 @@ function Provider({ children }: Readonly<{ children: React.ReactNode }>) {
       console.error("Failed to create/fetch user:", err?.response?.data || err?.message || err);
     }
   };
+
+  const refreshUser = async () => {
+    try {
+      const result = await axios.get("/api/users");
+      setUserDetails(result.data);
+    } catch (err: any) {
+      console.error("Failed to refresh user details:", err);
+    }
+  };
+
   return (
     <div>
-      <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>
+      <UserDetailContext.Provider
+        value={{ userDetails, setUserDetails, refreshUser }}
+      >
         {children}
       </UserDetailContext.Provider>
     </div>
