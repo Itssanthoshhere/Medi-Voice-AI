@@ -3,7 +3,7 @@ import { SessionChatTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export async function POST(req: NextRequest) {
   const { notes, selectedDoctor } = await req.json();
@@ -32,19 +32,33 @@ export async function GET(req: NextRequest) {
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get("sessionId");
 
-    if (!sessionId) {
+    if (sessionId) {
+      const result = await db
+        .select()
+        .from(SessionChatTable)
+        .where(eq(SessionChatTable.sessionId, sessionId));
+
+      return NextResponse.json(result[0] || null);
+    }
+
+    // If no sessionId is provided, fetch all sessions for the current logged-in user
+    const user = await currentUser();
+    const userEmail = user?.primaryEmailAddress?.emailAddress;
+
+    if (!userEmail) {
       return NextResponse.json(
-        { error: "Session ID is required" },
-        { status: 400 }
+        { error: "Unauthorized or missing user email" },
+        { status: 401 }
       );
     }
 
-    const result = await db
+    const sessions = await db
       .select()
       .from(SessionChatTable)
-      .where(eq(SessionChatTable.sessionId, sessionId));
+      .where(eq(SessionChatTable.createdBy, userEmail))
+      .orderBy(desc(SessionChatTable.id));
 
-    return NextResponse.json(result[0] || null);
+    return NextResponse.json(sessions);
   } catch (e) {
     return NextResponse.json(e, { status: 500 });
   }
