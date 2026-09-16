@@ -30,9 +30,9 @@ import {
 
 export default function AboutPage() {
   return (
-    <div className="space-y-16 pb-16">
-      {/* Hero Section */}
-      <div className="relative rounded-3xl bg-white text-gray-900 p-8 md:p-14 overflow-hidden border border-gray-100 shadow-sm">
+    <div className="space-y-10 pb-16">
+      {/* Section 1: Hero Section (Soft Ambient Light Shading) */}
+      <section className="relative rounded-3xl bg-gradient-to-b from-gray-50/90 via-white to-gray-50/40 text-gray-900 p-8 md:p-14 overflow-hidden border border-gray-200/60 shadow-xs">
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Left Column: Headline & CTA */}
           <div className="lg:col-span-7 space-y-6">
@@ -146,10 +146,10 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Dark Reference Integration & Metrics Section (medivoice.org style) */}
-      <div className="relative rounded-3xl bg-[#09090b] border border-[#1c1c1e] text-white p-8 md:p-12 overflow-hidden shadow-2xl space-y-12">
+      {/* Section 2: Dark Reference Integration & Metrics Section (medivoice.org style) */}
+      <section className="relative rounded-3xl bg-[#09090b] border border-[#1c1c1e] text-white p-8 md:p-12 overflow-hidden shadow-2xl space-y-12">
         {/* Subtle grid pattern background overlay */}
         <div className="absolute inset-0 bg-[radial-gradient(#27272a_1px,transparent_1px)] [background-size:20px_20px] opacity-20 pointer-events-none" />
 
@@ -170,7 +170,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        {/* Stat Feature Cards (medivoice.org Integration Style) */}
+        {/* Stat Feature Cards */}
         <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             {
@@ -248,9 +248,8 @@ export default function AboutPage() {
           })}
         </div>
 
-        {/* Our Mission & Our Vision Section (2 Dark Cards) */}
+        {/* Mission & Vision Dark Cards */}
         <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Our Mission */}
           <div className="p-8 rounded-3xl bg-[#18181b] border border-[#27272a] space-y-5 hover:border-[#a4161a]/40 transition-all">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 rounded-2xl bg-[#a4161a]/15 border border-[#a4161a]/30 text-[#c1121f] flex items-center justify-center">
@@ -273,7 +272,6 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Our Vision */}
           <div className="p-8 rounded-3xl bg-[#18181b] border border-[#27272a] space-y-5 hover:border-indigo-500/40 transition-all">
             <div className="flex items-center justify-between">
               <div className="w-12 h-12 rounded-2xl bg-indigo-500/15 border border-indigo-500/30 text-indigo-400 flex items-center justify-center">
@@ -296,11 +294,10 @@ export default function AboutPage() {
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Operational Defensibility & Security Architecture (Reference Layout with MediVoice AI Context) */}
-      <div className="space-y-10">
-        {/* Header */}
+      {/* Section 3: Core Technology (Soft Slate Background Shading) */}
+      <section className="bg-[#f8fafc] p-8 md:p-12 rounded-3xl border border-gray-200/60 shadow-xs space-y-10">
         <div className="text-center space-y-4 max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mx-auto">
             <Activity className="w-3.5 h-3.5" />
@@ -347,7 +344,7 @@ export default function AboutPage() {
             return (
               <div
                 key={idx}
-                className="p-7 rounded-3xl bg-white border border-gray-100 shadow-sm flex flex-col space-y-4 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-rose-200 group"
+                className="p-7 rounded-3xl bg-white border border-gray-200/70 shadow-2xs flex flex-col space-y-4 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-rose-200 group"
               >
                 <div className="w-10 h-10 rounded-full bg-rose-50/80 border border-rose-100 text-[#a4161a] flex items-center justify-center shrink-0 group-hover:bg-[#a4161a] group-hover:text-white transition-colors">
                   <Icon className="w-5 h-5" />
@@ -365,10 +362,9 @@ export default function AboutPage() {
           })}
         </div>
 
-        {/* Bottom 2 Operational & Rollout Banner Cards */}
+        {/* Bottom 2 Banner Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Clinical Workflow Controls Card */}
-          <div className="p-8 rounded-3xl bg-white border border-gray-100 shadow-sm space-y-5 hover:shadow-md transition-shadow">
+          <div className="p-8 rounded-3xl bg-white border border-gray-200/80 shadow-2xs space-y-5 hover:shadow-md transition-shadow">
             <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a4161a] block">
               CLINICAL WORKFLOW CONTROLS
             </span>
@@ -391,8 +387,7 @@ export default function AboutPage() {
             </div>
           </div>
 
-          {/* Recommended Rollout Card */}
-          <div className="p-8 rounded-3xl bg-gradient-to-br from-rose-50/60 to-rose-100/40 border border-rose-200/80 shadow-sm flex flex-col justify-between space-y-5 hover:shadow-md transition-shadow">
+          <div className="p-8 rounded-3xl bg-gradient-to-br from-rose-50/80 to-rose-100/50 border border-rose-200/80 shadow-2xs flex flex-col justify-between space-y-5 hover:shadow-md transition-shadow">
             <div className="space-y-3">
               <span className="text-[11px] font-bold tracking-[0.16em] uppercase text-[#a4161a] block">
                 GET STARTED NOW
@@ -415,10 +410,10 @@ export default function AboutPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* How It Works Workflow */}
-      <div className="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-sm space-y-10">
+      {/* Section 4: How It Works Workflow (Clean White Section Panel) */}
+      <section className="bg-white rounded-3xl border border-gray-200/60 p-8 md:p-12 shadow-2xs space-y-10">
         <div className="text-center space-y-2 max-w-lg mx-auto">
           <p
             className="text-[11px] font-bold tracking-[0.16em] uppercase"
@@ -471,10 +466,10 @@ export default function AboutPage() {
             </div>
           ))}
         </div>
-      </div>
+      </section>
 
-      {/* Bottom CTA Banner */}
-      <div className="relative rounded-3xl bg-gradient-to-r from-[#a4161a] via-[#8b1116] to-rose-900 text-white p-8 md:p-12 overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+      {/* Section 5: Bottom CTA Banner (Rich Theme Red Gradient) */}
+      <section className="relative rounded-3xl bg-gradient-to-r from-[#a4161a] via-[#8b1116] to-rose-900 text-white p-8 md:p-12 overflow-hidden shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="space-y-2 text-center md:text-left">
           <h3 className="text-2xl md:text-3xl font-extrabold text-white">
             Ready to experience AI-powered voice healthcare?
@@ -492,7 +487,7 @@ export default function AboutPage() {
             </Button>
           </Link>
         </div>
-      </div>
+      </section>
     </div>
   );
 }
