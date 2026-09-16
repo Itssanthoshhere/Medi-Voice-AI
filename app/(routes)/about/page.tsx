@@ -51,10 +51,10 @@ export default function AboutPage() {
             </h1>
 
             <p className="text-gray-600 text-base md:text-lg leading-relaxed">
-              MediVoice AI bridges the gap between symptom awareness and clinical
-              assessment. By combining conversational voice agents with clinical
-              guidelines, we deliver instant, empathetic preliminary health
-              guidance anytime, anywhere.
+              MediVoice AI bridges the gap between symptom awareness and
+              clinical assessment. By combining conversational voice agents with
+              clinical guidelines, we deliver instant, empathetic preliminary
+              health guidance anytime, anywhere.
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
@@ -98,10 +98,14 @@ export default function AboutPage() {
                   </div>
                   <div>
                     <h4 className="text-sm font-bold text-gray-900 flex items-center gap-1.5">
-                      Dr. Elliot <span className="text-[10px] bg-rose-50 text-[#a4161a] px-2 py-0.5 rounded-full border border-rose-200 font-semibold">AI General Physician</span>
+                      Dr. Elliot{" "}
+                      <span className="text-[10px] bg-rose-50 text-[#a4161a] px-2 py-0.5 rounded-full border border-rose-200 font-semibold">
+                        AI General Physician
+                      </span>
                     </h4>
                     <p className="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
-                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" /> Voice Engine Connected
+                      <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping" />{" "}
+                      Voice Engine Connected
                     </p>
                   </div>
                 </div>
@@ -115,11 +119,15 @@ export default function AboutPage() {
               <div className="p-4 rounded-2xl bg-slate-900 text-white border border-slate-800 space-y-2">
                 <div className="flex items-center justify-between text-[11px] text-slate-300">
                   <span>Voice Stream</span>
-                  <span className="text-rose-400 font-mono font-bold">24ms Latency</span>
+                  <span className="text-rose-400 font-mono font-bold">
+                    24ms Latency
+                  </span>
                 </div>
 
                 <div className="flex items-center justify-center gap-1.5 h-8">
-                  {[40, 75, 30, 90, 60, 100, 45, 80, 55, 95, 35, 70, 50, 85].map((h, i) => (
+                  {[
+                    40, 75, 30, 90, 60, 100, 45, 80, 55, 95, 35, 70, 50, 85,
+                  ].map((h, i) => (
                     <div
                       key={i}
                       className="w-1 bg-gradient-to-t from-rose-500 to-amber-400 rounded-full animate-pulse"
@@ -136,17 +144,20 @@ export default function AboutPage() {
               <div className="p-3.5 rounded-2xl bg-rose-50/60 border border-rose-100 text-xs text-gray-800 leading-relaxed flex items-start gap-2.5">
                 <Sparkles className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
                 <p>
-                  &ldquo;Hello! I&apos;m Dr. Elliot. Please tell me what symptoms or health concerns you are experiencing today.&rdquo;
+                  &ldquo;Hello! I&apos;m Dr. Elliot. Please tell me what
+                  symptoms or health concerns you are experiencing today.&rdquo;
                 </p>
               </div>
 
               {/* Bottom Feature Badges */}
               <div className="flex items-center justify-between text-[11px] text-gray-500 pt-1 border-t border-gray-100">
                 <span className="flex items-center gap-1 font-medium text-emerald-700">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> HIPAA Compliant
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> HIPAA
+                  Compliant
                 </span>
                 <span className="flex items-center gap-1 text-gray-700 font-semibold">
-                  <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" /> Real-Time Synthesis
+                  <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />{" "}
+                  Real-Time Synthesis
                 </span>
               </div>
             </div>
@@ -326,43 +337,52 @@ export default function AboutPage() {
       {/* How It Works Workflow */}
       <div className="bg-white rounded-3xl border border-gray-100 p-8 md:p-12 shadow-sm space-y-10">
         <div className="text-center space-y-2 max-w-lg mx-auto">
-          <h3 className="text-2xl font-bold text-gray-900">
+          <p
+            className="text-[11px] font-bold tracking-[0.16em] uppercase"
+            style={{ color: "#a4161a" }}
+          >
+            How It Works
+          </p>
+          <h3 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
             How MediVoice AI Works
           </h3>
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-gray-500">
             Three simple steps from symptoms to structured clinical output.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
           {[
             {
               step: "01",
-              title: "Describe Symptoms",
-              desc: "Enter your health concerns or select one of our 10+ specialized AI medical agents.",
+              title: "Speak to an AI Doctor",
+              desc: "Choose from 10+ specialist agents and start a natural voice conversation. Describe your symptoms just like you would in a real clinic call — the AI listens, asks follow-up questions, and guides the session.",
             },
             {
               step: "02",
-              title: "Voice Consultation",
-              desc: "Speak naturally with the AI doctor. The agent listens, asks follow-up questions, and offers preliminary guidance.",
+              title: "Get a Clinical SOAP Report",
+              desc: "Your consultation is automatically compiled into an industry-standard clinical summary — Chief Complaint, History, Assessment, and Recommendations — ready to download as a formatted PDF.",
             },
             {
               step: "03",
-              title: "Get Clinical Report",
-              desc: "Review an auto-generated structured report complete with symptoms, recommendations, and export options.",
+              title: "Review & Take Action",
+              desc: "Access your complete consultation history anytime. Share SOAP reports with your physical doctor, schedule follow-ups, or consult another specialist — all from your health dashboard.",
             },
           ].map((item, idx) => (
             <div
               key={idx}
-              className="relative p-6 rounded-2xl bg-gray-50/70 border border-gray-100 space-y-3"
+              className="relative p-7 rounded-2xl bg-gray-50/80 border border-gray-200/80 space-y-3 hover:shadow-md transition-shadow group"
             >
-              <span className="text-3xl font-black text-rose-500/20 block">
+              <span
+                className="block text-4xl font-extrabold tracking-tight mb-2"
+                style={{ color: "rgba(164, 22, 26, 0.15)" }}
+              >
                 {item.step}
               </span>
-              <h4 className="text-base font-bold text-gray-900">
+              <h4 className="text-base font-bold text-gray-900 group-hover:text-primary transition-colors">
                 {item.title}
               </h4>
-              <p className="text-xs text-gray-500 leading-relaxed">
+              <p className="text-xs text-gray-600 leading-relaxed">
                 {item.desc}
               </p>
             </div>
