@@ -105,10 +105,10 @@ function HistoryList() {
     <div className="mt-8">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h3 className="font-bold text-lg text-gray-900 flex items-center gap-2">
-            Recent Consultations
+          <h3 className="font-extrabold text-xl text-gray-900 tracking-tight flex items-center gap-2">
+            Recent <span className="italic font-serif font-normal text-[#a4161a]">Consultations</span>
             {historyList.length > 0 && (
-              <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary">
+              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-red-50 text-[#a4161a] border border-red-100">
                 {historyList.length}
               </span>
             )}
