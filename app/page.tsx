@@ -646,7 +646,7 @@ function ClinicalSOAPSection() {
    ═══════════════════════════════════════════════════════════════ */
 function BodyGrid() {
   return (
-    <section id="how-it-works" className="max-w-[1120px] mx-auto px-6 pt-5 pb-20">
+    <section id="solutions" className="max-w-[1120px] mx-auto px-6 pt-5 pb-20">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.38fr] gap-7 items-start">
         {/* Main content column */}
         <div className="grid gap-5">
