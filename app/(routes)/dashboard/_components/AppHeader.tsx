@@ -54,7 +54,7 @@ function AppHeader() {
       <Link href="/">
         <Image
           src="/logo.png"
-          alt="MediVoice"
+          alt="MediVoice AI"
           width={140}
           height={140}
           style={{ width: "auto", height: "auto" }}

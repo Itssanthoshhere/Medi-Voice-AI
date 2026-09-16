@@ -265,11 +265,12 @@ function Navbar() {
           >
             <Image
               src="/logo.png"
-              alt="MediVoice"
+              alt="MediVoice AI"
               width={180}
               height={180}
               className="rounded-xl"
               style={{ width: "auto", height: "auto" }}
+              priority
             />
             {/* <span className="font-extrabold text-charcoal text-xl tracking-tight">
               MediVoice
