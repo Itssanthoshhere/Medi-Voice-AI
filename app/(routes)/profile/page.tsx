@@ -46,6 +46,7 @@ export default function ProfilePage() {
   const [savingMedical, setSavingMedical] = useState<boolean>(false);
   const [medicalSaved, setMedicalSaved] = useState<boolean>(false);
 
+  const [fullName, setFullName] = useState<string>("");
   const [bloodGroup, setBloodGroup] = useState<string>("O+");
   const [allergies, setAllergies] = useState<string>(
     "Chronic Tonsillitis / Enlarged Tonsils",
@@ -59,6 +60,37 @@ export default function ProfilePage() {
   const plan = (userDetails?.plan || "free").toLowerCase();
   const credits = userDetails?.credits ?? 10;
   const maxCredits = plan === "clinic" ? 9999 : plan === "pro" ? 100 : 10;
+
+  // 1. Sync from userDetails or localStorage cache
+  useEffect(() => {
+    try {
+      const cached = localStorage.getItem("medivoice_profile_data");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.name) setFullName(parsed.name);
+        if (parsed.bloodGroup) setBloodGroup(parsed.bloodGroup);
+        if (parsed.allergies !== undefined && parsed.allergies !== null) setAllergies(parsed.allergies);
+        if (parsed.emergencyContact !== undefined && parsed.emergencyContact !== null) setEmergencyContact(parsed.emergencyContact);
+        if (parsed.preferredVoice) setPreferredVoice(parsed.preferredVoice);
+      }
+    } catch (e) {
+      // ignore
+    }
+
+    if (userDetails) {
+      if (userDetails.name) setFullName(userDetails.name);
+      if (userDetails.bloodGroup) setBloodGroup(userDetails.bloodGroup);
+      if (userDetails.allergies !== undefined && userDetails.allergies !== null && userDetails.allergies !== "") {
+        setAllergies(userDetails.allergies);
+      }
+      if (userDetails.emergencyContact !== undefined && userDetails.emergencyContact !== null && userDetails.emergencyContact !== "") {
+        setEmergencyContact(userDetails.emergencyContact);
+      }
+      if (userDetails.preferredVoice) setPreferredVoice(userDetails.preferredVoice);
+    } else if (user?.fullName) {
+      setFullName((prev) => prev || user.fullName || "");
+    }
+  }, [userDetails, user]);
 
   useEffect(() => {
     fetchUserStats();
@@ -80,14 +112,41 @@ export default function ProfilePage() {
     }
   };
 
-  const handleSaveMedical = () => {
-    setSavingMedical(true);
-    setTimeout(() => {
-      setSavingMedical(false);
+  const handleSaveMedical = async () => {
+    try {
+      setSavingMedical(true);
+      const payload = {
+        name: fullName || user?.fullName || "Patient",
+        bloodGroup,
+        allergies,
+        emergencyContact,
+        preferredVoice,
+      };
+
+      // Persist to Neon Postgres DB
+      await axios.put("/api/users", payload);
+
+      // Save to localStorage for instant recovery
+      try {
+        localStorage.setItem("medivoice_profile_data", JSON.stringify(payload));
+      } catch (e) {
+        // ignore
+      }
+
+      // Refresh global context
+      if (refreshUser) {
+        await refreshUser();
+      }
+
       setIsEditingMedical(false);
       setMedicalSaved(true);
       setTimeout(() => setMedicalSaved(false), 4000);
-    }, 600);
+    } catch (err) {
+      console.error("Failed to save profile:", err);
+      alert("Failed to save profile changes. Please try again.");
+    } finally {
+      setSavingMedical(false);
+    }
   };
 
   return (
@@ -144,7 +203,7 @@ export default function ProfilePage() {
             <div className="space-y-1">
               <div className="flex items-center gap-2.5">
                 <h1 className="text-2xl font-extrabold tracking-tight text-white">
-                  {user?.fullName || userDetails?.name || "Patient Profile"}
+                  {fullName || user?.fullName || userDetails?.name || "Patient Profile"}
                 </h1>
                 <span className="px-2.5 py-0.5 rounded-full bg-white/15 text-rose-200 text-xs font-semibold border border-white/10 backdrop-blur-md">
                   Verified Patient
@@ -346,6 +405,26 @@ export default function ProfilePage() {
             )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* Full Name */}
+              <div className="sm:col-span-2 p-4 rounded-xl bg-gray-50/70 border border-gray-100 space-y-1.5">
+                <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
+                  <User className="w-3.5 h-3.5 text-primary" /> Full Name
+                </label>
+                {!isEditingMedical ? (
+                  <p className="text-base font-bold text-gray-900">
+                    {fullName || user?.fullName || userDetails?.name || "Patient Profile"}
+                  </p>
+                ) : (
+                  <input
+                    type="text"
+                    value={fullName}
+                    placeholder="Enter your full name"
+                    onChange={(e) => setFullName(e.target.value)}
+                    className="w-full text-sm font-semibold bg-white border border-gray-200 rounded-lg p-2 focus:ring-2 focus:ring-primary outline-none"
+                  />
+                )}
+              </div>
+
               {/* Blood Group */}
               <div className="p-4 rounded-xl bg-gray-50/70 border border-gray-100 space-y-1.5">
                 <label className="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-1.5">
