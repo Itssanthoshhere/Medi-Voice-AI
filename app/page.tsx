@@ -1499,13 +1499,36 @@ export default function Page() {
   return (
     <div className="mv-shell">
       <Navbar />
-      <main>
-        <Hero />
-        <FeatureGrid />
-        <HowItWorks />
-        <SpecialistRoster />
-        <ClinicalSOAPSection />
-        <BodyGrid />
+      <main className="space-y-0">
+        {/* 1. Hero Section - Soft Light Ambient Canvas */}
+        <section className="w-full bg-gradient-to-b from-gray-50/90 via-white to-gray-50/30 border-b border-gray-200/60">
+          <Hero />
+        </section>
+
+        {/* 2. Feature Grid - Distinct Soft Slate Canvas */}
+        <section className="w-full bg-[#f8fafc] border-b border-gray-200/60 py-4">
+          <FeatureGrid />
+        </section>
+
+        {/* 3. How It Works - Clean White Canvas */}
+        <section className="w-full bg-white border-b border-gray-200/60 py-4">
+          <HowItWorks />
+        </section>
+
+        {/* 4. Specialist Roster - Soft Tinted Canvas */}
+        <section className="w-full bg-gradient-to-b from-white via-red-50/20 to-gray-50/30 border-b border-gray-200/60 py-4">
+          <SpecialistRoster />
+        </section>
+
+        {/* 5. Clinical SOAP Section - Distinct Soft Slate Canvas */}
+        <section className="w-full bg-[#f8fafc] border-b border-gray-200/60 py-4">
+          <ClinicalSOAPSection />
+        </section>
+
+        {/* 6. Body Grid Section */}
+        <section className="w-full bg-white py-4">
+          <BodyGrid />
+        </section>
       </main>
       <Footer />
     </div>
