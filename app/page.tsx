@@ -996,7 +996,7 @@ function Footer() {
             { label: "Specialists", href: "#specialists" },
             { label: "About", href: "/about" },
             { label: "Pricing", href: "/billing" },
-            { label: "Privacy", href: "/about" },
+            { label: "Privacy", href: "/privacy" },
           ].map((l) => (
             <Link
               key={l.label}
