@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
+import { clerkAppearance } from "@/config/clerk-theme";
 import Provider from "./provider";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -50,7 +51,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={clerkAppearance}>
       <html lang="en">
         <head>
           <link rel="preconnect" href="https://fonts.googleapis.com" />
