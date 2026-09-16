@@ -346,7 +346,7 @@ function Navbar() {
       className="sticky top-0 z-50 border-b border-gray-200/80"
       style={{ backdropFilter: "blur(16px)", background: "rgba(255,255,255,0.9)" }}
     >
-      <div className="max-w-[1120px] mx-auto px-6">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
         <div className="flex items-center justify-between h-[72px] gap-6">
           {/* Brand + Interactive Eye Tracker */}
           <div className="flex items-center gap-3 shrink-0">
@@ -488,7 +488,7 @@ function Navbar() {
    ═══════════════════════════════════════════════════════════════ */
 function Hero() {
   return (
-    <section className="max-w-[1120px] mx-auto px-6 pt-12 pb-8">
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-10 sm:pt-14 pb-8">
       <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
         {/* Left column */}
         <div>
@@ -619,7 +619,7 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="max-w-[1120px] mx-auto px-6 py-16">
+    <section id="how-it-works" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
       <div className="text-center mb-12 space-y-2">
         <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
           How it works
@@ -660,7 +660,7 @@ function HowItWorks() {
    ═══════════════════════════════════════════════════════════════ */
 function FeatureGrid() {
   return (
-    <section id="features" className="max-w-[1120px] mx-auto px-6 py-16">
+    <section id="features" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
       <div className="text-center mb-12 space-y-2">
         <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
           Core capabilities
@@ -699,7 +699,7 @@ function FeatureGrid() {
    ═══════════════════════════════════════════════════════════════ */
 function SpecialistRoster() {
   return (
-    <section id="specialists" className="max-w-[1120px] mx-auto px-6 py-16">
+    <section id="specialists" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
       <div className="text-center mb-12">
         <p className="text-[11px] font-bold tracking-[0.16em] uppercase mb-3" style={{ color: "#a4161a" }}>
           Specialist Network
@@ -767,7 +767,7 @@ function SpecialistRoster() {
    ═══════════════════════════════════════════════════════════════ */
 function ClinicalSOAPSection() {
   return (
-    <section className="max-w-[1120px] mx-auto px-6 py-16">
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-5">
           <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
@@ -849,7 +849,7 @@ function ClinicalSOAPSection() {
    ═══════════════════════════════════════════════════════════════ */
 function BodyGrid() {
   return (
-    <section id="solutions" className="max-w-[1120px] mx-auto px-6 pt-5 pb-20">
+    <section id="solutions" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-5 pb-20">
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.38fr] gap-7 items-start">
         {/* Main content column */}
         <div className="grid gap-5">
@@ -965,7 +965,7 @@ function BodyGrid() {
 function Footer() {
   return (
     <footer className="border-t border-gray-200">
-      <div className="max-w-[1120px] mx-auto px-6 py-7 flex flex-wrap items-center justify-between gap-4">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-7 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
             href="/"
