@@ -33,7 +33,6 @@ export default function AboutPage() {
     <div className="space-y-16 pb-16">
       {/* Hero Section */}
       <div className="relative rounded-3xl bg-white text-gray-900 p-8 md:p-14 overflow-hidden border border-gray-100 shadow-sm">
-
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           {/* Left Column: Headline & CTA */}
           <div className="lg:col-span-7 space-y-6">
@@ -266,10 +265,10 @@ export default function AboutPage() {
                 Our Mission
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                To democratize access to reliable health guidance through voice AI.
-                We empower individuals to understand their symptoms early, prepare
-                structured medical briefs for their physical doctors, and reduce
-                anxiety around unexpected health concerns.
+                To democratize access to reliable health guidance through voice
+                AI. We empower individuals to understand their symptoms early,
+                prepare structured medical briefs for their physical doctors,
+                and reduce anxiety around unexpected health concerns.
               </p>
             </div>
           </div>
@@ -289,10 +288,10 @@ export default function AboutPage() {
                 Our Vision
               </h3>
               <p className="text-sm text-slate-300 leading-relaxed">
-                To build the world&apos;s most trusted voice-first medical assistant
-                layer. By automating preliminary patient triage and clinical report
-                generation, MediVoice AI helps healthcare systems operate with
-                speed, precision, and compassion.
+                To build the world&apos;s most trusted voice-first medical
+                assistant layer. By automating preliminary patient triage and
+                clinical report generation, MediVoice AI helps healthcare
+                systems operate with speed, precision, and compassion.
               </p>
             </div>
           </div>
@@ -403,7 +402,8 @@ export default function AboutPage() {
               </h3>
               <p className="text-xs text-gray-600 leading-relaxed">
                 Start a preliminary consultation with our AI general physician
-                or specialist doctors anytime, anywhere with zero waiting room delays.
+                or specialist doctors anytime, anywhere with zero waiting room
+                delays.
               </p>
             </div>
 

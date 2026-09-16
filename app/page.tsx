@@ -16,6 +16,8 @@ import {
   ShieldCheck,
   Clock,
   HeartPulse,
+  Brain,
+  Activity,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════
@@ -804,42 +806,177 @@ function FeatureGrid() {
   return (
     <section
       id="features"
-      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16"
+      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16 space-y-12"
     >
-      <div className="text-center mb-12 space-y-2">
+      {/* Section Header */}
+      <div className="text-center space-y-3 max-w-2xl mx-auto">
         <p
           className="text-[11px] font-bold tracking-[0.16em] uppercase"
           style={{ color: "#a4161a" }}
         >
-          Core capabilities
+          Why patients choose MediVoice AI
         </p>
-        <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
-          Built for every moment a patient reaches out
+        <h2 className="text-3xl md:text-4xl font-extrabold text-charcoal tracking-tight leading-tight">
+          AI agents handle every step from symptoms to{" "}
+          <span className="italic font-serif font-normal text-[#a4161a]">
+            a scheduled follow-up
+          </span>
         </h2>
         <p className="text-sm text-gray-500 max-w-xl mx-auto">
-          Comprehensive clinical intelligence combining neural voice synthesis,
-          automated SOAP notes, and specialist triaging.
+          MediVoice AI does not stop at the consultation. It listens, analyzes,
+          generates clinical reports, and keeps your health record updated.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        {CORE_FEATURES.map((f, idx) => {
-          const Icon = f.icon;
-          return (
-            <article
-              key={idx}
-              className="mv-card p-6 space-y-4 hover:shadow-lg transition-shadow group"
-            >
-              <div className={`p-3 rounded-xl w-max ${f.bg} ${f.color}`}>
-                <Icon className="w-5 h-5" />
+      {/* Split Layout: Feature Cards + Workflow Card */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left: 2x2 Feature Cards */}
+        <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {[
+            {
+              icon: Mic,
+              title: "Natural voice conversation",
+              desc: "Speak to AI doctors naturally, just like a real phone call. Low-latency neural voices ensure human-like cadence and warmth.",
+            },
+            {
+              icon: FileText,
+              title: "Auto clinical SOAP reports",
+              desc: "Every session compiles into a structured medical summary — Chief Complaint, History, Assessment — ready to download as PDF.",
+            },
+            {
+              icon: Clock,
+              title: "Consultation history",
+              desc: "Review transcripts, doctor advice, and clinical reports from past sessions at any time from your health dashboard.",
+            },
+            {
+              icon: HeartPulse,
+              title: "Personalized profiles",
+              desc: "Store blood group, allergies, emergency contacts, and preferred AI doctor so every session is personalized to your care.",
+            },
+          ].map((f, idx) => {
+            const Icon = f.icon;
+            return (
+              <article
+                key={idx}
+                className="mv-card p-6 space-y-3 hover:shadow-md transition-shadow group"
+              >
+                <div className="p-2.5 rounded-lg w-max bg-gray-50 border border-gray-100 text-gray-600 group-hover:text-[#a4161a] group-hover:bg-red-50 group-hover:border-red-100 transition-colors">
+                  <Icon className="w-4.5 h-4.5" />
+                </div>
+                <h3 className="text-sm font-bold text-gray-900 leading-snug">
+                  {f.title}
+                </h3>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  {f.desc}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+
+        {/* Right: Workflow Timeline Card */}
+        <div className="lg:col-span-7">
+          <div className="mv-card p-6 md:p-8 space-y-5 border-l-4 border-l-[#a4161a]/80 relative overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-[#a4161a] text-white">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#a4161a]">
+                    CONSULTATION AGENT
+                  </p>
+                  <h4 className="text-base font-bold text-gray-900">
+                    Voice consultation workflow
+                  </h4>
+                </div>
               </div>
-              <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
-                {f.title}
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{f.desc}</p>
-            </article>
-          );
-        })}
+              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
+                Live
+              </span>
+            </div>
+
+            {/* Divider */}
+            <div className="border-t border-gray-100" />
+
+            {/* Timeline Steps */}
+            <div className="space-y-4">
+              {[
+                {
+                  icon: Mic,
+                  step: "Step 1",
+                  label: "VOICE",
+                  labelColor: "text-[#a4161a] bg-red-50",
+                  title: "Patient describes symptoms",
+                  desc: "Natural language input captured via real-time voice stream with 99.4% recognition accuracy.",
+                },
+                {
+                  icon: Brain,
+                  step: "Step 2",
+                  label: "AI TRIAGE",
+                  labelColor: "text-purple-600 bg-purple-50",
+                  title: "AI specialist analyzes condition",
+                  desc: "Multi-agent system routes to the best specialist and asks targeted follow-up questions.",
+                },
+                {
+                  icon: FileText,
+                  step: "Step 3",
+                  label: "SOAP",
+                  labelColor: "text-blue-600 bg-blue-50",
+                  title: "Generate clinical SOAP report",
+                  desc: "Auto-compiled medical summary with Chief Complaint, Assessment, and Recommendations as downloadable PDF.",
+                },
+                {
+                  icon: ShieldCheck,
+                  step: "Step 4",
+                  label: "RECORD",
+                  labelColor: "text-emerald-600 bg-emerald-50",
+                  title: "Save to patient health record",
+                  desc: "Consultation transcript, report, and doctor notes stored securely with AES-256 encryption.",
+                },
+                {
+                  icon: Activity,
+                  step: "Step 5",
+                  label: "FOLLOW-UP",
+                  labelColor: "text-amber-600 bg-amber-50",
+                  title: "Review & take action",
+                  desc: "Share SOAP report with your physical doctor, consult another specialist, or schedule follow-up care.",
+                },
+              ].map((item, idx) => {
+                const StepIcon = item.icon;
+                return (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3.5 p-3.5 rounded-xl bg-gray-50/70 border border-gray-100 hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="p-2 rounded-lg bg-white border border-gray-200 text-gray-500 shrink-0 mt-0.5">
+                      <StepIcon className="w-4 h-4" />
+                    </div>
+                    <div className="space-y-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`text-[9px] font-extrabold uppercase tracking-[0.12em] px-2 py-0.5 rounded ${item.labelColor}`}
+                        >
+                          {item.label}
+                        </span>
+                        <span className="text-[10px] text-gray-400 font-semibold">
+                          {item.step}
+                        </span>
+                      </div>
+                      <h5 className="text-sm font-bold text-gray-900">
+                        {item.title}
+                      </h5>
+                      <p className="text-xs text-gray-500 leading-relaxed">
+                        {item.desc}
+                      </p>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
