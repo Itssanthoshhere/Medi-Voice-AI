@@ -38,6 +38,7 @@ const plans = [
     monthlyPrice: 0,
     yearlyPrice: 0,
     badge: null,
+    trialNotice: null,
     borderColor: "border-gray-200",
     ctaText: "Current Plan",
     ctaVariant: "outline" as const,
@@ -63,6 +64,7 @@ const plans = [
     monthlyPrice: 9.99,
     yearlyPrice: 99.99,
     badge: "Most Popular",
+    trialNotice: "7-Day Free Trial",
     borderColor: "border-primary/50",
     ctaText: "Upgrade to Pro",
     ctaVariant: "default" as const,
@@ -88,6 +90,7 @@ const plans = [
     monthlyPrice: 29.99,
     yearlyPrice: 299.99,
     badge: "Best Value",
+    trialNotice: "30-Day Risk-Free Trial",
     borderColor: "border-amber-300",
     ctaText: "Upgrade to Clinic",
     ctaVariant: "default" as const,
@@ -102,6 +105,29 @@ const plans = [
       { text: "Priority AI models", included: true },
       { text: "Up to 50 patient profiles", included: true },
     ],
+  },
+];
+
+const guaranteeCards = [
+  {
+    icon: Stethoscope,
+    title: "Included usage",
+    description: "All plans include access to 10+ AI Doctor agents with bundled voice calls and instant medical summaries.",
+  },
+  {
+    icon: Clock,
+    title: "Cancel anytime",
+    description: "Start monthly or yearly with total freedom. Cancel anytime directly from your dashboard billing settings.",
+  },
+  {
+    icon: Sparkles,
+    title: "7-day trial window",
+    description: "Validate MediVoice AI with full specialist consultations before any commitment on our Pro plan.",
+  },
+  {
+    icon: Shield,
+    title: "30-day money-back",
+    description: "Risk-free 30-day evaluation period for Clinic plans. 100% full refund if you are not fully satisfied.",
   },
 ];
 
@@ -130,29 +156,29 @@ const highlights = [
 
 const faqs = [
   {
-    question: "Can I change my plan anytime?",
+    question: "Do you offer a free trial or money-back guarantee?",
     answer:
-      "Yes! You can upgrade, downgrade, or cancel your plan at any time. Changes take effect immediately, and we'll prorate any unused time.",
+      "Yes! Our Pro plan features a 7-day free trial window, and our Clinic plan comes with a 30-day risk-free money-back guarantee.",
+  },
+  {
+    question: "Can I change or cancel my plan anytime?",
+    answer:
+      "Yes! You can upgrade, downgrade, or cancel your plan at any time with one click. Changes take effect immediately.",
   },
   {
     question: "What happens when I exceed my consultation limit?",
     answer:
-      "You'll receive a notification when you're close to your limit. You can upgrade your plan or wait until the next billing cycle for your consultations to reset.",
+      "You'll receive a notification when you're close to your limit. You can upgrade your plan anytime to get instant extra consultations.",
   },
   {
     question: "Are the AI consultations a replacement for real doctors?",
     answer:
-      "No. MediVoice AI provides AI-assisted preliminary assessments and health information. Always consult a licensed healthcare provider for medical decisions.",
+      "No. MediVoice AI provides AI-assisted preliminary assessments and health information. Always consult a licensed healthcare provider for medical emergencies.",
   },
   {
     question: "Is my medical data secure?",
     answer:
       "Absolutely. We use end-to-end encryption and follow HIPAA compliance standards. Your data is never shared with third parties.",
-  },
-  {
-    question: "Do you offer refunds?",
-    answer:
-      "We offer a 7-day money-back guarantee for all paid plans. If you're not satisfied, contact our support team for a full refund.",
   },
 ];
 
@@ -322,6 +348,12 @@ function BillingPage() {
                     /{billingCycle === "monthly" ? "mo" : "yr"}
                   </span>
                 </div>
+                {plan.trialNotice && (
+                  <div className="mt-2 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>{plan.trialNotice}</span>
+                  </div>
+                )}
                 {billingCycle === "yearly" && savings > 0 && (
                   <p className="text-xs text-emerald-600 font-semibold mt-1">
                     Save {savings}% vs monthly
@@ -384,6 +416,27 @@ function BillingPage() {
                   </div>
                 ))}
               </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* 4 Bottom Guarantee Cards (Reference layout) */}
+      <div className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {guaranteeCards.map((card, idx) => {
+          const Icon = card.icon;
+          return (
+            <div
+              key={idx}
+              className="p-5 rounded-2xl bg-slate-50/80 border border-slate-200/80 flex flex-col justify-between space-y-3"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100/80 text-emerald-700 flex items-center justify-center shrink-0 font-bold">
+                  <Icon className="w-4 h-4" />
+                </div>
+                <h4 className="font-bold text-sm text-gray-900">{card.title}</h4>
+              </div>
+              <p className="text-xs text-gray-600 leading-relaxed">{card.description}</p>
             </div>
           );
         })}
