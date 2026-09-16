@@ -18,6 +18,11 @@ import {
   HeartPulse,
   Brain,
   Activity,
+  Headphones,
+  ArrowRight,
+  ChevronDown,
+  Plus,
+  PhoneCall,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════
@@ -605,127 +610,244 @@ function Navbar() {
    ═══════════════════════════════════════════════════════════════ */
 function Hero() {
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-10 sm:pt-14 pb-8">
-      <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_0.9fr] gap-8 items-start">
-        {/* Left column */}
-        <div>
-          {/* Eyebrow */}
-          <p
-            className="inline-flex items-center gap-2.5 px-3.5 py-2.5 rounded-full text-xs font-bold tracking-[0.18em] uppercase mb-5"
-            style={{
-              background: "#fdf2f2",
-              border: "1px solid #fbd5d5",
-              color: "#a4161a",
-            }}
-          >
-            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            24/7 AI Medical Specialist Network
-          </p>
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-8 sm:pt-12 pb-12">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        {/* Left Column: Headline, Pills & CTAs */}
+        <div className="lg:col-span-6 space-y-6">
+          {/* Top Pill Badges Row (medivoice.org style) */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-red-50 text-[#a4161a] border border-red-100">
+              <HeartPulse className="w-3.5 h-3.5 text-[#a4161a]" />
+              Built for 24/7 AI Medical Consultation
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-700 border border-gray-200">
+              <Sparkles className="w-3.5 h-3.5 text-[#a4161a]" />
+              Launch offer · 10+ Specialists →
+            </span>
+          </div>
 
-          {/* H1 */}
-          <h1
-            className="font-extrabold text-charcoal tracking-[-0.04em] leading-[0.98] mb-4"
-            style={{ fontSize: "clamp(2.6rem, 5vw, 4.15rem)" }}
-          >
-            Consult with AI Medical Specialists.{" "}
-            <span className="text-primary">Anytime, Anywhere.</span>
+          {/* Main H1 Headline */}
+          <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-extrabold text-charcoal tracking-tight leading-[1.06]">
+            The AI medical network built for{" "}
+            <span className="italic font-serif font-normal text-[#a4161a]">
+              voice consultations.
+            </span>
           </h1>
 
-          {/* Lead */}
-          <p className="text-lg text-gray-600 leading-relaxed mb-3 max-w-[700px]">
-            MediVoice provides real-time, natural voice consultations with 10+
-            AI clinical specialists. Describe symptoms, receive intelligent
-            triage advice, and get hospital-grade SOAP reports generated
-            instantly.
-          </p>
-          <p className="text-[0.95rem] text-gray-500 mb-7">
-            Intake, triaging, and health documentation. For severe emergencies,
-            always contact 911 or local emergency services immediately.
+          {/* Sub-headline Paragraph */}
+          <p className="text-base sm:text-lg text-gray-600 leading-relaxed max-w-xl">
+            MediVoice AI is built for instant patient triage, automating intake,
+            clinical consultations, and health documentation: instant voice AI
+            specialists, SOAP reports, emergency routing, and follow-up care.
           </p>
 
-          {/* CTAs — pill shaped */}
-          <div className="flex flex-wrap gap-3 mb-8">
+          {/* Pill Shaped CTAs */}
+          <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               href="/dashboard"
-              id="hero-cta-primary"
-              className="inline-flex items-center justify-center gap-2 px-[18px] py-3 text-[0.95rem] font-semibold !text-white bg-primary hover:bg-primary-dark rounded-full transition-all hover:-translate-y-px hover:shadow-lg hover:shadow-primary/20"
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-bold !text-white bg-[#18181b] hover:bg-black transition-all shadow-sm hover:shadow-md"
+              style={{ color: "#ffffff" }}
             >
-              Start Consultation Demo <ArrowRightIcon />
+              <Headphones className="w-4 h-4 text-white shrink-0" />
+              <span className="!text-white" style={{ color: "#ffffff" }}>
+                Try the agent
+              </span>
             </Link>
             <Link
               href="/about"
-              id="hero-cta-secondary"
-              className="inline-flex items-center justify-center gap-2 px-[18px] py-3 text-[0.95rem] font-semibold text-charcoal rounded-full transition-colors"
-              style={{
-                background: "rgba(255,255,255,0.88)",
-                border: "1px solid #d0d5dd",
-              }}
+              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-sm font-semibold text-gray-800 bg-gray-100 hover:bg-gray-200 transition-all border border-gray-200/80"
             >
-              About MediVoice
+              Book a Demo <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
-          {/* Stats row */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-            {STATS.map((s, i) => (
-              <div key={i} className="mv-card-sm px-4 py-[14px]">
-                <strong className="block text-charcoal text-xl font-extrabold leading-tight mb-1">
-                  {s.value}
-                </strong>
-                <span className="text-gray-500 text-[0.85rem]">{s.label}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Proof points */}
-          <div className="flex flex-wrap gap-3">
-            {PROOF_ITEMS.map((p) => (
-              <div
-                key={p.title}
-                className="mv-card-sm min-w-[180px] px-4 py-3.5 flex-1"
-              >
-                <strong className="block text-charcoal text-[0.95rem] mb-1">
-                  {p.title}
-                </strong>
-                <span className="text-gray-500 text-[0.85rem]">{p.desc}</span>
-              </div>
-            ))}
+          {/* Sub-label proof text */}
+          <div className="pt-2 flex items-center gap-4 text-xs text-gray-400 font-medium">
+            <span>✓ No credit card required</span>
+            <span>•</span>
+            <span>✓ Instant voice responses</span>
+            <span>•</span>
+            <span>✓ Encrypted HIPAA security</span>
           </div>
         </div>
 
-        {/* Right column — sidebar panel */}
-        <aside className="mv-panel p-7">
-          <p
-            className="text-[11px] font-bold tracking-[0.16em] uppercase mb-2.5"
-            style={{ color: "#a4161a" }}
-          >
-            What this page covers
-          </p>
-          <h2 className="text-xl font-bold text-charcoal leading-snug mb-2.5">
-            See the core points before you start
-          </h2>
-          <p className="text-gray-500 text-[0.95rem] mb-5">
-            MediVoice empowers patients to receive immediate clinical guidance,
-            structured triage summaries, and seamless follow-ups whenever
-            symptoms arise.
-          </p>
-          <div className="grid gap-2.5">
-            {TOPICS.map((t) => (
-              <div
-                key={t}
-                className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-[0.95rem] font-semibold"
-                style={{
-                  background: "#fdf2f2",
-                  border: "1px solid #fbd5d5",
-                  color: "#4a1011",
-                }}
-              >
-                <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                {t}
+        {/* Right Column: Creative Live Interactive Consultation Mock & EHR Sync (medivoice.org style) */}
+        <div className="lg:col-span-6">
+          <div className="bg-gradient-to-b from-gray-50 to-gray-100/60 p-4 sm:p-6 rounded-3xl border border-gray-200/80 shadow-xl space-y-4 relative overflow-hidden">
+            {/* Top Interactive Inbox Panel */}
+            <div className="bg-white rounded-2xl p-4 sm:p-5 border border-gray-200/80 shadow-sm space-y-4">
+              {/* Header Bar */}
+              <div className="flex items-center justify-between gap-2 border-b border-gray-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <button className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-bold text-gray-800 hover:bg-gray-50 transition-colors">
+                    Active AI Specialists <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+                  </button>
+                  <span className="hidden sm:inline-flex text-[10px] font-extrabold text-[#a4161a] bg-red-50 border border-red-100 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                    +10 Doctors Online
+                  </span>
+                </div>
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-1.5 bg-[#18181b] hover:bg-black !text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors shadow-2xs"
+                  style={{ color: "#ffffff" }}
+                >
+                  <Plus className="w-3.5 h-3.5 text-white shrink-0" />
+                  <span className="!text-white" style={{ color: "#ffffff" }}>
+                    Start Consult
+                  </span>
+                </Link>
               </div>
-            ))}
+
+              {/* Consultation Live Feed List featuring MediVoice AI Doctors */}
+              <div className="space-y-2.5">
+                {[
+                  {
+                    name: "Dr. Elliot",
+                    role: "General Physician",
+                    desc: "Fever, Cough & Cold Triage",
+                    time: "2m ago",
+                    status: "Active Call",
+                    statusColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
+                    channel: "Voice Session",
+                    channelIcon: PhoneCall,
+                  },
+                  {
+                    name: "Dr. Layla",
+                    role: "Psychologist",
+                    desc: "Anxiety, Stress & Sleep Intake",
+                    time: "12m ago",
+                    status: "SOAP Ready",
+                    statusColor: "text-[#a4161a] bg-red-50 border-red-200",
+                    channel: "PDF Summary",
+                    channelIcon: FileText,
+                  },
+                  {
+                    name: "Dr. Clara",
+                    role: "Dermatologist",
+                    desc: "Skin Rash & Allergy Assessment",
+                    time: "45m ago",
+                    status: "Triage Complete",
+                    statusColor: "text-blue-700 bg-blue-50 border-blue-200",
+                    channel: "AI Analysis",
+                    channelIcon: Sparkles,
+                  },
+                  {
+                    name: "Dr. Savannah",
+                    role: "Pediatrician",
+                    desc: "Infant Care & Fever Guidance",
+                    time: "1h ago",
+                    status: "In Progress",
+                    statusColor: "text-amber-700 bg-amber-50 border-amber-200",
+                    channel: "Voice Stream",
+                    channelIcon: Mic,
+                  },
+                  {
+                    name: "Dr. Emma",
+                    role: "Nutritionist",
+                    desc: "Gut Health & Meal Plan Advice",
+                    time: "2h ago",
+                    status: "Completed",
+                    statusColor: "text-emerald-700 bg-emerald-50 border-emerald-200",
+                    channel: "Encrypted",
+                    channelIcon: ShieldCheck,
+                  },
+                ].map((doctor, idx) => {
+                  const ChannelIcon = doctor.channelIcon;
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-center justify-between gap-3 p-2.5 rounded-xl bg-gray-50/70 hover:bg-gray-100/80 border border-gray-100 transition-colors"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-8 h-8 rounded-full bg-red-50 text-[#a4161a] font-bold text-xs flex items-center justify-center shrink-0 border border-red-100">
+                          {doctor.name.replace("Dr. ", "").charAt(0)}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex items-center gap-2">
+                            <h5 className="text-xs font-bold text-gray-900 truncate">
+                              {doctor.name}
+                            </h5>
+                            <span className="text-[10px] text-gray-400 font-medium">
+                              • {doctor.role}
+                            </span>
+                            <span className="text-[10px] text-gray-400 font-medium shrink-0">
+                              {doctor.time}
+                            </span>
+                          </div>
+                          <p className="text-[11px] text-gray-500 truncate">
+                            {doctor.desc}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${doctor.statusColor}`}
+                        >
+                          {doctor.status}
+                        </span>
+                        <span className="hidden sm:inline-flex items-center gap-1 text-[10px] text-gray-500 font-medium bg-white px-2 py-0.5 rounded border border-gray-200">
+                          <ChannelIcon className="w-3 h-3 text-gray-400" />
+                          {doctor.channel}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Bottom Live Sync Header & MediVoice AI Core System Cards */}
+            <div className="space-y-3 pt-1">
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="flex items-center gap-1.5 font-bold text-gray-700">
+                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  LIVE · REAL-TIME VOICE AI & CLINICAL EHR SYNC
+                </span>
+                <span className="text-gray-400 font-semibold">+10 doctors</span>
+              </div>
+
+              {/* Core System Sync Cards (Voice Engine, SOAP Generator, Patient Vault) */}
+              <div className="grid grid-cols-3 gap-2.5">
+                <div className="bg-white p-3 rounded-2xl border border-gray-200/80 shadow-2xs space-y-1 text-center">
+                  <div className="text-[11px] font-extrabold text-[#a4161a] tracking-tight uppercase">
+                    Voice Engine
+                  </div>
+                  <div className="text-[10px] text-gray-400 flex items-center justify-center gap-1">
+                    <span className="font-bold text-[#a4161a] bg-red-50 px-1 rounded">
+                      99.4% Acc
+                    </span>
+                    <span className="truncate">Neural Stream</span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-3 rounded-2xl border border-gray-200/80 shadow-2xs space-y-1 text-center">
+                  <div className="text-[11px] font-extrabold text-blue-600 tracking-tight uppercase">
+                    SOAP Generator
+                  </div>
+                  <div className="text-[10px] text-gray-400 flex items-center justify-center gap-1">
+                    <span className="font-bold text-blue-700 bg-blue-50 px-1 rounded">
+                      Instant PDF
+                    </span>
+                    <span className="truncate">Clinical Report</span>
+                  </div>
+                </div>
+
+                <div className="bg-white p-3 rounded-2xl border border-gray-200/80 shadow-2xs space-y-1 text-center">
+                  <div className="text-[11px] font-extrabold text-emerald-600 tracking-tight uppercase">
+                    Patient Vault
+                  </div>
+                  <div className="text-[10px] text-gray-400 flex items-center justify-center gap-1">
+                    <span className="font-bold text-emerald-700 bg-emerald-50 px-1 rounded">
+                      AES-256
+                    </span>
+                    <span className="truncate">HIPAA Encrypted</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-        </aside>
+        </div>
       </div>
     </section>
   );
