@@ -6,10 +6,15 @@ import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 
 export type UserDetails = {
+  id?: number;
   name: string;
   email: string;
   credits: number;
   plan: string;
+  bloodGroup?: string;
+  allergies?: string;
+  emergencyContact?: string;
+  preferredVoice?: string;
 };
 
 function Provider({ children }: Readonly<{ children: React.ReactNode }>) {

@@ -10,6 +10,10 @@ const formatUser = (userRecord: any, defaultPlan = "free") => ({
   email: userRecord?.email,
   credits: userRecord?.credits ?? 10,
   plan: userRecord?.plan || defaultPlan,
+  bloodGroup: userRecord?.bloodGroup || "O+",
+  allergies: userRecord?.allergies || "",
+  emergencyContact: userRecord?.emergencyContact || "",
+  preferredVoice: userRecord?.preferredVoice || "Elliot (Male - Warm)",
 });
 
 export async function POST(req: NextRequest) {
@@ -40,6 +44,10 @@ export async function POST(req: NextRequest) {
         email: userEmail,
         credits: 10,
         plan: "free",
+        bloodGroup: "O+",
+        allergies: "None",
+        emergencyContact: "",
+        preferredVoice: "Elliot (Male - Warm)",
       })
       .returning();
 
@@ -92,27 +100,28 @@ export async function PUT(req: NextRequest) {
       );
     }
 
-    const { plan, credits } = await req.json();
-    const targetPlan = plan || "free";
-    const targetCredits =
-      credits !== undefined
-        ? credits
-        : targetPlan === "clinic"
-        ? 9999
-        : targetPlan === "pro"
-        ? 100
-        : 10;
+    const body = await req.json();
+    const updateData: Record<string, any> = {};
+
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.plan !== undefined) updateData.plan = body.plan;
+    if (body.credits !== undefined) updateData.credits = body.credits;
+    if (body.bloodGroup !== undefined) updateData.bloodGroup = body.bloodGroup;
+    if (body.allergies !== undefined) updateData.allergies = body.allergies;
+    if (body.emergencyContact !== undefined) updateData.emergencyContact = body.emergencyContact;
+    if (body.preferredVoice !== undefined) updateData.preferredVoice = body.preferredVoice;
+
+    if (Object.keys(updateData).length === 0) {
+      return NextResponse.json({ error: "No fields to update" }, { status: 400 });
+    }
 
     const updatedUser = await db
       .update(users)
-      .set({
-        plan: targetPlan,
-        credits: targetCredits,
-      })
+      .set(updateData)
       .where(eq(users.email, userEmail))
       .returning();
 
-    return NextResponse.json(formatUser(updatedUser[0], targetPlan));
+    return NextResponse.json(formatUser(updatedUser[0]));
   } catch (e) {
     console.error("PUT /api/users error:", e);
     const message = e instanceof Error ? e.message : "Unknown error";

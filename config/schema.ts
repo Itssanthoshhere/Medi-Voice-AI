@@ -6,6 +6,10 @@ export const usersTable = pgTable("users", {
   email: varchar({ length: 255 }).notNull().unique(),
   credits: integer().default(10),
   plan: varchar({ length: 50 }).default("free"),
+  bloodGroup: varchar({ length: 20 }).default("O+"),
+  allergies: text().default("None"),
+  emergencyContact: varchar({ length: 100 }).default(""),
+  preferredVoice: varchar({ length: 100 }).default("Elliot (Male - Warm)"),
 });
 
 export const SessionChatTable = pgTable("sessionChatTable", {
