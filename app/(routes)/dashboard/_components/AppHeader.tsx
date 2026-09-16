@@ -51,8 +51,8 @@ function AppHeader() {
             href={option.path}
             className={`text-sm transition-colors hover:text-primary ${
               pathname === option.path
-                ? "text-primary font-bold"
-                : "text-gray-600 font-medium"
+                  ? "text-primary font-bold"
+                  : "text-gray-600 font-medium"
             }`}
           >
             {option.name}
