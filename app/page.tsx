@@ -394,6 +394,65 @@ function Hero() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
+   HOW IT WORKS — 3 Steps
+   ═══════════════════════════════════════════════════════════════ */
+const STEPS = [
+  {
+    num: "01",
+    title: "Speak to an AI Doctor",
+    desc: "Choose from 10+ specialist agents and start a natural voice conversation. Describe your symptoms just like you would in a real clinic call — the AI listens, asks follow-up questions, and guides the session.",
+  },
+  {
+    num: "02",
+    title: "Get a Clinical SOAP Report",
+    desc: "Your consultation is automatically compiled into an industry-standard clinical summary — Chief Complaint, History, Assessment, and Recommendations — ready to download as a formatted PDF.",
+  },
+  {
+    num: "03",
+    title: "Review & Take Action",
+    desc: "Access your complete consultation history anytime. Share SOAP reports with your physical doctor, schedule follow-ups, or consult another specialist — all from your health dashboard.",
+  },
+];
+
+function HowItWorks() {
+  return (
+    <section id="how-it-works" className="max-w-[1120px] mx-auto px-6 py-16">
+      <div className="text-center mb-12 space-y-2">
+        <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
+          How it works
+        </p>
+        <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
+          From first call to clinical report — in 3 steps
+        </h2>
+        <p className="text-sm text-gray-500 max-w-xl mx-auto">
+          No sign-up friction, no waiting rooms. Just speak, and let MediVoice
+          handle the rest.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {STEPS.map((step) => (
+          <article key={step.num} className="mv-card p-7 relative group hover:shadow-lg transition-shadow">
+            {/* Step number */}
+            <span
+              className="block text-4xl font-extrabold mb-4 tracking-tight"
+              style={{ color: "rgba(164, 22, 26, 0.12)" }}
+            >
+              {step.num}
+            </span>
+            {/* Connector line on md+ */}
+            <h3 className="text-lg font-bold text-charcoal mb-2 group-hover:text-primary transition-colors">
+              {step.title}
+            </h3>
+            <p className="text-sm text-gray-600 leading-relaxed">{step.desc}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
    3. FEATURE GRID
    ═══════════════════════════════════════════════════════════════ */
 function FeatureGrid() {
@@ -760,6 +819,7 @@ export default function Page() {
       <main>
         <Hero />
         <FeatureGrid />
+        <HowItWorks />
         <SpecialistRoster />
         <ClinicalSOAPSection />
         <BodyGrid />
