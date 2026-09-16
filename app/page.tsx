@@ -931,12 +931,11 @@ function SpecialistRoster() {
             <div className="pt-3 mt-3 border-t border-gray-200/80">
               <Button
                 size="sm"
-                variant="outline"
                 onClick={(e) => {
                   e.stopPropagation();
                   handleCardClick(doctor);
                 }}
-                className="w-full text-xs font-semibold h-7 rounded-lg text-primary border-primary/30 hover:bg-primary hover:text-white"
+                className="w-full text-xs font-bold h-8 rounded-xl bg-rose-50 text-[#a4161a] border border-rose-200/90 hover:bg-[#a4161a] hover:!text-white hover:border-[#a4161a] transition-all duration-200 shadow-2xs"
               >
                 View Profile & Consult
               </Button>

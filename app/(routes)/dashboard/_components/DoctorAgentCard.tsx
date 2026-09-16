@@ -126,10 +126,10 @@ function DoctorAgentCard({ doctorAgent }: DoctorAgentCardProps) {
               e.stopPropagation();
               handleCardClick();
             }}
-            className={`w-full flex items-center justify-center gap-2 font-semibold text-xs h-10 rounded-xl transition-all shadow-sm ${
+            className={`w-full flex items-center justify-center gap-2 font-bold text-xs h-10 rounded-xl transition-all shadow-2xs ${
               isLocked
-                ? "bg-gradient-to-r from-[#a4161a] to-[#8b1116] hover:from-[#8b1116] hover:to-[#720e12] text-white shadow-md shadow-[#a4161a]/20"
-                : "bg-primary hover:bg-primary/90 text-white shadow-primary/20"
+                ? "bg-gradient-to-r from-[#a4161a] to-[#8b1116] hover:from-[#8b1116] hover:to-[#720e12] !text-white shadow-md shadow-[#a4161a]/20"
+                : "bg-rose-50 hover:bg-[#a4161a] text-[#a4161a] hover:!text-white border border-rose-200/90 hover:border-[#a4161a]"
             }`}
           >
             {isLocked ? (
