@@ -510,11 +510,9 @@ function BillingPage() {
             </Button>
           </Link>
           <Link href="/history">
-            <Button
-              variant="outline"
-              className="font-semibold px-6 h-11 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-            >
-              <span>View Consultation History</span>
+            <Button className="!bg-slate-900 hover:!bg-slate-800 !text-white font-bold px-6 h-11 rounded-xl shadow-md flex items-center gap-2 transition-all">
+              <Clock className="w-4 h-4 shrink-0 text-white" />
+              <span className="!text-white">View Consultation History</span>
             </Button>
           </Link>
         </div>
