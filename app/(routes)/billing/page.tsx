@@ -260,8 +260,11 @@ function BillingPage() {
             <Crown className="w-3.5 h-3.5" />
             Subscription Plans
           </div>
-          <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">
-            Choose the Right Plan for You
+          <h1 className="text-3xl md:text-5xl font-extrabold text-charcoal tracking-tight leading-tight">
+            Choose the{" "}
+            <span className="italic font-serif font-normal text-[#a4161a]">
+              Right Plan for You
+            </span>
           </h1>
           <p className="text-gray-500 text-base max-w-lg mx-auto leading-relaxed">
             Unlock the full power of AI-assisted medical consultations. Start
@@ -476,8 +479,12 @@ function BillingPage() {
 
       {/* Section 3: Highlights Section (Soft tint background canvas) */}
       <section className="bg-gradient-to-b from-white via-red-50/20 to-gray-50/30 p-8 sm:p-10 rounded-3xl border border-gray-200/60 max-w-6xl mx-auto">
-        <h2 className="text-center text-2xl font-bold text-gray-900 mb-8">
-          Why MediVoice AI?
+        <h2 className="text-center text-2xl md:text-3xl font-extrabold text-charcoal tracking-tight mb-8">
+          Why{" "}
+          <span className="italic font-serif font-normal text-[#a4161a]">
+            MediVoice AI
+          </span>
+          ?
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {highlights.map((item, idx) => {
@@ -505,8 +512,11 @@ function BillingPage() {
       {/* Section 4: FAQ Section (Soft slate background canvas) */}
       <section className="bg-[#f8fafc] p-8 sm:p-10 rounded-3xl border border-gray-200/60 max-w-6xl mx-auto">
         <div className="max-w-3xl mx-auto space-y-6">
-          <h2 className="text-center text-2xl font-bold text-gray-900">
-            Frequently Asked Questions
+          <h2 className="text-center text-2xl md:text-3xl font-extrabold text-charcoal tracking-tight">
+            Frequently{" "}
+            <span className="italic font-serif font-normal text-[#a4161a]">
+              Asked Questions
+            </span>
           </h2>
           <div className="space-y-4">
             {faqs.map((faq, idx) => (
@@ -528,8 +538,12 @@ function BillingPage() {
 
       {/* Section 5: Bottom CTA */}
       <section className="text-center max-w-6xl mx-auto bg-gradient-to-br from-red-50/80 via-rose-50/40 to-white rounded-3xl p-10 border border-red-200/80 shadow-sm">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Ready to Transform Your Healthcare?
+        <h2 className="text-2xl md:text-3xl font-extrabold text-charcoal tracking-tight mb-2">
+          Ready to Transform{" "}
+          <span className="italic font-serif font-normal text-[#a4161a]">
+            Your Healthcare
+          </span>
+          ?
         </h2>
         <p className="text-sm text-gray-500 mb-6 max-w-md mx-auto">
           Join thousands of users who trust MediVoice AI for quick, reliable,
