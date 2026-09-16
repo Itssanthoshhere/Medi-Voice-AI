@@ -34,7 +34,7 @@ export default function SuggestedDoctorCard({
         className="w-[50px] h-[50px] rounded-full object-cover shadow-xs"
       />
       <h2 className="font-bold text-sm text-center text-gray-900 mt-2">
-        {doctorAgent.name || doctorAgent.specialist}
+        {doctorAgent.doctorName || doctorAgent.name || doctorAgent.specialist}
       </h2>
       <p className="text-xs text-center text-gray-500 mt-0.5 line-clamp-1">
         {doctorAgent.specialist}

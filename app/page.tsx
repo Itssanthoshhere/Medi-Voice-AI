@@ -3,9 +3,11 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useUser, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import { AIDoctorAgents } from "@/shared/list";
+import { AIDoctorAgents, DoctorAgent } from "@/shared/list";
+import DoctorProfileModal from "@/components/DoctorProfileModal";
 import {
   Mic,
   FileText,
@@ -19,23 +21,62 @@ import {
    INLINE ICONS
    ═══════════════════════════════════════════════════════════════ */
 const ArrowRightIcon = () => (
-  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="15"
+    height="15"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="5" y1="12" x2="19" y2="12" />
     <polyline points="12 5 19 12 12 19" />
   </svg>
 );
 const MenuIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="3" y1="6" x2="21" y2="6" /><line x1="3" y1="12" x2="21" y2="12" /><line x1="3" y1="18" x2="21" y2="18" />
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="3" y1="6" x2="21" y2="6" />
+    <line x1="3" y1="12" x2="21" y2="12" />
+    <line x1="3" y1="18" x2="21" y2="18" />
   </svg>
 );
 const XIcon = () => (
-  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="18" y1="6" x2="6" y2="18" />
+    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 const CheckIcon = () => (
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -58,9 +99,18 @@ const STATS = [
 ];
 
 const PROOF_ITEMS = [
-  { title: "Natural Voice AI", desc: "Powered by Gemini Live and neural speech models for human-like clinical empathy." },
-  { title: "Structured SOAP Reports", desc: "Automated Chief Complaint, Assessment, and PDF summary after every call." },
-  { title: "HIPAA-Ready & Secure", desc: "Encrypted consultation records, personal history, and private health notes." },
+  {
+    title: "Natural Voice AI",
+    desc: "Powered by Gemini Live and neural speech models for human-like clinical empathy.",
+  },
+  {
+    title: "Structured SOAP Reports",
+    desc: "Automated Chief Complaint, Assessment, and PDF summary after every call.",
+  },
+  {
+    title: "HIPAA-Ready & Secure",
+    desc: "Encrypted consultation records, personal history, and private health notes.",
+  },
 ];
 
 const TOPICS = [
@@ -71,12 +121,48 @@ const TOPICS = [
 ];
 
 const CORE_FEATURES = [
-  { icon: Mic, title: "Natural Voice Conversations", desc: "Speak naturally to AI doctors just like a real clinic phone call. Neural voice synthesis reproduces realistic human cadence, tone, and empathy.", color: "text-rose-600", bg: "bg-rose-50" },
-  { icon: FileText, title: "Automated Clinical SOAP Reports", desc: "Every voice consultation automatically compiles into a structured medical note with Chief Complaint, History, Assessment, and PDF export.", color: "text-blue-600", bg: "bg-blue-50" },
-  { icon: Sparkles, title: "Symptom Analysis & Doctor Matching", desc: "Describe your symptoms in plain English, and our smart recommendation engine analyzes your condition to suggest the best specialist agent.", color: "text-purple-600", bg: "bg-purple-50" },
-  { icon: ShieldCheck, title: "HIPAA-Ready Security & Privacy", desc: "Consultations and medical profiles are protected with AES-256 encryption at rest and TLS 1.3 in transit. Your health data is strictly confidential.", color: "text-emerald-600", bg: "bg-emerald-50" },
-  { icon: Clock, title: "Complete History & Consultation Audit", desc: "Review transcripts, doctor advice, and clinical reports from past sessions at any time in your centralized health dashboard.", color: "text-amber-600", bg: "bg-amber-50" },
-  { icon: HeartPulse, title: "Personalized Patient Profiles", desc: "Store blood group, allergies, emergency contacts, and preferred AI doctor voice accents so every session is personalized to your care.", color: "text-indigo-600", bg: "bg-indigo-50" },
+  {
+    icon: Mic,
+    title: "Natural Voice Conversations",
+    desc: "Speak naturally to AI doctors just like a real clinic phone call. Neural voice synthesis reproduces realistic human cadence, tone, and empathy.",
+    color: "text-rose-600",
+    bg: "bg-rose-50",
+  },
+  {
+    icon: FileText,
+    title: "Automated Clinical SOAP Reports",
+    desc: "Every voice consultation automatically compiles into a structured medical note with Chief Complaint, History, Assessment, and PDF export.",
+    color: "text-blue-600",
+    bg: "bg-blue-50",
+  },
+  {
+    icon: Sparkles,
+    title: "Symptom Analysis & Doctor Matching",
+    desc: "Describe your symptoms in plain English, and our smart recommendation engine analyzes your condition to suggest the best specialist agent.",
+    color: "text-purple-600",
+    bg: "bg-purple-50",
+  },
+  {
+    icon: ShieldCheck,
+    title: "HIPAA-Ready Security & Privacy",
+    desc: "Consultations and medical profiles are protected with AES-256 encryption at rest and TLS 1.3 in transit. Your health data is strictly confidential.",
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
+  },
+  {
+    icon: Clock,
+    title: "Complete History & Consultation Audit",
+    desc: "Review transcripts, doctor advice, and clinical reports from past sessions at any time in your centralized health dashboard.",
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+  },
+  {
+    icon: HeartPulse,
+    title: "Personalized Patient Profiles",
+    desc: "Store blood group, allergies, emergency contacts, and preferred AI doctor voice accents so every session is personalized to your care.",
+    color: "text-indigo-600",
+    bg: "bg-indigo-50",
+  },
 ];
 
 const ACCORDION_SECTIONS = [
@@ -221,8 +307,10 @@ function NavbarInteractiveEyes() {
 
     const onScroll = () => {
       // Dynamic vertical tracking as user scrolls down through page content
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      const scrollFraction = docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0;
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const scrollFraction =
+        docHeight > 0 ? Math.min(window.scrollY / docHeight, 1) : 0;
       const gazeY = window.innerHeight * (0.35 + scrollFraction * 0.55);
       updatePupils(lastX, gazeY);
     };
@@ -304,7 +392,9 @@ function Navbar() {
   const { user } = useUser();
 
   useEffect(() => {
-    const hashLinks = NAV_LINKS.filter((l) => l.href.startsWith("#")).map((l) => l.href.slice(1));
+    const hashLinks = NAV_LINKS.filter((l) => l.href.startsWith("#")).map((l) =>
+      l.href.slice(1),
+    );
 
     const onScroll = () => {
       const scrollPos = window.scrollY + 140;
@@ -328,7 +418,10 @@ function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    href: string,
+  ) => {
     if (href.startsWith("#")) {
       e.preventDefault();
       const id = href.slice(1);
@@ -344,7 +437,10 @@ function Navbar() {
   return (
     <header
       className="sticky top-0 z-50 border-b border-gray-200/80"
-      style={{ backdropFilter: "blur(16px)", background: "rgba(255,255,255,0.9)" }}
+      style={{
+        backdropFilter: "blur(16px)",
+        background: "rgba(255,255,255,0.9)",
+      }}
     >
       <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12">
         <div className="flex items-center justify-between h-[72px] gap-6">
@@ -375,7 +471,10 @@ function Navbar() {
           </div>
 
           {/* Desktop centre nav */}
-          <nav className="hidden md:flex items-center gap-2 flex-1 justify-center" aria-label="Primary">
+          <nav
+            className="hidden md:flex items-center gap-2 flex-1 justify-center"
+            aria-label="Primary"
+          >
             {NAV_LINKS.map((l) => {
               const isActive = activeHash === l.href;
               return (
@@ -399,7 +498,10 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-3 shrink-0">
             {!user ? (
               <>
-                <Link href="/sign-in" className="text-[0.95rem] text-gray-600 hover:text-charcoal transition-colors">
+                <Link
+                  href="/sign-in"
+                  className="text-[0.95rem] text-gray-600 hover:text-charcoal transition-colors"
+                >
                   Sign in
                 </Link>
                 <Link
@@ -412,7 +514,10 @@ function Navbar() {
               </>
             ) : (
               <div className="flex gap-4 items-center">
-                <Button variant="outline" className="rounded-full font-semibold">
+                <Button
+                  variant="outline"
+                  className="rounded-full font-semibold"
+                >
                   <Link href="/dashboard">Dashboard</Link>
                 </Button>
                 <UserButton />
@@ -433,7 +538,10 @@ function Navbar() {
 
         {/* Mobile dropdown */}
         {open && (
-          <nav className="md:hidden pb-4 border-t border-gray-100 flex flex-col" aria-label="Mobile navigation">
+          <nav
+            className="md:hidden pb-4 border-t border-gray-100 flex flex-col"
+            aria-label="Mobile navigation"
+          >
             {NAV_LINKS.map((l) => {
               const isActive = activeHash === l.href;
               return (
@@ -457,7 +565,10 @@ function Navbar() {
             <div className="mt-3 pt-3 border-t border-gray-100 flex flex-col gap-2">
               {!user ? (
                 <>
-                  <Link href="/sign-in" className="px-2 py-2.5 text-sm font-medium text-gray-700">
+                  <Link
+                    href="/sign-in"
+                    className="px-2 py-2.5 text-sm font-medium text-gray-700"
+                  >
                     Sign in
                   </Link>
                   <Link
@@ -469,7 +580,10 @@ function Navbar() {
                 </>
               ) : (
                 <div className="px-2 py-2 flex items-center justify-between">
-                  <Button variant="outline" className="rounded-full font-semibold w-full mr-4">
+                  <Button
+                    variant="outline"
+                    className="rounded-full font-semibold w-full mr-4"
+                  >
                     <Link href="/dashboard">Dashboard</Link>
                   </Button>
                   <UserButton />
@@ -495,7 +609,11 @@ function Hero() {
           {/* Eyebrow */}
           <p
             className="inline-flex items-center gap-2.5 px-3.5 py-2.5 rounded-full text-xs font-bold tracking-[0.18em] uppercase mb-5"
-            style={{ background: "#fdf2f2", border: "1px solid #fbd5d5", color: "#a4161a" }}
+            style={{
+              background: "#fdf2f2",
+              border: "1px solid #fbd5d5",
+              color: "#a4161a",
+            }}
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
             24/7 AI Medical Specialist Network
@@ -512,13 +630,14 @@ function Hero() {
 
           {/* Lead */}
           <p className="text-lg text-gray-600 leading-relaxed mb-3 max-w-[700px]">
-            MediVoice provides real-time, natural voice consultations with 10+ AI
-            clinical specialists. Describe symptoms, receive intelligent triage advice,
-            and get hospital-grade SOAP reports generated instantly.
+            MediVoice provides real-time, natural voice consultations with 10+
+            AI clinical specialists. Describe symptoms, receive intelligent
+            triage advice, and get hospital-grade SOAP reports generated
+            instantly.
           </p>
           <p className="text-[0.95rem] text-gray-500 mb-7">
-            Intake, triaging, and health documentation. For severe emergencies, always
-            contact 911 or local emergency services immediately.
+            Intake, triaging, and health documentation. For severe emergencies,
+            always contact 911 or local emergency services immediately.
           </p>
 
           {/* CTAs — pill shaped */}
@@ -534,7 +653,10 @@ function Hero() {
               href="/about"
               id="hero-cta-secondary"
               className="inline-flex items-center justify-center gap-2 px-[18px] py-3 text-[0.95rem] font-semibold text-charcoal rounded-full transition-colors"
-              style={{ background: "rgba(255,255,255,0.88)", border: "1px solid #d0d5dd" }}
+              style={{
+                background: "rgba(255,255,255,0.88)",
+                border: "1px solid #d0d5dd",
+              }}
             >
               About MediVoice
             </Link>
@@ -555,8 +677,13 @@ function Hero() {
           {/* Proof points */}
           <div className="flex flex-wrap gap-3">
             {PROOF_ITEMS.map((p) => (
-              <div key={p.title} className="mv-card-sm min-w-[180px] px-4 py-3.5 flex-1">
-                <strong className="block text-charcoal text-[0.95rem] mb-1">{p.title}</strong>
+              <div
+                key={p.title}
+                className="mv-card-sm min-w-[180px] px-4 py-3.5 flex-1"
+              >
+                <strong className="block text-charcoal text-[0.95rem] mb-1">
+                  {p.title}
+                </strong>
                 <span className="text-gray-500 text-[0.85rem]">{p.desc}</span>
               </div>
             ))}
@@ -575,15 +702,20 @@ function Hero() {
             See the core points before you start
           </h2>
           <p className="text-gray-500 text-[0.95rem] mb-5">
-            MediVoice empowers patients to receive immediate clinical guidance, structured
-            triage summaries, and seamless follow-ups whenever symptoms arise.
+            MediVoice empowers patients to receive immediate clinical guidance,
+            structured triage summaries, and seamless follow-ups whenever
+            symptoms arise.
           </p>
           <div className="grid gap-2.5">
             {TOPICS.map((t) => (
               <div
                 key={t}
                 className="flex items-center gap-2.5 px-3.5 py-3 rounded-2xl text-[0.95rem] font-semibold"
-                style={{ background: "#fdf2f2", border: "1px solid #fbd5d5", color: "#4a1011" }}
+                style={{
+                  background: "#fdf2f2",
+                  border: "1px solid #fbd5d5",
+                  color: "#4a1011",
+                }}
               >
                 <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
                 {t}
@@ -619,9 +751,15 @@ const STEPS = [
 
 function HowItWorks() {
   return (
-    <section id="how-it-works" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
+    <section
+      id="how-it-works"
+      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16"
+    >
       <div className="text-center mb-12 space-y-2">
-        <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
+        <p
+          className="text-[11px] font-bold tracking-[0.16em] uppercase"
+          style={{ color: "#a4161a" }}
+        >
           How it works
         </p>
         <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
@@ -635,7 +773,10 @@ function HowItWorks() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {STEPS.map((step) => (
-          <article key={step.num} className="mv-card p-7 relative group hover:shadow-lg transition-shadow">
+          <article
+            key={step.num}
+            className="mv-card p-7 relative group hover:shadow-lg transition-shadow"
+          >
             {/* Step number */}
             <span
               className="block text-4xl font-extrabold mb-4 tracking-tight"
@@ -660,9 +801,15 @@ function HowItWorks() {
    ═══════════════════════════════════════════════════════════════ */
 function FeatureGrid() {
   return (
-    <section id="features" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
+    <section
+      id="features"
+      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16"
+    >
       <div className="text-center mb-12 space-y-2">
-        <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
+        <p
+          className="text-[11px] font-bold tracking-[0.16em] uppercase"
+          style={{ color: "#a4161a" }}
+        >
           Core capabilities
         </p>
         <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
@@ -678,7 +825,10 @@ function FeatureGrid() {
         {CORE_FEATURES.map((f, idx) => {
           const Icon = f.icon;
           return (
-            <article key={idx} className="mv-card p-6 space-y-4 hover:shadow-lg transition-shadow group">
+            <article
+              key={idx}
+              className="mv-card p-6 space-y-4 hover:shadow-lg transition-shadow group"
+            >
               <div className={`p-3 rounded-xl w-max ${f.bg} ${f.color}`}>
                 <Icon className="w-5 h-5" />
               </div>
@@ -698,24 +848,55 @@ function FeatureGrid() {
    4. SPECIALIST ROSTER
    ═══════════════════════════════════════════════════════════════ */
 function SpecialistRoster() {
+  const [selectedDoctor, setSelectedDoctor] = useState<DoctorAgent | null>(
+    null,
+  );
+  const [modalOpen, setModalOpen] = useState(false);
+  const router = useRouter();
+  const { user } = useUser();
+
+  const handleCardClick = (doctor: DoctorAgent) => {
+    setSelectedDoctor(doctor);
+    setModalOpen(true);
+  };
+
+  const handleStartConsultation = (doctor: DoctorAgent) => {
+    setModalOpen(false);
+    if (!user) {
+      router.push("/sign-up");
+    } else {
+      router.push("/dashboard");
+    }
+  };
+
   return (
-    <section id="specialists" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
+    <section
+      id="specialists"
+      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16"
+    >
       <div className="text-center mb-12">
-        <p className="text-[11px] font-bold tracking-[0.16em] uppercase mb-3" style={{ color: "#a4161a" }}>
+        <p
+          className="text-[11px] font-bold tracking-[0.16em] uppercase mb-3"
+          style={{ color: "#a4161a" }}
+        >
           Specialist Network
         </p>
         <h2 className="text-3xl font-extrabold text-charcoal tracking-tight mb-3">
           10+ Specialized AI Medical Agents
         </h2>
         <p className="text-gray-500 text-sm max-w-xl mx-auto">
-          From pediatric care to cardiology and dermatology, MediVoice AI deploys
-          dedicated clinical agents tailored to specific patient needs.
+          Tap any doctor agent card below to view their full clinical profile,
+          areas of expertise, and sample consultation questions.
         </p>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
         {AIDoctorAgents.map((doctor) => (
-          <div key={doctor.id} className="mv-card p-4 flex flex-col justify-between hover:shadow-lg transition-shadow group">
+          <div
+            key={doctor.id}
+            onClick={() => handleCardClick(doctor)}
+            className="mv-card p-4 flex flex-col justify-between hover:shadow-xl transition-all cursor-pointer group"
+          >
             <div className="space-y-3">
               <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-rose-50 border border-gray-100">
                 <Image
@@ -736,28 +917,40 @@ function SpecialistRoster() {
                 )}
               </div>
               <div>
-                <h3 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">
-                  {doctor.specialist}
+                <h3 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors flex items-center justify-between">
+                  <span>{doctor.doctorName || doctor.specialist}</span>
                 </h3>
+                <span className="text-[10px] text-primary font-semibold block mt-0.5">
+                  {doctor.specialist}
+                </span>
                 <p className="text-[11px] text-gray-500 mt-1 line-clamp-2 leading-snug">
                   {doctor.description}
                 </p>
               </div>
             </div>
             <div className="pt-3 mt-3 border-t border-gray-200/80">
-              <Link href="/dashboard" className="block w-full">
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="w-full text-xs font-semibold h-7 rounded-lg text-primary border-primary/30 hover:bg-primary hover:text-white"
-                >
-                  Consult Agent
-                </Button>
-              </Link>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleCardClick(doctor);
+                }}
+                className="w-full text-xs font-semibold h-7 rounded-lg text-primary border-primary/30 hover:bg-primary hover:text-white"
+              >
+                View Profile & Consult
+              </Button>
             </div>
           </div>
         ))}
       </div>
+
+      <DoctorProfileModal
+        doctor={selectedDoctor}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onStartConsultation={handleStartConsultation}
+      />
     </section>
   );
 }
@@ -770,7 +963,10 @@ function ClinicalSOAPSection() {
     <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
         <div className="space-y-5">
-          <p className="text-[11px] font-bold tracking-[0.16em] uppercase" style={{ color: "#a4161a" }}>
+          <p
+            className="text-[11px] font-bold tracking-[0.16em] uppercase"
+            style={{ color: "#a4161a" }}
+          >
             Clinical Documentation
           </p>
           <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
@@ -778,9 +974,9 @@ function ClinicalSOAPSection() {
           </h2>
           <p className="text-gray-600 text-sm leading-relaxed">
             Every voice consultation automatically compiles into an
-            industry-standard clinical summary covering Chief Complaint, History,
-            Differential Assessments, and Recommendations — ready to export as a
-            formatted PDF for physicians.
+            industry-standard clinical summary covering Chief Complaint,
+            History, Differential Assessments, and Recommendations — ready to
+            export as a formatted PDF for physicians.
           </p>
           <ul className="space-y-2.5 text-sm text-gray-700">
             {[
@@ -789,7 +985,9 @@ function ClinicalSOAPSection() {
               "Downloadable formatted PDF reports for physical doctors",
             ].map((item) => (
               <li key={item} className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">✓</span>
+                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                  ✓
+                </span>
                 <span>{item}</span>
               </li>
             ))}
@@ -809,32 +1007,50 @@ function ClinicalSOAPSection() {
           <div className="flex items-center justify-between border-b border-gray-100 pb-3">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="font-bold text-gray-900">Clinical SOAP Report</span>
+              <span className="font-bold text-gray-900">
+                Clinical SOAP Report
+              </span>
               <span className="text-gray-400">• Session #MV-8492</span>
             </div>
-            <span className="font-bold text-primary bg-rose-50 px-2 py-0.5 rounded">PDF Ready</span>
+            <span className="font-bold text-primary bg-rose-50 px-2 py-0.5 rounded">
+              PDF Ready
+            </span>
           </div>
           <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-xl">
             <div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold">Specialist</span>
-              <p className="font-bold text-gray-800">Dr. Elliot (General Physician)</p>
+              <span className="text-[10px] text-gray-400 uppercase font-bold">
+                Specialist
+              </span>
+              <p className="font-bold text-gray-800">
+                Dr. Elliot (General Physician)
+              </p>
             </div>
             <div>
-              <span className="text-[10px] text-gray-400 uppercase font-bold">Triage Status</span>
-              <p className="font-bold text-emerald-600">Non-Emergent / Stable</p>
+              <span className="text-[10px] text-gray-400 uppercase font-bold">
+                Triage Status
+              </span>
+              <p className="font-bold text-emerald-600">
+                Non-Emergent / Stable
+              </p>
             </div>
           </div>
           <div className="space-y-2 text-gray-700">
             <div>
-              <span className="font-bold text-gray-900 uppercase text-[10px]">Chief Complaint:</span>
+              <span className="font-bold text-gray-900 uppercase text-[10px]">
+                Chief Complaint:
+              </span>
               <p className="bg-gray-50 p-2 rounded-lg mt-1 text-gray-600">
-                48-hour history of sore throat, dry cough, and mild fatigue. No dyspnea reported.
+                48-hour history of sore throat, dry cough, and mild fatigue. No
+                dyspnea reported.
               </p>
             </div>
             <div>
-              <span className="font-bold text-gray-900 uppercase text-[10px]">Recommendations:</span>
+              <span className="font-bold text-gray-900 uppercase text-[10px]">
+                Recommendations:
+              </span>
               <p className="bg-gray-50 p-2 rounded-lg mt-1 text-gray-600">
-                Supportive care, hydration, rest. Follow up with in-person clinic if fever exceeds 101°F.
+                Supportive care, hydration, rest. Follow up with in-person
+                clinic if fever exceeds 101°F.
               </p>
             </div>
           </div>
@@ -849,7 +1065,10 @@ function ClinicalSOAPSection() {
    ═══════════════════════════════════════════════════════════════ */
 function BodyGrid() {
   return (
-    <section id="solutions" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-5 pb-20">
+    <section
+      id="solutions"
+      className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 pt-5 pb-20"
+    >
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_0.38fr] gap-7 items-start">
         {/* Main content column */}
         <div className="grid gap-5">
@@ -863,7 +1082,9 @@ function BodyGrid() {
               >
                 <summary className="flex items-center justify-between gap-4 px-5 py-5 text-[1.05rem] font-semibold text-charcoal hover:text-primary transition-colors">
                   {section.title}
-                  <span className="text-primary text-xl font-light shrink-0">+</span>
+                  <span className="text-primary text-xl font-light shrink-0">
+                    +
+                  </span>
                 </summary>
                 <div className="px-5 pb-5">
                   <ul className="space-y-2 text-gray-600 text-[0.95rem]">
@@ -883,7 +1104,9 @@ function BodyGrid() {
 
           {/* FAQ accordion */}
           <div className="mv-card p-6">
-            <h3 className="text-xl font-bold text-charcoal mb-4">Common questions</h3>
+            <h3 className="text-xl font-bold text-charcoal mb-4">
+              Common questions
+            </h3>
             <div className="mv-card overflow-hidden p-1">
               {FAQS.map((faq, idx) => (
                 <details
@@ -893,10 +1116,14 @@ function BodyGrid() {
                 >
                   <summary className="flex items-center justify-between gap-4 px-5 py-5 text-[1.05rem] font-semibold text-charcoal hover:text-primary transition-colors">
                     {faq.q}
-                    <span className="text-primary text-xl font-light shrink-0">+</span>
+                    <span className="text-primary text-xl font-light shrink-0">
+                      +
+                    </span>
                   </summary>
                   <div className="px-5 pb-5">
-                    <p className="text-gray-600 text-[0.95rem] leading-relaxed">{faq.a}</p>
+                    <p className="text-gray-600 text-[0.95rem] leading-relaxed">
+                      {faq.a}
+                    </p>
                   </div>
                 </details>
               ))}
@@ -908,13 +1135,19 @@ function BodyGrid() {
         <aside className="grid gap-5">
           {/* Common searches */}
           <div className="mv-card p-5">
-            <h3 className="text-lg font-bold text-charcoal mb-4">Common searches this page answers</h3>
+            <h3 className="text-lg font-bold text-charcoal mb-4">
+              Common searches this page answers
+            </h3>
             <div className="grid gap-2.5">
               {SEO_TERMS.map((t) => (
                 <span
                   key={t}
                   className="block text-[0.92rem] px-3.5 py-3 rounded-2xl"
-                  style={{ background: "#fdf2f2", border: "1px solid #fbd5d5", color: "#4a1011" }}
+                  style={{
+                    background: "#fdf2f2",
+                    border: "1px solid #fbd5d5",
+                    color: "#4a1011",
+                  }}
                 >
                   {t}
                 </span>
@@ -924,7 +1157,9 @@ function BodyGrid() {
 
           {/* Explore more */}
           <div className="mv-card p-5">
-            <h3 className="text-lg font-bold text-charcoal mb-4">Explore more</h3>
+            <h3 className="text-lg font-bold text-charcoal mb-4">
+              Explore more
+            </h3>
             <div className="flex flex-wrap gap-2.5">
               {RELATED_LINKS.map((r) => (
                 <Link
@@ -943,8 +1178,8 @@ function BodyGrid() {
           <div className="mv-card p-5">
             <h3 className="text-lg font-bold text-charcoal mb-2">Next step</h3>
             <p className="text-gray-500 text-[0.95rem] mb-4">
-              Experience the future of digital triage. Start a free voice consultation
-              with an AI doctor or explore our specialist roster.
+              Experience the future of digital triage. Start a free voice
+              consultation with an AI doctor or explore our specialist roster.
             </p>
             <Link
               href="/dashboard"
