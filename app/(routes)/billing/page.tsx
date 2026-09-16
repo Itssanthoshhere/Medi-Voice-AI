@@ -15,6 +15,7 @@ import {
   Shield,
   Clock,
   Stethoscope,
+  ArrowRight,
   FileText,
   Headphones,
   Users,
@@ -447,18 +448,20 @@ function BillingPage() {
           Join thousands of users who trust MediVoice AI for quick,
           reliable, and accessible medical consultations.
         </p>
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <Link href="/dashboard">
-            <Button className="text-white font-semibold px-6 shadow-sm">
-              Get Started Free
+            <Button className="bg-[#a4161a] hover:bg-[#8b1116] !text-white font-bold px-6 h-11 rounded-xl shadow-md flex items-center gap-2">
+              <Stethoscope className="w-4 h-4" />
+              <span>Start AI Consultation</span>
+              <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
-          <Link href="/dashboard">
+          <Link href="/history">
             <Button
               variant="outline"
-              className="font-semibold px-6 border-gray-300"
+              className="font-semibold px-6 h-11 rounded-xl border-gray-300 text-gray-700 hover:bg-gray-100 hover:text-gray-900"
             >
-              View Dashboard
+              <span>View Consultation History</span>
             </Button>
           </Link>
         </div>
