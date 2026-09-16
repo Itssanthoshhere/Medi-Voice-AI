@@ -1,14 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useUser, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import { AIDoctorAgents } from "@/shared/list";
+import {
+  Mic,
+  FileText,
+  Sparkles,
+  ShieldCheck,
+  Clock,
+  HeartPulse,
+} from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════
-   ICONS — inline SVG, no extra dependency
+   ICONS
    ═══════════════════════════════════════════════════════════════ */
 const MicIcon = () => (
   <svg
@@ -135,21 +143,6 @@ const CheckIcon = () => (
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
-const MailIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect width="20" height="16" x="2" y="4" rx="2" />
-    <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
-  </svg>
-);
 const ChevronDownSmall = () => (
   <svg
     width="14"
@@ -179,7 +172,6 @@ const ArrowRightIcon = () => (
     <polyline points="12 5 19 12 12 19" />
   </svg>
 );
-
 const AlertTriangleIcon = () => (
   <svg
     width="20"
@@ -236,13 +228,16 @@ type NavLink = {
 
 const NAV_LINKS: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Dashboard", href: "/dashboard" },
-  { label: "History", href: "/history" },
+  { label: "Features", href: "#features" },
+  { label: "Specialists", href: "#specialists" },
+  { label: "How It Works", href: "#how-it-works" },
   { label: "Pricing", href: "/billing" },
-  { label: "Profile", href: "/profile" },
   { label: "About", href: "/about" },
 ];
 
+/* ═══════════════════════════════════════════════════════════════
+   1. NAVBAR
+   ═══════════════════════════════════════════════════════════════ */
 function Navbar() {
   const [open, setOpen] = useState(false);
   const { user } = useUser();
@@ -272,9 +267,6 @@ function Navbar() {
               style={{ width: "auto", height: "auto" }}
               priority
             />
-            {/* <span className="font-extrabold text-charcoal text-xl tracking-tight">
-              MediVoice
-            </span> */}
           </Link>
 
           {/* Desktop centre nav */}
@@ -515,46 +507,64 @@ function StatBar() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   4. FEATURE GRID
+   4. CORE PLATFORM CAPABILITIES
    ═══════════════════════════════════════════════════════════════ */
-const FEATURES = [
+const CORE_FEATURES = [
   {
-    Icon: MicIcon,
-    heading: "AI Medical Transcription",
-    body: "Convert doctor-patient conversations into accurate medical transcripts in real-time.",
+    icon: Mic,
+    title: "Natural Voice Conversations",
+    desc: "Speak naturally to AI doctors just like a real clinic phone call. Neural voice synthesis reproduces realistic human cadence, tone, and empathy.",
+    color: "text-rose-600",
+    bg: "bg-rose-50",
   },
   {
-    Icon: AlertTriangleIcon,
-    heading: "Clinical Error Detection",
-    body: "AI flags inconsistencies and possible medical errors in transcribed content.",
+    icon: FileText,
+    title: "Automated Clinical SOAP Reports",
+    desc: "Every voice consultation automatically compiles into a structured medical note with Chief Complaint, History, Assessment, and PDF export.",
+    color: "text-blue-600",
+    bg: "bg-blue-50",
   },
   {
-    Icon: LightbulbIcon,
-    heading: "Context-Aware Recommendations",
-    body: "Provide contextual treatment or diagnosis suggestions based on conversations.",
+    icon: Sparkles,
+    title: "Symptom Analysis & Doctor Matching",
+    desc: "Describe your symptoms in plain English, and our smart recommendation engine analyzes your condition to suggest the best specialist agent.",
+    color: "text-purple-600",
+    bg: "bg-purple-50",
   },
   {
-    Icon: ActivityIcon,
-    heading: "Patient Sentiment Monitoring",
-    body: "Analyze patient tone and emotion to assist doctors with empathetic communication.",
+    icon: ShieldCheck,
+    title: "HIPAA-Ready Security & Privacy",
+    desc: "Consultations and medical profiles are protected with AES-256 encryption at rest and TLS 1.3 in transit. Your health data is strictly confidential.",
+    color: "text-emerald-600",
+    bg: "bg-emerald-50",
   },
   {
-    Icon: FileTextIcon,
-    heading: "Summarized Case Notes",
-    body: "Automatically generate brief, actionable summaries of medical discussions.",
+    icon: Clock,
+    title: "Complete History & Consultation Audit",
+    desc: "Review transcripts, doctor advice, and clinical reports from past sessions at any time in your centralized health dashboard.",
+    color: "text-amber-600",
+    bg: "bg-amber-50",
+  },
+  {
+    icon: HeartPulse,
+    title: "Personalized Patient Profiles",
+    desc: "Store blood group, allergies, emergency contacts, and preferred AI doctor voice accents so every session is personalized to your care.",
+    color: "text-indigo-600",
+    bg: "bg-indigo-50",
   },
 ];
 
 function FeatureGrid() {
   return (
     <section
-      className="bg-surface py-20 border-b border-gray-200"
+      id="features"
+      className="bg-surface py-20 sm:py-24 border-b border-gray-200"
       aria-labelledby="features-heading"
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Section header */}
-        <div className="text-center mb-14">
-          <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary mb-3">
+        <div className="text-center mb-14 space-y-2">
+          <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary">
             Core capabilities
           </p>
           <h2
@@ -563,23 +573,115 @@ function FeatureGrid() {
           >
             Built for every moment a patient reaches out
           </h2>
+          <p className="text-sm text-gray-500 max-w-xl mx-auto">
+            Comprehensive clinical intelligence combining neural voice
+            synthesis, automated SOAP notes, and specialist triaging.
+          </p>
         </div>
 
-        {/* 3-col grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {FEATURES.map((f) => (
-            <article
-              key={f.heading}
-              className="bg-white rounded-xl border border-gray-200 p-6 hover:border-gray-300 hover:shadow-sm transition-all"
+        {/* 6-card grid (3x2 balanced) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {CORE_FEATURES.map((f, idx) => {
+            const Icon = f.icon;
+            return (
+              <article
+                key={idx}
+                className="bg-white rounded-2xl border border-gray-200 p-6 sm:p-7 space-y-4 hover:border-primary/40 hover:shadow-md transition-all group"
+              >
+                <div className={`p-3 rounded-xl w-max ${f.bg} ${f.color}`}>
+                  <Icon className="w-5 h-5" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
+                  {f.title}
+                </h3>
+                <p className="text-xs sm:text-sm text-gray-600 leading-relaxed">
+                  {f.desc}
+                </p>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   5. [NEW] 10+ AI MEDICAL SPECIALISTS ROSTER (FROM CODEBASE)
+   ═══════════════════════════════════════════════════════════════ */
+function SpecialistRoster() {
+  return (
+    <section
+      id="specialists"
+      className="bg-white py-20 border-b border-gray-200"
+      aria-labelledby="specialists-heading"
+    >
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="text-center mb-12">
+          <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary mb-3">
+            Specialist Network
+          </p>
+          <h2
+            id="specialists-heading"
+            className="text-3xl font-extrabold text-charcoal tracking-tight mb-3"
+          >
+            10+ Specialized AI Medical Agents
+          </h2>
+          <p className="text-gray-600 text-sm max-w-xl mx-auto">
+            From pediatric care to cardiology and dermatology, MediVoice AI
+            deploys dedicated clinical agents tailored to specific patient
+            needs.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          {AIDoctorAgents.map((doctor) => (
+            <div
+              key={doctor.id}
+              className="bg-surface rounded-xl border border-gray-200 p-4 flex flex-col justify-between hover:border-primary/40 hover:shadow-sm transition-all group"
             >
-              <div className="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-primary mb-5">
-                <f.Icon />
+              <div className="space-y-3">
+                <div className="relative w-full aspect-square rounded-lg overflow-hidden bg-rose-50 border border-gray-100">
+                  <Image
+                    src={doctor.image}
+                    alt={doctor.specialist}
+                    fill
+                    className="object-cover group-hover:scale-105 transition-transform"
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  />
+                  {doctor.subscriptionRequired ? (
+                    <span className="absolute top-2 right-2 text-[9px] font-bold bg-slate-900/80 text-amber-300 px-1.5 py-0.5 rounded backdrop-blur-sm">
+                      Pro
+                    </span>
+                  ) : (
+                    <span className="absolute top-2 right-2 text-[9px] font-bold bg-emerald-600 text-white px-1.5 py-0.5 rounded">
+                      Free
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 group-hover:text-primary transition-colors">
+                    {doctor.specialist}
+                  </h3>
+                  <p className="text-[11px] text-gray-500 mt-1 line-clamp-2 leading-snug">
+                    {doctor.description}
+                  </p>
+                </div>
               </div>
-              <h3 className="text-base font-bold text-charcoal mb-2">
-                {f.heading}
-              </h3>
-              <p className="text-sm text-gray-600 leading-relaxed">{f.body}</p>
-            </article>
+
+              <div className="pt-3 mt-3 border-t border-gray-200/80">
+                <Link href="/dashboard" className="block w-full">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="w-full text-xs font-semibold h-7 rounded-lg text-primary border-primary/30 hover:bg-primary hover:text-white"
+                  >
+                    Consult Agent
+                  </Button>
+                </Link>
+              </div>
+            </div>
           ))}
         </div>
       </div>
@@ -588,7 +690,125 @@ function FeatureGrid() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   5. TABBED SECTION
+   6. [NEW] AUTOMATED SOAP CLINICAL NOTES (FROM ABOUT & API)
+   ═══════════════════════════════════════════════════════════════ */
+function ClinicalSOAPSection() {
+  return (
+    <section className="bg-surface py-20 border-b border-gray-200">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="space-y-5">
+            <p className="text-[11px] font-bold tracking-[0.14em] uppercase text-primary">
+              Clinical Documentation
+            </p>
+            <h2 className="text-3xl font-extrabold text-charcoal tracking-tight">
+              Hospital-Grade SOAP Reports Generated Automatically
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              Every voice consultation automatically compiles into an
+              industry-standard clinical summary covering Chief Complaint,
+              History, Differential Assessments, and Recommendations — ready to
+              export as a formatted PDF for physicians.
+            </p>
+
+            <ul className="space-y-2.5 text-sm text-gray-700">
+              <li className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                  ✓
+                </span>
+                <span>
+                  Automatic extraction of Chief Complaint and Duration
+                </span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                  ✓
+                </span>
+                <span>Differential clinical assessments with triage flags</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <span className="w-4 h-4 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center text-xs font-bold">
+                  ✓
+                </span>
+                <span>
+                  Downloadable formatted PDF reports for physical doctors
+                </span>
+              </li>
+            </ul>
+
+            <div className="pt-2">
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold !text-white bg-primary hover:bg-primary-dark rounded-lg transition-colors shadow-sm"
+              >
+                Try Consultation in Dashboard <ArrowRightIcon />
+              </Link>
+            </div>
+          </div>
+
+          {/* SOAP Note Mockup */}
+          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4 shadow-sm text-xs">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="font-bold text-gray-900">
+                  Clinical SOAP Report
+                </span>
+                <span className="text-gray-400">• Session #MV-8492</span>
+              </div>
+              <span className="font-bold text-primary bg-rose-50 px-2 py-0.5 rounded">
+                PDF Ready
+              </span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 bg-gray-50 p-3 rounded-lg">
+              <div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold">
+                  Specialist
+                </span>
+                <p className="font-bold text-gray-800">
+                  Dr. Elliot (General Physician)
+                </p>
+              </div>
+              <div>
+                <span className="text-[10px] text-gray-400 uppercase font-bold">
+                  Triage Status
+                </span>
+                <p className="font-bold text-emerald-600">
+                  Non-Emergent / Stable
+                </p>
+              </div>
+            </div>
+
+            <div className="space-y-2 text-gray-700">
+              <div>
+                <span className="font-bold text-gray-900 uppercase text-[10px]">
+                  Chief Complaint:
+                </span>
+                <p className="bg-gray-50 p-2 rounded mt-1 text-gray-600">
+                  48-hour history of sore throat, dry cough, and mild fatigue.
+                  No dyspnea reported.
+                </p>
+              </div>
+              <div>
+                <span className="font-bold text-gray-900 uppercase text-[10px]">
+                  Recommendations:
+                </span>
+                <p className="bg-gray-50 p-2 rounded mt-1 text-gray-600">
+                  Supportive care, hydration, rest. Follow up with in-person
+                  clinic if fever exceeds 101°F.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   7. TABBED SECTION
    ═══════════════════════════════════════════════════════════════ */
 const TABS = [
   {
@@ -643,6 +863,7 @@ function TabbedSection() {
 
   return (
     <section
+      id="how-it-works"
       className="bg-white py-20 border-b border-gray-200"
       aria-labelledby="tabs-heading"
     >
@@ -714,7 +935,7 @@ function TabbedSection() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   6. FAQ ACCORDION
+   8. FAQ ACCORDION
    ═══════════════════════════════════════════════════════════════ */
 const FAQS = [
   {
@@ -797,7 +1018,7 @@ function FAQAccordion() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   7. SEO LINKS BLOCK
+   9. SEO LINKS BLOCK
    ═══════════════════════════════════════════════════════════════ */
 const SEO_TERMS = [
   "best AI answering service for primary care",
@@ -836,13 +1057,13 @@ function SEOLinksBlock() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   8. RELATED LINKS ROW
+   10. RELATED LINKS ROW
    ═══════════════════════════════════════════════════════════════ */
 const RELATED_LINKS = [
-  { label: "AI medical receptionist", href: "/ai-receptionist" },
-  { label: "AI answering service", href: "/answering-service" },
-  { label: "Primary care page", href: "/for/primary-care" },
-  { label: "Practice types", href: "/for" },
+  { label: "AI medical receptionist", href: "/dashboard" },
+  { label: "10+ AI Specialists", href: "#specialists" },
+  { label: "Pricing & Plans", href: "/billing" },
+  { label: "About Platform", href: "/about" },
   { label: "LegalVoice — for law firms", href: "https://legalvoice.app" },
 ];
 
@@ -874,7 +1095,7 @@ function RelatedLinks() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   9. FINAL CTA BAND
+   11. FINAL CTA BAND (WITH FIXED HIGH-CONTRAST BUTTON TEXT)
    ═══════════════════════════════════════════════════════════════ */
 function CTABand() {
   return (
@@ -887,19 +1108,25 @@ function CTABand() {
           id="final-cta-heading"
           className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-4 max-w-xl mx-auto"
         >
-          Ready to stop losing patients to voicemail?
+          Ready to experience voice-first AI healthcare?
         </h2>
         <p className="text-red-100 mb-8 max-w-md mx-auto text-sm leading-relaxed">
-          Start a measured pilot with no commitment required. One captured call
-          can cover years of platform cost.
+          Start your free preliminary consultation with our AI doctors right
+          now. No commitment required.
         </p>
         <Link
           href="/sign-up"
           id="final-cta"
-          className="inline-flex items-center gap-2 px-7 py-3.5 text-base font-bold
-            text-primary bg-white hover:bg-gray-50 rounded-lg transition-colors"
+          className="inline-flex items-center gap-2 px-7 py-3.5 text-base font-bold bg-white hover:bg-gray-50 rounded-lg transition-colors shadow-md hover:shadow-lg"
+          style={{ color: "#a4161a" }}
         >
-          Start a measured pilot <ArrowRightIcon />
+          <span
+            style={{ color: "#a4161a" }}
+            className="font-bold text-[#a4161a]"
+          >
+            Start Free Consultation
+          </span>
+          <ArrowRightIcon />
         </Link>
       </div>
     </section>
@@ -907,7 +1134,7 @@ function CTABand() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   10. FOOTER
+   12. FOOTER
    ═══════════════════════════════════════════════════════════════ */
 function Footer() {
   return (
@@ -918,8 +1145,7 @@ function Footer() {
       >
         {/* Left — copyright */}
         <p className="text-xs text-muted">
-          &copy; {new Date().getFullYear()} DATAMAN ANALYTICS LLC d/b/a
-          MediVoice AI.
+          &copy; {new Date().getFullYear()} MediVoice AI. All rights reserved.
         </p>
 
         {/* Center — logo */}
@@ -948,9 +1174,10 @@ function Footer() {
         {/* Right — nav links */}
         <nav className="flex gap-6 justify-end" aria-label="Footer">
           {[
+            { label: "Features", href: "#features" },
+            { label: "Specialists", href: "#specialists" },
             { label: "About", href: "/about" },
-            { label: "Privacy", href: "/privacy" },
-            { label: "SMS Terms", href: "/sms-terms" },
+            { label: "Pricing", href: "/billing" },
           ].map((l) => (
             <Link
               key={l.href}
@@ -977,6 +1204,8 @@ export default function Page() {
         <Hero />
         <StatBar />
         <FeatureGrid />
+        <SpecialistRoster />
+        <ClinicalSOAPSection />
         <TabbedSection />
         <FAQAccordion />
         <SEOLinksBlock />
