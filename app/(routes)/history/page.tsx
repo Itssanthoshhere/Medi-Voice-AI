@@ -110,13 +110,13 @@ function HistoryPage() {
         const notes = item.notes?.toLowerCase() || "";
         const complaint =
           item.report?.chiefComplaint?.toLowerCase() || "";
-        const patientName =
-          item.report?.patientName?.toLowerCase() || "";
+        const user =
+          item.report?.user?.toLowerCase() || "";
         return (
           specialist.includes(q) ||
           notes.includes(q) ||
           complaint.includes(q) ||
-          patientName.includes(q) ||
+          user.includes(q) ||
           item.sessionId.toLowerCase().includes(q)
         );
       });
