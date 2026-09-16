@@ -16,6 +16,7 @@ import {
   MicOff,
   Sparkles,
   FileText,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +24,10 @@ import ChatMessage, { Message } from "./_components/ChatMessage";
 import VoiceRecorder from "./_components/VoiceRecorder";
 import Vapi from "@vapi-ai/web";
 import { AIDoctorAgents } from "@/shared/list";
+import MedicalReportDialog, {
+  MedicalReportData,
+} from "../_components/MedicalReportDialog";
+import { toast } from "sonner";
 
 type DoctorData = {
   id?: number;
@@ -39,6 +44,7 @@ type Session = {
   doctorAgent?: DoctorData;
   selectedDocter?: DoctorData;
   conversation?: Message[];
+  report?: MedicalReportData;
   createdOn?: string;
 };
 
@@ -79,7 +85,18 @@ export default function MedicalVoiceAgentPage() {
     number | null
   >(null);
   const [error, setError] = useState<string | null>(null);
+  const [isGeneratingReport, setIsGeneratingReport] = useState(false);
+  const [medicalReport, setMedicalReport] = useState<MedicalReportData | null>(
+    null,
+  );
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
+  const messagesRef = useRef<Message[]>(messages);
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  const reportGeneratedRef = useRef(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
@@ -177,6 +194,11 @@ export default function MedicalVoiceAgentPage() {
             }. Could you please tell me your name and age before we begin?`,
           };
           setMessages([initialGreeting]);
+        }
+
+        if (res.data.report) {
+          setMedicalReport(res.data.report);
+          reportGeneratedRef.current = true;
         }
       }
     } catch (err) {
@@ -371,7 +393,8 @@ CONVERSATION FLOW:
       name: `AI ${specialistName} Voice Agent`,
       firstMessage: `Hello, thank you for connecting! I am your AI ${specialistName}. Could you please tell me your name and age before we begin?`,
       transcriber: {
-        provider: "assembly-ai",
+        provider: "deepgram",
+        model: "nova-2",
         language: "en",
       },
       voice: {
@@ -411,6 +434,18 @@ CONVERSATION FLOW:
       setCallStarted(false);
       setIsCallActive(false);
       setActiveTranscript(null);
+      const msgs =
+        messagesRef.current.length > 0 ? messagesRef.current : messages;
+      if (msgs.length >= 2) {
+        GenerateReport();
+      } else {
+        toast.info("Consultation Ended", {
+          description: "Returning to dashboard...",
+        });
+        setTimeout(() => {
+          router.replace("/dashboard");
+        }, 1500);
+      }
     });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -436,6 +471,7 @@ CONVERSATION FLOW:
               return prev;
             }
             const updated: Message[] = [...prev, { role, content: text }];
+            messagesRef.current = updated;
             saveConversation(updated);
             return updated;
           });
@@ -453,6 +489,17 @@ CONVERSATION FLOW:
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vapi.on("error", (err: any) => {
+      // Ignore benign "ejected" / "Meeting has ended" errors — Daily fires these after every call ends normally
+      const errStr = typeof err === "object" ? JSON.stringify(err) : String(err);
+      if (
+        err?.type === "ejected" ||
+        err?.type === "daily-error" ||
+        errStr.includes("Meeting has ended") ||
+        errStr.includes("ejected")
+      ) {
+        console.log("Call session cleaned up (normal post-call event).");
+        return;
+      }
       const errorMsg =
         err?.error?.message ||
         err?.message ||
@@ -489,7 +536,62 @@ CONVERSATION FLOW:
     }
   };
 
-  const endCall = () => {
+  const GenerateReport = async (forcedMessages?: Message[]) => {
+    const msgs =
+      forcedMessages ||
+      (messagesRef.current.length > 0 ? messagesRef.current : messages);
+
+    if (msgs.length < 2) {
+      toast.warning("Not enough conversation", {
+        description: "Please share symptoms or converse with the doctor before generating a report.",
+      });
+      return;
+    }
+
+    if (reportGeneratedRef.current && !forcedMessages) return;
+    reportGeneratedRef.current = true;
+    setIsGeneratingReport(true);
+
+    const toastId = toast.loading("Generating Medical Report...", {
+      description: "Analyzing your consultation transcript with AI...",
+    });
+
+    try {
+      const res = await axios.post("/api/medical-report", {
+        sessionId,
+        sessionDetail: {
+          specialist: doctor.specialist,
+          image: doctor.image,
+        },
+        messages: msgs,
+      });
+      console.log("Medical report generated:", res.data);
+      if (res.data?.report) {
+        setMedicalReport(res.data.report);
+        toast.success("Medical Report Generated Successfully!", {
+          id: toastId,
+          description: "Your consultation summary is ready on the dashboard.",
+          duration: 4000,
+        });
+        setTimeout(() => {
+          router.replace("/dashboard");
+        }, 2000);
+      } else {
+        toast.error("Could not parse medical report.", { id: toastId });
+      }
+    } catch (err) {
+      console.error("Error generating medical report:", err);
+      toast.error("Failed to generate medical report. Please try again.", {
+        id: toastId,
+      });
+      // Allow retry on failure
+      reportGeneratedRef.current = false;
+    } finally {
+      setIsGeneratingReport(false);
+    }
+  };
+
+  const endCall = async () => {
     if (vapiRef.current) {
       try {
         vapiRef.current.stop();
@@ -504,6 +606,19 @@ CONVERSATION FLOW:
     setActiveTranscript(null);
     if (typeof window !== "undefined" && "speechSynthesis" in window) {
       window.speechSynthesis.cancel();
+    }
+
+    const currentMsgs =
+      messagesRef.current.length > 0 ? messagesRef.current : messages;
+    if (currentMsgs.length >= 2) {
+      await GenerateReport();
+    } else {
+      toast.info("Consultation Ended", {
+        description: "Returning to dashboard...",
+      });
+      setTimeout(() => {
+        router.replace("/dashboard");
+      }, 1500);
     }
   };
 
@@ -558,6 +673,34 @@ CONVERSATION FLOW:
         </div>
 
         <div className="flex items-center gap-2 md:gap-3">
+          {/* Medical Report Action Button */}
+          {medicalReport ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsReportModalOpen(true)}
+              className="border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 font-semibold text-xs gap-1.5 h-8.5 px-3 shadow-2xs"
+            >
+              <FileText className="w-3.5 h-3.5 text-emerald-700" />
+              <span className="hidden sm:inline">View</span> Report
+            </Button>
+          ) : messages.length >= 2 && !isCallActive && !callStarted ? (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => GenerateReport()}
+              disabled={isGeneratingReport}
+              className="border-blue-300 bg-blue-50 text-blue-800 hover:bg-blue-100 font-semibold text-xs gap-1.5 h-8.5 px-3 shadow-2xs"
+            >
+              {isGeneratingReport ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin text-blue-700" />
+              ) : (
+                <FileText className="w-3.5 h-3.5 text-blue-700" />
+              )}
+              <span className="hidden sm:inline">Generate</span> Report
+            </Button>
+          ) : null}
+
           {/* Audio toggle button */}
           <Button
             variant="outline"
@@ -653,6 +796,46 @@ CONVERSATION FLOW:
               Patient Note Context:
             </span>{" "}
             <span className="text-amber-900 font-medium">{session.notes}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Completed Report Ready Banner */}
+      {medicalReport && !isGeneratingReport && (
+        <div className="mb-4 p-3 rounded-xl bg-emerald-50/90 border border-emerald-200/90 text-xs text-emerald-900 flex items-center justify-between shadow-2xs">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <div>
+              <span className="font-bold text-emerald-950">
+                Medical Consultation Summary is ready.
+              </span>{" "}
+              <span className="text-emerald-800 hidden sm:inline">
+                Review your chief concern, symptoms, and doctor recommendations.
+              </span>
+            </div>
+          </div>
+          <Button
+            size="sm"
+            onClick={() => setIsReportModalOpen(true)}
+            className="bg-emerald-700 hover:bg-emerald-800 text-white font-semibold text-xs h-7 px-3 flex items-center gap-1.5 ml-2 flex-shrink-0"
+          >
+            <FileText className="w-3.5 h-3.5" />
+            View Report
+          </Button>
+        </div>
+      )}
+
+      {/* Report generation status */}
+      {isGeneratingReport && (
+        <div className="mb-4 p-3.5 rounded-xl bg-blue-50/90 border border-blue-200/90 text-xs text-blue-900 flex items-center gap-2 shadow-2xs animate-pulse">
+          <Loader2 className="w-4 h-4 text-blue-700 flex-shrink-0 animate-spin" />
+          <div>
+            <span className="font-bold text-blue-950">
+              Generating Medical Report...
+            </span>{" "}
+            <span className="text-blue-900 font-medium">
+              Analyzing consultation transcript and preparing your summary.
+            </span>
           </div>
         </div>
       )}
@@ -758,6 +941,15 @@ CONVERSATION FLOW:
           )}
         </Button>
       </div>
+
+      {/* Medical Report Dialog */}
+      <MedicalReportDialog
+        open={isReportModalOpen}
+        onOpenChange={setIsReportModalOpen}
+        report={medicalReport}
+        doctorSpecialist={doctor.specialist}
+        doctorImage={doctor.image}
+      />
     </div>
   );
 }

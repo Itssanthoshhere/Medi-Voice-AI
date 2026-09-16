@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
-import { cn } from "cn";
+import { cn } from "@/lib/utils";
 
 import { Button } from "@/components/ui/button";
 import { XIcon } from "lucide-react";
@@ -101,7 +101,7 @@ function DialogFooter({
     <div
       data-slot="dialog-footer"
       className={cn(
-        "-mx-6 -mb-6 mt-2 flex flex-col-reverse gap-2 rounded-b-2xl border-t border-gray-100 bg-gray-50/80 p-4 sm:flex-row sm:justify-end",
+        "flex flex-col-reverse gap-2 rounded-b-2xl border-t border-gray-100 bg-gray-50/80 p-4 sm:flex-row sm:justify-end",
         className,
       )}
       {...props}

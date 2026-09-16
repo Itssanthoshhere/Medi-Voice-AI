@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Provider from "./provider";
+import { Toaster } from "@/components/ui/sonner";
 
 export const viewport: Viewport = {
   themeColor: "#A4161A",
@@ -60,7 +61,11 @@ export default function RootLayout({
           />
         </head>
         <body>
-          <Provider>{children}</Provider>
+          <Provider>
+            {children}
+
+            <Toaster />
+          </Provider>
         </body>
       </html>
     </ClerkProvider>

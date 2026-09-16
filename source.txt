@@ -44,3 +44,4 @@ The following commands were used to initialize and set up the medi-voice-ai proj
 
    npx shadcn@latest add dialog
    npx shadcn@latest add textarea
+   npx shadcn@latest add sonner
