@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useUser, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 
@@ -226,13 +227,20 @@ const ActivityIcon = () => (
   </svg>
 );
 
-const NAV_LINKS = [
-  { label: "Product", href: "/product", hasDropdown: true },
-  { label: "Pricing", href: "/pricing" },
-  { label: "Why", href: "/why" },
-  { label: "Newsletter", href: "/newsletter", icon: MailIcon },
-  { label: "Practice Types", href: "/for", hasDropdown: true },
-  { label: "Blog", href: "/blog" },
+type NavLink = {
+  label: string;
+  href: string;
+  icon?: any;
+  hasDropdown?: boolean;
+};
+
+const NAV_LINKS: NavLink[] = [
+  { label: "Home", href: "/" },
+  { label: "Dashboard", href: "/dashboard" },
+  { label: "History", href: "/history" },
+  { label: "Pricing", href: "/billing" },
+  { label: "Profile", href: "/profile" },
+  { label: "About", href: "/about" },
 ];
 
 function Navbar() {
@@ -424,22 +432,22 @@ function Hero() {
         {/* CTAs */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
           <Link
-            href="/sign-up"
+            href="/dashboard"
             id="hero-cta-primary"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2
               px-6 py-3 text-base font-semibold !text-white bg-primary
-              hover:bg-primary-dark rounded-lg transition-colors"
+              hover:bg-primary-dark rounded-lg transition-colors shadow-md shadow-primary/20"
           >
-            Start a measured pilot
+            Start Consultation Demo <ArrowRightIcon />
           </Link>
           <Link
-            href="/about"
+            href="/billing"
             id="hero-cta-secondary"
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2
               px-6 py-3 text-base font-semibold text-charcoal bg-white
-              hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors"
+              hover:bg-gray-50 border border-gray-200 rounded-lg transition-colors shadow-sm"
           >
-            About MediVoice <ArrowRightIcon />
+            View Subscription Plans
           </Link>
         </div>
 
@@ -494,7 +502,7 @@ function StatBar() {
               <div className="text-3xl font-extrabold text-primary tracking-tight mb-2">
                 {s.value}
               </div>
-              <div className="text-sm text-muted leading-snug max-w-[220px] mx-auto sm:mx-0">
+              <div className="text-sm text-gray-600 leading-snug max-w-[220px] mx-auto sm:mx-0">
                 {s.label}
               </div>
             </div>

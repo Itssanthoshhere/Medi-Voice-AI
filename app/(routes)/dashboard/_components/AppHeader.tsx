@@ -12,26 +12,31 @@ import { Zap, Crown, Sparkles } from "lucide-react";
 const menuOptions = [
   {
     id: 1,
+    name: "Home",
+    path: "/",
+  },
+  {
+    id: 2,
     name: "Dashboard",
     path: "/dashboard",
   },
   {
-    id: 2,
+    id: 3,
     name: "History",
     path: "/history",
   },
   {
-    id: 3,
+    id: 4,
     name: "Pricing",
     path: "/billing",
   },
   {
-    id: 4,
+    id: 5,
     name: "Profile",
     path: "/profile",
   },
   {
-    id: 5,
+    id: 6,
     name: "About",
     path: "/about",
   },
@@ -46,7 +51,7 @@ function AppHeader() {
 
   return (
     <div className="flex items-center justify-between p-4 shadow-sm border-b border-gray-100 px-10 md:px-20 lg:px-40 bg-white sticky top-0 z-50">
-      <Link href="/dashboard">
+      <Link href="/">
         <Image
           src="/logo.png"
           alt="MediVoice"
