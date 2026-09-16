@@ -7,7 +7,7 @@ function HistoryLayout({
     <div>
       <AppHeader />
 
-      <div className="px-10 md:px-20 lg:px-40 py-10">{children}</div>
+      <div className="px-4 sm:px-6 lg:px-10 xl:px-12 py-10 w-full max-w-[1440px] mx-auto">{children}</div>
     </div>
   );
 }
