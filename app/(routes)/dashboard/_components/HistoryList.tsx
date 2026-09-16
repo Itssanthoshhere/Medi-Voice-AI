@@ -7,7 +7,6 @@ import Link from "next/link";
 import { useUser } from "@clerk/nextjs";
 import {
   FileText,
-  Calendar,
   ArrowUpRight,
   CheckCircle2,
   Clock,
@@ -33,6 +32,25 @@ type ConsultationHistoryItem = {
   report?: MedicalReportData;
   createdOn?: string;
 };
+
+function getRelativeTime(dateStr: string): string {
+  const now = new Date();
+  const date = new Date(dateStr);
+  const diffMs = now.getTime() - date.getTime();
+  const diffSecs = Math.floor(diffMs / 1000);
+  const diffMins = Math.floor(diffSecs / 60);
+  const diffHours = Math.floor(diffMins / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  const diffWeeks = Math.floor(diffDays / 7);
+  const diffMonths = Math.floor(diffDays / 30);
+
+  if (diffSecs < 60) return "Just now";
+  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
+  if (diffWeeks < 5) return `${diffWeeks} week${diffWeeks === 1 ? "" : "s"} ago`;
+  return `${diffMonths} month${diffMonths === 1 ? "" : "s"} ago`;
+}
 
 function HistoryList() {
   const { user, isLoaded: isUserLoaded } = useUser();
@@ -165,12 +183,26 @@ function HistoryList() {
                           <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
                         </h4>
                         <div className="flex items-center gap-1 text-[11px] text-gray-400 mt-0.5">
-                          <Calendar className="w-3 h-3 text-gray-400" />
-                          <span>
+                          <Clock className="w-3 h-3 text-gray-400" />
+                          <span className="font-medium text-gray-500">
                             {item.createdOn
-                              ? new Date(item.createdOn).toLocaleDateString()
+                              ? getRelativeTime(item.createdOn)
                               : "Recent"}
                           </span>
+                          {item.createdOn && (
+                            <>
+                              <span className="text-gray-300">·</span>
+                              <span>
+                                {new Date(item.createdOn).toLocaleDateString(
+                                  "en-US",
+                                  {
+                                    month: "short",
+                                    day: "numeric",
+                                  }
+                                )}
+                              </span>
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
