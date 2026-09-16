@@ -52,22 +52,22 @@ const NAV_LINKS = [
 ];
 
 const STATS = [
-  { value: "24/7", label: "patient intake and voice coverage" },
-  { value: "10+", label: "specialized AI medical agents on call" },
-  { value: "1 consult", label: "generates a full clinical SOAP report" },
+  { value: "24/7", label: "on-demand AI voice consultations" },
+  { value: "10+", label: "specialized AI medical agents available" },
+  { value: "Instant", label: "clinical SOAP report generation" },
 ];
 
 const PROOF_ITEMS = [
-  { title: "24/7 intake coverage", desc: "Never let nights, weekends, or overflow calls disappear into voicemail." },
-  { title: "Human handoff when needed", desc: "Escalate sensitive or low-confidence situations to staff without friction." },
-  { title: "Reviewable call records", desc: "Keep transcripts, summaries, and follow-up context in one place." },
+  { title: "Natural Voice AI", desc: "Powered by Gemini Live and neural speech models for human-like clinical empathy." },
+  { title: "Structured SOAP Reports", desc: "Automated Chief Complaint, Assessment, and PDF summary after every call." },
+  { title: "HIPAA-Ready & Secure", desc: "Encrypted consultation records, personal history, and private health notes." },
 ];
 
 const TOPICS = [
   "Natural voice AI consultations",
   "Automated SOAP clinical reports",
-  "10+ specialist AI agents",
-  "Personalized patient profiles",
+  "10+ specialist AI medical agents",
+  "Personalized patient health profiles",
 ];
 
 const CORE_FEATURES = [
@@ -81,68 +81,84 @@ const CORE_FEATURES = [
 
 const ACCORDION_SECTIONS = [
   {
-    title: "Voice AI consultations",
+    title: "Real-time AI voice consultations",
     content: [
-      "Answer every patient call instantly with a natural, conversational AI voice agent",
-      "Collect the patient's chief complaint, insurance info, and visit reason conversationally",
-      "Schedule the next available appointment or route to urgent care",
-      "Send staff a structured summary — no follow-up calls required",
+      "Speak naturally to dedicated specialist agents in real-time with bidirectional audio",
+      "AI asks targeted follow-up questions to understand severity, duration, and context",
+      "Receive empathetic, clinically grounded guidance without appointment queues",
+      "Review full transcript and audio history right from your personal dashboard",
     ],
   },
   {
-    title: "The math",
+    title: "Instant clinical access & triage",
     content: [
-      "At $100+ per visit, every missed call is a measurable, direct revenue loss",
-      "MediVoice's annual cost is recovered by a single captured appointment",
-      "After-hours and overflow calls are the highest-risk unanswered moments",
-      "Staff time saved on routine intake can be redirected to in-person care",
+      "Skip days or weeks of waiting rooms for preliminary medical guidance",
+      "Available 24/7 on demand for late-night worries, non-emergencies, and health questions",
+      "Symptom-checking intelligence helps you understand urgency before visiting a clinic",
+      "Structured notes save time when consulting your in-person physician",
     ],
   },
   {
-    title: "Patient intake automation",
+    title: "Automated SOAP clinical documentation",
     content: [
-      "Chief complaint, symptoms, and urgency captured conversationally",
-      "Insurance carrier, member ID, and coverage questions handled upfront",
-      "EHR-compatible summaries ready for staff to review before the appointment",
-      "No voicemail chains, callback delays, or missing information gaps",
+      "Every session extracts Chief Complaint, History of Present Illness, and Duration",
+      "Differential assessments categorize severity into clear triage indicators",
+      "Generate a downloadable, professionally formatted PDF report with a single click",
+      "Eliminate handwriting gaps and forgotten symptom details between visits",
     ],
   },
   {
-    title: "Appointment scheduling",
+    title: "Specialist triaging & recommendations",
     content: [
-      "Book the next available slot in real time during the call",
-      "Route time-sensitive cases to urgent care or on-call staff immediately",
-      "Send an automated appointment confirmation message to the patient",
-      "Flag and escalate situations that require immediate human judgment",
+      "Describe your symptoms in plain English to automatically identify the best specialist",
+      "Direct access to Pediatricians, Cardiologists, Dermatologists, Neurologists, and more",
+      "Personalized care accounting for your blood group, allergies, and health history",
+      "Flag potential red flags and advise immediate emergency care when symptoms warrant",
     ],
   },
 ];
 
 const FAQS = [
-  { q: "What is the best answering service for primary care practices?", a: "The best fit answers every call quickly, captures structured intake, books the next step, and routes urgent matters — instead of just taking a message. MediVoice AI is purpose-built for exactly this workflow." },
-  { q: "Can AI handle patient intake without giving medical advice?", a: "Yes. MediVoice AI handles intake, scheduling, follow-up, and routing while staying strictly focused on information gathering. It does not provide medical advice or clinical guidance of any kind." },
-  { q: "How do practices stop losing after-hours patients?", a: "With always-on coverage that answers immediately, captures structured intake, and moves the caller into a scheduling or escalation flow — regardless of time of day. MediVoice AI operates 24/7 for exactly this purpose." },
-  { q: "What's the difference between a medical answering service and patient intake software?", a: "A traditional answering service takes a message. Patient intake software captures structured visit details, schedules appointments, and automatically routes urgency-based calls — MediVoice AI does all three simultaneously." },
-  { q: "Is MediVoice suitable for high-volume or multi-location practices?", a: "Yes. MediVoice handles concurrent call volume without degradation — every caller receives an immediate response regardless of how many lines are active. Contact us for enterprise or multi-location pricing." },
+  {
+    q: "How do AI doctor voice consultations work?",
+    a: "Choose a specialist agent from your dashboard and click start. Using bidirectional neural voice AI, the specialist listens to your spoken symptoms, asks relevant clinical follow-ups, and explains potential causes and next steps in clear, empathetic language.",
+  },
+  {
+    q: "Can I share the generated SOAP reports with my physical doctor?",
+    a: "Yes! At the end of each consultation, MediVoice compiles a hospital-grade SOAP note (Subjective, Objective, Assessment, Plan). You can download it as a formatted PDF or view it in your dashboard history to hand to your primary care physician.",
+  },
+  {
+    q: "Are consultations and medical details private and secure?",
+    a: "Yes. MediVoice is engineered with HIPAA-ready principles. All call recordings, transcripts, and personal profile details are protected with AES-256 encryption at rest and TLS 1.3 in transit.",
+  },
+  {
+    q: "Which medical specialties are available on MediVoice?",
+    a: "MediVoice features 10+ specialized agents including General Physicians, Pediatricians, Cardiologists, Neurologists, Dermatologists, Psychiatrists, Gynecologists, and more — each with tailored clinical prompts and guidance style.",
+  },
+  {
+    q: "Does MediVoice replace an in-person emergency room or doctor?",
+    a: "No. MediVoice is designed for clinical triage, health education, symptom triaging, and documentation. For severe conditions, chest pain, difficulty breathing, or life-threatening emergencies, always call emergency services (like 911) immediately.",
+  },
 ];
 
 const SEO_TERMS = [
-  "best AI answering service for primary care",
-  "primary care patient intake automation",
-  "after-hours call handling for medical offices",
-  "AI receptionist for medical practices",
-  "patient intake software for primary care",
-  "overflow call coverage for clinics",
-  "24/7 medical answering service",
-  "automated patient scheduling",
+  "AI doctor voice consultation",
+  "24/7 symptom triage AI",
+  "automated clinical SOAP reports",
+  "pediatric and cardiology AI specialists",
+  "speech-to-speech medical AI",
+  "digital health symptom checker",
+  "AI medical consultation app",
+  "downloadable clinical SOAP notes",
 ];
 
 const RELATED_LINKS = [
-  { label: "AI medical receptionist", href: "/dashboard" },
-  { label: "10+ AI Specialists", href: "#specialists" },
-  { label: "Pricing & Plans", href: "/billing" },
+  { label: "AI Doctor Dashboard", href: "/dashboard" },
+  { label: "Specialist Roster", href: "#specialists" },
+  { label: "Consultation History", href: "/history" },
+  { label: "Patient Profile", href: "/profile" },
+  { label: "Subscription Plans", href: "/billing" },
   { label: "About Platform", href: "/about" },
-  { label: "LegalVoice — for law firms", href: "https://legalvoice.app" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -288,7 +304,7 @@ function Hero() {
             style={{ background: "#fdf2f2", border: "1px solid #fbd5d5", color: "#a4161a" }}
           >
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-            Voice AI built for medical practices
+            24/7 AI Medical Specialist Network
           </p>
 
           {/* H1 */}
@@ -296,25 +312,19 @@ function Hero() {
             className="font-extrabold text-charcoal tracking-[-0.04em] leading-[0.98] mb-4"
             style={{ fontSize: "clamp(2.6rem, 5vw, 4.15rem)" }}
           >
-            Never miss a patient call.{" "}
-            <span className="text-primary">Day or night.</span>
+            Consult with AI Medical Specialists.{" "}
+            <span className="text-primary">Anytime, Anywhere.</span>
           </h1>
 
           {/* Lead */}
           <p className="text-lg text-gray-600 leading-relaxed mb-3 max-w-[700px]">
-            MediVoice automates patient intake, appointment scheduling, and
-            after-hours call handling with conversational AI. Your practice stays
-            responsive 24/7 — without adding staff.
-          </p>
-          <p className="text-[0.95rem] text-gray-500 mb-3">
-            Intake and scheduling only. No medical advice.
+            MediVoice provides real-time, natural voice consultations with 10+ AI
+            clinical specialists. Describe symptoms, receive intelligent triage advice,
+            and get hospital-grade SOAP reports generated instantly.
           </p>
           <p className="text-[0.95rem] text-gray-500 mb-7">
-            For law firms, sister platform{" "}
-            <Link href="https://legalvoice.app" className="underline underline-offset-2 hover:text-charcoal transition-colors">
-              LegalVoice
-            </Link>{" "}
-            provides Voice AI for automated client calls.
+            Intake, triaging, and health documentation. For severe emergencies, always
+            contact 911 or local emergency services immediately.
           </p>
 
           {/* CTAs — pill shaped */}
@@ -371,9 +381,8 @@ function Hero() {
             See the core points before you start
           </h2>
           <p className="text-gray-500 text-[0.95rem] mb-5">
-            MediVoice is built to help practices answer faster, capture better
-            intake, and hand sensitive situations to staff when judgment is
-            required.
+            MediVoice empowers patients to receive immediate clinical guidance, structured
+            triage summaries, and seamless follow-ups whenever symptoms arise.
           </p>
           <div className="grid gap-2.5">
             {TOPICS.map((t) => (
@@ -740,8 +749,8 @@ function BodyGrid() {
           <div className="mv-card p-5">
             <h3 className="text-lg font-bold text-charcoal mb-2">Next step</h3>
             <p className="text-gray-500 text-[0.95rem] mb-4">
-              If this is the workflow you need, start a free consultation demo or
-              explore our specialist network.
+              Experience the future of digital triage. Start a free voice consultation
+              with an AI doctor or explore our specialist roster.
             </p>
             <Link
               href="/dashboard"
