@@ -243,15 +243,15 @@ export default function ProfilePage() {
                 Current Plan
               </span>
               {plan === "clinic" ? (
-                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-500/20 border border-amber-400/40 text-amber-300 text-xs font-bold whitespace-nowrap flex items-center gap-1">
                   <Crown className="w-3 h-3 fill-amber-300" /> Clinic
                 </span>
               ) : plan === "pro" ? (
-                <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-rose-300 text-xs font-bold flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-primary/20 border border-primary/40 text-rose-300 text-xs font-bold whitespace-nowrap flex items-center gap-1">
                   <Zap className="w-3 h-3 fill-rose-300" /> Pro Member
                 </span>
               ) : (
-                <span className="px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold flex items-center gap-1">
+                <span className="px-2.5 py-0.5 rounded-full bg-slate-800 border border-slate-700 text-slate-300 text-xs font-bold whitespace-nowrap flex items-center gap-1">
                   <Sparkles className="w-3 h-3 text-amber-400" /> Free Tier
                 </span>
               )}

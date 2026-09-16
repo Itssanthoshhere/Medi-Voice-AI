@@ -82,7 +82,7 @@ function AppHeader() {
         {/* Plan / Credits pill */}
         <Link
           href="/billing"
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition-all hover:scale-105 border ${
+          className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0 transition-all hover:scale-105 border ${
             plan === "clinic"
               ? "bg-amber-50 text-amber-700 border-amber-200"
               : plan === "pro"
