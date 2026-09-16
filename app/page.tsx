@@ -816,7 +816,7 @@ function FeatureGrid() {
         >
           Why patients choose MediVoice AI
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-charcoal tracking-tight leading-tight">
+        <h2 className="text-3xl md:text-5xl font-extrabold text-charcoal tracking-tight leading-tight">
           AI agents handle every step from symptoms to{" "}
           <span className="italic font-serif font-normal text-[#a4161a]">
             a scheduled follow-up
@@ -829,8 +829,8 @@ function FeatureGrid() {
       </div>
 
       {/* Split Layout: Feature Cards + Workflow Card */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left: 2x2 Feature Cards */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+        {/* Left: 2x2 Feature Cards Grid */}
         <div className="lg:col-span-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[
             {
@@ -858,122 +858,154 @@ function FeatureGrid() {
             return (
               <article
                 key={idx}
-                className="mv-card p-6 space-y-3 hover:shadow-md transition-shadow group"
+                className="bg-white rounded-3xl p-6 md:p-7 border border-gray-200/70 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
               >
-                <div className="p-2.5 rounded-lg w-max bg-gray-50 border border-gray-100 text-gray-600 group-hover:text-[#a4161a] group-hover:bg-red-50 group-hover:border-red-100 transition-colors">
-                  <Icon className="w-4.5 h-4.5" />
+                <div className="space-y-4">
+                  <div className="p-3 rounded-2xl w-max bg-red-50/80 border border-red-100 text-[#a4161a] group-hover:bg-[#a4161a] group-hover:text-white transition-colors">
+                    <Icon className="w-5 h-5" />
+                  </div>
+                  <h3 className="text-lg font-bold text-gray-900 leading-snug">
+                    {f.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    {f.desc}
+                  </p>
                 </div>
-                <h3 className="text-sm font-bold text-gray-900 leading-snug">
-                  {f.title}
-                </h3>
-                <p className="text-xs text-gray-500 leading-relaxed">
-                  {f.desc}
-                </p>
               </article>
             );
           })}
         </div>
 
-        {/* Right: Workflow Timeline Card */}
+        {/* Right: Workflow Canvas Container (Gray BG like reference) */}
         <div className="lg:col-span-7">
-          <div className="mv-card p-6 md:p-8 space-y-5 border-l-4 border-l-[#a4161a]/80 relative overflow-hidden">
-            {/* Header */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="p-2 rounded-lg bg-[#a4161a] text-white">
-                  <Sparkles className="w-4 h-4" />
+          <div className="bg-[#f3f4f6] rounded-3xl p-6 md:p-8 space-y-6 border border-gray-200/60 shadow-sm h-full flex flex-col justify-between">
+            <div className="space-y-6">
+              {/* Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-3 rounded-xl bg-gray-900 text-white shadow-sm">
+                    <Sparkles className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#a4161a]">
+                      CONSULTATION AGENT
+                    </p>
+                    <h4 className="text-lg font-extrabold text-gray-900">
+                      Voice consultation workflow
+                    </h4>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#a4161a]">
-                    CONSULTATION AGENT
-                  </p>
-                  <h4 className="text-base font-bold text-gray-900">
-                    Voice consultation workflow
-                  </h4>
-                </div>
+                <span className="text-xs font-semibold text-emerald-700 bg-emerald-100/70 border border-emerald-200 px-3 py-1 rounded-full">
+                  Live
+                </span>
               </div>
-              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full">
-                Live
-              </span>
+
+              {/* Timeline Step Cards (White / Tinted Cards inside Gray Canvas) */}
+              <div className="space-y-3.5">
+                {[
+                  {
+                    icon: Mic,
+                    step: "Step 1",
+                    label: "VOICE",
+                    labelColor: "text-[#a4161a]",
+                    cardBg: "bg-white border-gray-200/80",
+                    titleColor: "text-[#a4161a]",
+                    descColor: "text-red-900/70",
+                    title: "Patient voice intake & symptoms",
+                    desc: "Real-time speech stream processed with low latency, identifying symptom context automatically.",
+                  },
+                  {
+                    icon: Brain,
+                    step: "Step 2",
+                    label: "AI TRIAGE",
+                    labelColor: "text-red-600",
+                    cardBg: "bg-red-50/60 border-red-100",
+                    titleColor: "text-red-700",
+                    descColor: "text-red-900/70",
+                    title: "AI specialist analyzes condition",
+                    desc: "Multi-agent system routes case to specialist persona and asks targeted follow-up questions.",
+                  },
+                  {
+                    icon: FileText,
+                    step: "Step 3",
+                    label: "SOAP",
+                    labelColor: "text-red-700",
+                    cardBg: "bg-red-50/40 border-red-100/80",
+                    titleColor: "text-red-800",
+                    descColor: "text-red-900/70",
+                    title: "Generate clinical SOAP report",
+                    desc: "Auto-compiled medical summary with Chief Complaint, Assessment, and downloadable PDF.",
+                  },
+                  {
+                    icon: ShieldCheck,
+                    step: "Step 4",
+                    label: "RECORD",
+                    labelColor: "text-emerald-700",
+                    cardBg: "bg-emerald-50/60 border-emerald-100",
+                    titleColor: "text-emerald-800",
+                    descColor: "text-emerald-900/70",
+                    title: "Encrypted health record backup",
+                    desc: "Consultation transcript, report, and doctor notes stored securely with AES-256 encryption.",
+                  },
+                  {
+                    icon: Activity,
+                    step: "Step 5",
+                    label: "FOLLOW-UP",
+                    labelColor: "text-amber-700",
+                    cardBg: "bg-amber-50/60 border-amber-100",
+                    titleColor: "text-amber-800",
+                    descColor: "text-amber-900/70",
+                    title: "Schedule follow-up & care handoff",
+                    desc: "Share SOAP report with your primary doctor or trigger automated follow-up reminders.",
+                  },
+                ].map((item, idx) => {
+                  const StepIcon = item.icon;
+                  return (
+                    <div
+                      key={idx}
+                      className={`p-4 rounded-2xl border shadow-sm transition-all flex items-start gap-3.5 ${item.cardBg}`}
+                    >
+                      <div className="p-2 rounded-lg bg-white border border-gray-200/80 text-gray-700 shrink-0 mt-0.5 shadow-2xs">
+                        <StepIcon className="w-4 h-4" />
+                      </div>
+                      <div className="space-y-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`text-[9px] font-extrabold uppercase tracking-[0.14em] ${item.labelColor}`}
+                          >
+                            {item.label}
+                          </span>
+                          <span className="text-[10px] text-gray-400 font-semibold">
+                            {item.step}
+                          </span>
+                        </div>
+                        <h5 className={`text-sm font-bold ${item.titleColor}`}>
+                          {item.title}
+                        </h5>
+                        <p className={`text-xs leading-relaxed ${item.descColor}`}>
+                          {item.desc}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Divider */}
-            <div className="border-t border-gray-100" />
-
-            {/* Timeline Steps */}
-            <div className="space-y-4">
-              {[
-                {
-                  icon: Mic,
-                  step: "Step 1",
-                  label: "VOICE",
-                  labelColor: "text-[#a4161a] bg-red-50",
-                  title: "Patient describes symptoms",
-                  desc: "Natural language input captured via real-time voice stream with 99.4% recognition accuracy.",
-                },
-                {
-                  icon: Brain,
-                  step: "Step 2",
-                  label: "AI TRIAGE",
-                  labelColor: "text-purple-600 bg-purple-50",
-                  title: "AI specialist analyzes condition",
-                  desc: "Multi-agent system routes to the best specialist and asks targeted follow-up questions.",
-                },
-                {
-                  icon: FileText,
-                  step: "Step 3",
-                  label: "SOAP",
-                  labelColor: "text-blue-600 bg-blue-50",
-                  title: "Generate clinical SOAP report",
-                  desc: "Auto-compiled medical summary with Chief Complaint, Assessment, and Recommendations as downloadable PDF.",
-                },
-                {
-                  icon: ShieldCheck,
-                  step: "Step 4",
-                  label: "RECORD",
-                  labelColor: "text-emerald-600 bg-emerald-50",
-                  title: "Save to patient health record",
-                  desc: "Consultation transcript, report, and doctor notes stored securely with AES-256 encryption.",
-                },
-                {
-                  icon: Activity,
-                  step: "Step 5",
-                  label: "FOLLOW-UP",
-                  labelColor: "text-amber-600 bg-amber-50",
-                  title: "Review & take action",
-                  desc: "Share SOAP report with your physical doctor, consult another specialist, or schedule follow-up care.",
-                },
-              ].map((item, idx) => {
-                const StepIcon = item.icon;
-                return (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-3.5 p-3.5 rounded-xl bg-gray-50/70 border border-gray-100 hover:bg-gray-50 transition-colors"
-                  >
-                    <div className="p-2 rounded-lg bg-white border border-gray-200 text-gray-500 shrink-0 mt-0.5">
-                      <StepIcon className="w-4 h-4" />
-                    </div>
-                    <div className="space-y-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`text-[9px] font-extrabold uppercase tracking-[0.12em] px-2 py-0.5 rounded ${item.labelColor}`}
-                        >
-                          {item.label}
-                        </span>
-                        <span className="text-[10px] text-gray-400 font-semibold">
-                          {item.step}
-                        </span>
-                      </div>
-                      <h5 className="text-sm font-bold text-gray-900">
-                        {item.title}
-                      </h5>
-                      <p className="text-xs text-gray-500 leading-relaxed">
-                        {item.desc}
-                      </p>
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Bottom Footer Statistics Row (like reference) */}
+            <div className="border-t border-gray-200/60 pt-5 grid grid-cols-3 gap-2 text-center">
+              <div>
+                <p className="text-xs font-bold text-gray-900">SOAP Notes</p>
+                <p className="text-[11px] text-gray-400">generated per call</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-900">Transcripts</p>
+                <p className="text-[11px] text-gray-400">encrypted & saved</p>
+              </div>
+              <div>
+                <p className="text-xs font-bold text-gray-900">Follow-ups</p>
+                <p className="text-[11px] text-gray-400">automated care</p>
+              </div>
             </div>
           </div>
         </div>
