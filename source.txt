@@ -38,10 +38,35 @@ The following commands were used to initialize and set up the medi-voice-ai proj
    npx drizzle-kit studio
    ```
 
+8. **Install Clerk Authentication:**
+   ```bash
    npm install @clerk/nextjs
+   ```
 
-   npm i axios
+9. **Install Axios & Vapi Voice SDK:**
+   ```bash
+   npm install axios @vapi-ai/web lucide-react
+   ```
 
-   npx shadcn@latest add dialog
-   npx shadcn@latest add textarea
-   npx shadcn@latest add sonner
+10. **Add UI Components (Dialog, Textarea, Sonner Toast, Input):**
+    ```bash
+    npx shadcn@latest add dialog textarea sonner input
+    ```
+
+11. **Clinical AI Features Integrated:**
+    - **Medical Test Report Upload & AI Vision Pathology Analysis** (`/api/analyze-report`)
+    - **Symptom-Indicated Diagnostic Test Recommendations** (`TestRecommendationsCard`)
+    - **Emergency Symptom Red-Flag Detector & Instant Safety Modal** (`emergencyDetector`, `EmergencyAlertModal`)
+
+12. **Emergency Alert Visual Overlay Testing Instructions:**
+    - Open any AI Doctor Consultation session (`/dashboard/medical-agent/[sessionId]`).
+    - In the message input box, type any of the following trigger phrases and press **Enter** (or speak via mic):
+      - `I am experiencing severe chest pain and shortness of breath`
+      - `I have difficulty breathing and a suffocating feeling`
+      - `Sudden numbness in my arm and slurred speech`
+      - `Severe uncontrolled bleeding`
+    - **Expected Visual Overlay:** Screen dims and a high-priority red alert modal pops up with:
+      - Header: **CRITICAL SAFETY OVERRIDE — Emergency Symptom Detected**
+      - Matched symptoms list
+      - Direct click-to-call hotline buttons (**911**, **112**, **102**)
+      - Immediate emergency guidance instructions

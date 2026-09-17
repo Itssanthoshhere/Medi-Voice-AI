@@ -1,0 +1,18 @@
+====================================================================
+           ST. JUDE HOSPITAL PATHOLOGY & MICROBIOLOGY LAB
+====================================================================
+Patient Name: Santhosh (Male, 21 Yrs)     Date: 17-Sep-2026
+Specimen Type: Throat Swab Culture       Ref ID: #TS-992014
+====================================================================
+TEST PARAMETER              RESULT       UNIT       REFERENCE RANGE
+====================================================================
+RAPID STREP A ANTIGEN       POSITIVE (+)            NEGATIVE
+TOTAL WBC COUNT             13,500 [HIGH] /uL      4,000 - 11,000
+NEUTROPHILS                 78%    [HIGH] %          40 - 75 %
+C-REACTIVE PROTEIN (CRP)    24.2   [HIGH] mg/L       0.0 - 5.0
+====================================================================
+MICROBIOLOGY FINDINGS:
+- Swab culture isolated Group A Beta-Hemolytic Streptococcus.
+- Leukocytosis with neutrophil predominance confirms acute bacterial tonsillitis / pharyngitis.
+- ENT Consultation advised for targeted prescription therapy and gargle regimen.
+====================================================================

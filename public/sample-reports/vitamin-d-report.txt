@@ -1,0 +1,18 @@
+====================================================================
+               METROPOLIS CLINICAL PATHOLOGY LABORATORY
+====================================================================
+Patient Name: Santhosh (Male, 21 Yrs)     Date: 16-Sep-2026
+Referred By: Dr. Elliot                  Lab Ref ID: #LAB-889421
+====================================================================
+TEST PARAMETER              RESULT       UNIT       REFERENCE RANGE
+====================================================================
+VITAMIN D (25-HYDROXY)      14.2  [LOW]   ng/mL      30.0 - 100.0
+HEMOGLOBIN (Hb)             13.8         g/dL       12.0 - 16.0
+FASTING BLOOD SUGAR         92           mg/dL      70.0 - 99.0
+====================================================================
+CLINICAL PATHOLOGY REMARKS:
+- Serum 25(OH)D is significantly below the normal range (Hypovitaminosis D).
+- Recommended: Clinical evaluation for Vitamin D3 oral supplementation.
+- Re-evaluate serum levels in 8-12 weeks.
+====================================================================
+* This report is electronically generated and verified by Pathologist.

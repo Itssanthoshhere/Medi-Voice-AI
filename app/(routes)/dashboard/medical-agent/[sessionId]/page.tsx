@@ -17,6 +17,10 @@ import {
   Sparkles,
   FileText,
   CheckCircle2,
+  Paperclip,
+  Upload,
+  AlertTriangle,
+  TestTube2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -28,6 +32,14 @@ import MedicalReportDialog, {
   MedicalReportData,
 } from "../_components/MedicalReportDialog";
 import { toast } from "sonner";
+import { checkEmergencySymptoms } from "../_utils/emergencyDetector";
+import EmergencyAlertModal from "../_components/EmergencyAlertModal";
+import ReportAnalysisCard, {
+  AnalyzedReportData,
+} from "../_components/ReportAnalysisCard";
+import TestRecommendationsCard, {
+  RecommendedTest,
+} from "../_components/TestRecommendationsCard";
 
 type DoctorData = {
   id?: number;
@@ -90,6 +102,17 @@ export default function MedicalVoiceAgentPage() {
     null,
   );
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [isEmergencyModalOpen, setIsEmergencyModalOpen] = useState(false);
+  const [emergencyMatchedTerms, setEmergencyMatchedTerms] = useState<string[]>(
+    [],
+  );
+  const [isAnalyzingReport, setIsAnalyzingReport] = useState(false);
+  const [analyzedReport, setAnalyzedReport] =
+    useState<AnalyzedReportData | null>(null);
+  const [recommendedTests, setRecommendedTests] = useState<RecommendedTest[]>(
+    [],
+  );
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const messagesRef = useRef<Message[]>(messages);
   useEffect(() => {
@@ -180,11 +203,30 @@ export default function MedicalVoiceAgentPage() {
           voiceId: resolvedVoice,
         });
 
+        if (res.data.notes) {
+          const notesEmergency = checkEmergencySymptoms(res.data.notes);
+          if (notesEmergency.isEmergency) {
+            setEmergencyMatchedTerms(notesEmergency.matchedTerms);
+            setIsEmergencyModalOpen(true);
+          }
+          checkSymptomsForTests(res.data.notes);
+        }
+
         if (
           Array.isArray(res.data.conversation) &&
           res.data.conversation.length > 0
         ) {
           setMessages(res.data.conversation);
+          res.data.conversation.forEach((m: Message) => {
+            if (m.content) {
+              const emergencyCheck = checkEmergencySymptoms(m.content);
+              if (emergencyCheck.isEmergency) {
+                setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
+                setIsEmergencyModalOpen(true);
+              }
+              checkSymptomsForTests(m.content);
+            }
+          });
         } else {
           // Default greeting
           const initialGreeting: Message = {
@@ -281,10 +323,170 @@ export default function MedicalVoiceAgentPage() {
     }
   };
 
+  const checkSymptomsForTests = (text: string) => {
+    const lower = text.toLowerCase();
+    const newTests: RecommendedTest[] = [];
+
+    if (
+      lower.includes("fatigue") ||
+      lower.includes("tired") ||
+      lower.includes("weakness") ||
+      lower.includes("energy") ||
+      lower.includes("exhausted")
+    ) {
+      newTests.push({
+        testName: "Vitamin D (25-OH) & B12 Panel",
+        rationale:
+          "Indicated for persistent fatigue, low energy, and muscle weakness to evaluate potential vitamin deficiency.",
+        priority: "Recommended",
+      });
+      newTests.push({
+        testName: "Complete Blood Count (CBC)",
+        rationale:
+          "Evaluates red blood cell count, hemoglobin concentration, and rules out anemia.",
+        priority: "Recommended",
+      });
+    }
+
+    if (
+      lower.includes("weight") ||
+      lower.includes("chilly") ||
+      lower.includes("hair loss") ||
+      lower.includes("thyroid") ||
+      lower.includes("sluggish")
+    ) {
+      newTests.push({
+        testName: "Thyroid Profile (TSH, Free T3/T4)",
+        rationale: "Evaluates thyroid gland activity and metabolic regulation.",
+        priority: "Recommended",
+      });
+    }
+
+    if (
+      lower.includes("joint") ||
+      lower.includes("bone") ||
+      lower.includes("stiff") ||
+      lower.includes("aching")
+    ) {
+      newTests.push({
+        testName: "Serum Calcium & Uric Acid Test",
+        rationale:
+          "Assesses bone mineralization, electrolyte status, and joint inflammatory markers.",
+        priority: "Recommended",
+      });
+    }
+
+    if (
+      lower.includes("throat") ||
+      lower.includes("tonsil") ||
+      lower.includes("cough") ||
+      lower.includes("cold") ||
+      lower.includes("swallowing") ||
+      lower.includes("fever")
+    ) {
+      newTests.push({
+        testName: "Rapid Strep A & Throat Swab Culture",
+        rationale:
+          "Indicated for sore throat, tonsil enlargement, or painful swallowing to rule out bacterial streptococcal infection.",
+        priority: "Recommended",
+      });
+      newTests.push({
+        testName: "Complete Blood Count (CBC) with Differential",
+        rationale:
+          "Evaluates white blood cell count (leukocytes) to distinguish between viral and bacterial throat infections.",
+        priority: "Recommended",
+      });
+    }
+
+    if (newTests.length > 0) {
+      setRecommendedTests((prev) => {
+        const existingNames = new Set(prev.map((t) => t.testName));
+        const filtered = newTests.filter((t) => !existingNames.has(t.testName));
+        return [...prev, ...filtered];
+      });
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsAnalyzingReport(true);
+    const toastId = toast.loading("Analyzing Medical Report...", {
+      description: `Processing ${file.name} with AI pathology engine...`,
+    });
+
+    try {
+      let reportText = "";
+      let fileData = "";
+
+      if (file.type.startsWith("image/") || file.type.includes("pdf")) {
+        const reader = new FileReader();
+        fileData = await new Promise((resolve) => {
+          reader.onload = (event) => resolve(event.target?.result as string);
+          reader.readAsDataURL(file);
+        });
+      } else {
+        reportText = await file.text();
+      }
+
+      const res = await axios.post("/api/analyze-report", {
+        reportText: reportText || file.name,
+        fileData: fileData || "",
+        fileName: file.name,
+      });
+
+      if (res.data?.report) {
+        const report: AnalyzedReportData = res.data.report;
+        setAnalyzedReport(report);
+
+        toast.success("Medical Report Analyzed!", {
+          id: toastId,
+          description: "Test levels and clinical recommendations updated.",
+        });
+
+        const systemReportMsg: Message = {
+          role: "assistant",
+          content: `📄 **Medical Report Uploaded (${file.name})**\n\n**Clinical Summary:** ${report.patientSummary || "Lab parameters extracted successfully."}\n\n**Findings & Deficiencies:**\n${(report.deficienciesOrAbnormalities || []).map((d) => `• ${d}`).join("\n") || "No critical deficiencies detected."}\n\n⚠️ *Reminder: All AI interpretations and supplementation notes MUST be confirmed with your doctor.*`,
+        };
+
+        const updatedMessages = [...messages, systemReportMsg];
+        setMessages(updatedMessages);
+        saveConversation(updatedMessages);
+
+        if (isAudioEnabled) {
+          speakText(
+            "I have analyzed your medical test report. Let's review the findings together.",
+          );
+        }
+      } else {
+        toast.error("Could not parse medical report file.", { id: toastId });
+      }
+    } catch (err) {
+      console.error("Error analyzing medical report file:", err);
+      toast.error("Failed to analyze report file. Please try again.", {
+        id: toastId,
+      });
+    } finally {
+      setIsAnalyzingReport(false);
+      if (e.target) e.target.value = "";
+    }
+  };
+
   const handleSendMessage = async (userText?: string) => {
     stopDoctorSpeech();
     const textToSend = userText || inputMessage;
     if (!textToSend.trim() || isSending) return;
+
+    // Check emergency keywords immediately
+    const emergencyCheck = checkEmergencySymptoms(textToSend);
+    if (emergencyCheck.isEmergency) {
+      setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
+      setIsEmergencyModalOpen(true);
+    }
+
+    // Check symptom-based lab test recommendations
+    checkSymptomsForTests(textToSend);
 
     const userMsg: Message = { role: "user", content: textToSend.trim() };
     const updatedMessages = [...messages, userMsg];
@@ -324,6 +526,15 @@ export default function MedicalVoiceAgentPage() {
 
   const handleVoiceTranscript = (transcriptText: string) => {
     if (transcriptText) {
+      // Check emergency symptoms in live voice transcript
+      const emergencyCheck = checkEmergencySymptoms(transcriptText);
+      if (emergencyCheck.isEmergency) {
+        setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
+        setIsEmergencyModalOpen(true);
+      }
+
+      checkSymptomsForTests(transcriptText);
+
       setInputMessage((prev) => {
         const trimmedNew = transcriptText.trim();
         if (!prev) return trimmedNew;
@@ -458,6 +669,14 @@ CONVERSATION FLOW:
 
         if (!text) return;
 
+        // Run Emergency & Diagnostic Test Checks on live voice transcripts
+        const emergencyCheck = checkEmergencySymptoms(text);
+        if (emergencyCheck.isEmergency) {
+          setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
+          setIsEmergencyModalOpen(true);
+        }
+        checkSymptomsForTests(text);
+
         if (message.transcriptType === "partial") {
           setActiveTranscript({ role, transcript: text });
         } else if (
@@ -490,7 +709,8 @@ CONVERSATION FLOW:
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vapi.on("error", (err: any) => {
       // Ignore benign "ejected" / "Meeting has ended" errors — Daily fires these after every call ends normally
-      const errStr = typeof err === "object" ? JSON.stringify(err) : String(err);
+      const errStr =
+        typeof err === "object" ? JSON.stringify(err) : String(err);
       if (
         err?.type === "ejected" ||
         err?.type === "daily-error" ||
@@ -543,7 +763,8 @@ CONVERSATION FLOW:
 
     if (msgs.length < 2) {
       toast.warning("Not enough conversation", {
-        description: "Please share symptoms or converse with the doctor before generating a report.",
+        description:
+          "Please share symptoms or converse with the doctor before generating a report.",
       });
       return;
     }
@@ -904,11 +1125,43 @@ CONVERSATION FLOW:
           </div>
         )}
 
+        {/* Analyzed Medical Lab Report Breakdown */}
+        {analyzedReport && <ReportAnalysisCard data={analyzedReport} />}
+
+        {/* Symptom-Indicated Diagnostic Test Recommendations */}
+        {recommendedTests.length > 0 && (
+          <TestRecommendationsCard tests={recommendedTests} />
+        )}
+
         <div ref={messagesEndRef} />
       </div>
 
+      {/* Hidden Medical Report File Input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileUpload}
+        accept="image/*,.pdf,.txt,.doc,.docx"
+        className="hidden"
+      />
+
       {/* Input controls */}
       <div className="mt-4 pt-3 border-t border-gray-200 flex items-center gap-2.5">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isSending || isAnalyzingReport}
+          title="Upload Medical Report (Image / PDF / Text)"
+          className="border-gray-300 text-gray-700 hover:bg-gray-100 shrink-0 h-10 w-10 shadow-2xs"
+        >
+          {isAnalyzingReport ? (
+            <Loader2 className="w-4 h-4 animate-spin text-primary" />
+          ) : (
+            <Paperclip className="w-4 h-4 text-gray-600" />
+          )}
+        </Button>
+
         <VoiceRecorder
           onTranscript={handleVoiceTranscript}
           disabled={isSending || isDoctorSpeaking}
@@ -949,6 +1202,13 @@ CONVERSATION FLOW:
         report={medicalReport}
         doctorSpecialist={doctor.specialist}
         doctorImage={doctor.image}
+      />
+
+      {/* Emergency Alert Safety Modal Overlay */}
+      <EmergencyAlertModal
+        isOpen={isEmergencyModalOpen}
+        onClose={() => setIsEmergencyModalOpen(false)}
+        matchedTerms={emergencyMatchedTerms}
       />
     </div>
   );

@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     if (!messages || !Array.isArray(messages)) {
       return NextResponse.json(
         { error: "Messages are required and must be an array" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -18,7 +18,10 @@ Instructions:
 - Respond in a compassionate, professional, and clear tone as a medical specialist.
 - Keep your answers concise, structured, and easy for a patient to digest.
 - Ask clarifying questions when relevant to better understand symptoms.
-- Always provide helpful initial medical insights while reminding the patient to seek in-person professional care when appropriate.`;
+- If the patient describes symptoms that warrant clinical lab investigation (e.g. persistent fatigue, joint pain, metabolic symptoms, thyroid issues), recommend relevant diagnostic lab tests ONLY when necessary (e.g. Vitamin D 25-OH, Complete Blood Count, TSH, Lipid Profile). Explain clearly why each test is recommended.
+- If medical report levels are discussed (e.g. low Vitamin D), explain the clinical meaning, possible deficiency symptoms, and suggested dietary or supplement discussion points.
+- ALWAYS include a clear disclaimer: "Any medication, dosage, or treatment changes must be evaluated and confirmed with a qualified doctor."
+- If severe emergency symptoms (chest pain, shortness of breath, sudden numbness, severe bleeding) are mentioned, urgently advise calling 911 / emergency services immediately.`;
 
     // 1. Try OpenRouter with multi-model fallback
     if (process.env.OPEN_ROUTER_API_KEY) {
@@ -35,7 +38,8 @@ Instructions:
       const formattedMessages = [
         { role: "system", content: systemInstruction },
         ...messages.map((m: { role: string; content: string }) => ({
-          role: m.role === "assistant" || m.role === "model" ? "assistant" : "user",
+          role:
+            m.role === "assistant" || m.role === "model" ? "assistant" : "user",
           content: m.content,
         })),
       ];
@@ -44,7 +48,10 @@ Instructions:
         try {
           const completion = await openai.chat.completions.create({
             model: model,
-            messages: formattedMessages as unknown as Array<{ role: "system" | "user" | "assistant"; content: string }>,
+            messages: formattedMessages as unknown as Array<{
+              role: "system" | "user" | "assistant";
+              content: string;
+            }>,
           });
 
           const replyText = completion.choices[0]?.message?.content;
@@ -52,7 +59,10 @@ Instructions:
             return NextResponse.json({ result: replyText });
           }
         } catch (err: any) {
-          console.warn(`Model ${model} failed/overloaded:`, err?.message || err);
+          console.warn(
+            `Model ${model} failed/overloaded:`,
+            err?.message || err,
+          );
           // continue to next model in loop
         }
       }
@@ -68,9 +78,10 @@ Instructions:
       try {
         const contents = messages.map(
           (m: { role: string; content: string }) => ({
-            role: m.role === "assistant" || m.role === "model" ? "model" : "user",
+            role:
+              m.role === "assistant" || m.role === "model" ? "model" : "user",
             parts: [{ text: m.content }],
-          })
+          }),
         );
 
         const response = await fetch(
@@ -90,7 +101,7 @@ Instructions:
                 temperature: 0.7,
               },
             }),
-          }
+          },
         );
 
         if (response.ok) {
@@ -108,15 +119,19 @@ Instructions:
     // 3. Dynamic Fallback response generator
     const lastUserMsg =
       [...messages].reverse().find((m) => m.role === "user")?.content || "";
-    
+
     let fallbackText = `I understand your health concerns regarding: "${lastUserMsg.slice(0, 60)}". Please monitor your symptoms closely, stay hydrated, and consult a qualified physician for an in-person evaluation. Is there anything specific causing you discomfort right now?`;
-    
+
     const msgLower = lastUserMsg.toLowerCase();
     if (msgLower.includes("headache") || msgLower.includes("head")) {
       fallbackText = `I understand you are experiencing a headache. Make sure to rest in a quiet, dimly lit room, stay well-hydrated, and avoid eye strain. If the pain is sudden, severe, or accompanied by dizziness or nausea, please seek medical care immediately.`;
     } else if (msgLower.includes("fever") || msgLower.includes("chills")) {
       fallbackText = `A fever indicates your body is reacting to an infection. Rest, drink plenty of fluids, and monitor your body temperature. If your fever persists above 102°F (38.9°C) or lasts over 3 days, please consult a healthcare provider.`;
-    } else if (msgLower.includes("back") || msgLower.includes("pain") || msgLower.includes("stomach")) {
+    } else if (
+      msgLower.includes("back") ||
+      msgLower.includes("pain") ||
+      msgLower.includes("stomach")
+    ) {
       fallbackText = `Pain can stem from strain, inflammation, or underlying issues. Rest the affected area and avoid heavy exertion. If the pain is sharp, escalating, or radiating, please seek immediate medical evaluation.`;
     }
 
@@ -125,7 +140,7 @@ Instructions:
     console.error("Error in ai-chat route:", error);
     return NextResponse.json(
       { error: "Failed to generate AI response" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

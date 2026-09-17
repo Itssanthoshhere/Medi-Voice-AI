@@ -1,0 +1,17 @@
+====================================================================
+               APEX HEALTHCARE ENDOCRINOLOGY LAB
+====================================================================
+Patient Name: Santhosh (Male, 21 Yrs)     Date: 17-Sep-2026
+Test Name: Comprehensive Thyroid Panel   Ref ID: #THY-44819
+====================================================================
+TEST PARAMETER              RESULT       UNIT       REFERENCE RANGE
+====================================================================
+TSH (THYROID STIMULATING)   7.82   [HIGH] uIU/mL     0.45 - 4.50
+FREE T4 (THYROXINE)         0.71   [LOW]  ng/dL      0.82 - 1.77
+FREE T3 (TRIIODOTHYRONINE)  2.1           pg/mL      2.0 - 4.4
+====================================================================
+ENDOCRINOLOGY EVALUATION:
+- Primary Hypothyroidism pattern detected (Elevated TSH with low Free T4).
+- Patient may report fatigue, cold intolerance, weight gain, or lethargy.
+- Physician consultation recommended for thyroid hormone replacement evaluation.
+====================================================================
