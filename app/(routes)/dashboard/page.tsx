@@ -6,6 +6,7 @@ import MentalHealthSection from "./_components/MentalHealthSection";
 import RecentReportsPreview from "./_components/RecentReportsPreview";
 import SymptomCheckerBanner from "./_components/SymptomCheckerBanner";
 import UpcomingAppointmentsWidget from "./_components/UpcomingAppointmentsWidget";
+import MedicationTrackerWidget from "./_components/MedicationTrackerWidget";
 
 function Dashboard() {
   return (
@@ -41,9 +42,10 @@ function Dashboard() {
         <SymptomCheckerBanner />
       </section>
 
-      {/* Section 2.5: Scheduled Doctor Appointments Widget */}
-      <section>
+      {/* Section 2.5: Scheduled Doctor Appointments & Medication Widgets */}
+      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <UpcomingAppointmentsWidget />
+        <MedicationTrackerWidget />
       </section>
 
       {/* Section 3: Consultation History Canvas (Soft Slate Shading) */}

@@ -437,7 +437,7 @@ Ensure you have the following installed on your machine:
 | **Phase 3** | Smart Symptom Triage Widget & Doctor Matcher | ✅ Shipped |
 | **Phase 4** | Family Health Profiles & Dependent Care | ✅ Shipped |
 | **Phase 5** | Doctor Availability & Appointment Scheduler | ✅ Shipped |
-| **Phase 6** | Prescription & Medication Tracker | 📋 Planned |
+| **Phase 6** | Prescription & Medication Tracker | ✅ Shipped |
 | **Phase 7** | Real-Time Health Monitoring Integrations | 📋 Planned |
 | **Phase 8** | Multi-Language Support (i18n) | 📋 Planned |
 

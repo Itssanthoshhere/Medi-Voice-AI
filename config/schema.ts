@@ -76,3 +76,28 @@ export const appointmentsTable = pgTable("appointmentsTable", {
   chiefComplaint: text(),
   createdAt: varchar({ length: 100 }),
 });
+
+export const prescriptionsTable = pgTable("prescriptionsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  prescriptionId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 })
+    .notNull()
+    .references(() => usersTable.email),
+  familyMemberId: varchar({ length: 100 }),
+  patientName: varchar({ length: 255 }).notNull().default("Primary User"),
+  doctorId: varchar({ length: 100 }),
+  doctorName: varchar({ length: 255 }).default("Dr. Elliot"),
+  specialization: varchar({ length: 255 }).default("General Physician"),
+  medicationName: varchar({ length: 255 }).notNull(),
+  dosage: varchar({ length: 100 }).notNull(),
+  frequency: varchar({ length: 100 }).notNull().default("Twice Daily"),
+  timing: varchar({ length: 100 }).default("After Meals"),
+  startDate: varchar({ length: 100 }).notNull(),
+  endDate: varchar({ length: 100 }),
+  totalDays: integer().default(7),
+  instructions: text(),
+  refillsRemaining: integer().default(0),
+  status: varchar({ length: 50 }).notNull().default("Active"),
+  lastTakenAt: varchar({ length: 100 }),
+  createdAt: varchar({ length: 100 }),
+});
