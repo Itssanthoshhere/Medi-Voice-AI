@@ -57,3 +57,22 @@ export const medicalReportsTable = pgTable("medicalReportsTable", {
   createdAt: varchar({ length: 100 }),
   familyMemberId: varchar({ length: 100 }),
 });
+
+export const appointmentsTable = pgTable("appointmentsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  appointmentId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 })
+    .notNull()
+    .references(() => usersTable.email),
+  familyMemberId: varchar({ length: 100 }),
+  patientName: varchar({ length: 255 }),
+  doctorId: varchar({ length: 100 }).notNull(),
+  doctorName: varchar({ length: 255 }).notNull(),
+  specialization: varchar({ length: 255 }).notNull(),
+  appointmentDate: varchar({ length: 100 }).notNull(),
+  timeSlot: varchar({ length: 50 }).notNull(),
+  consultationType: varchar({ length: 100 }).notNull().default("Voice AI Consultation"),
+  status: varchar({ length: 50 }).notNull().default("Scheduled"),
+  chiefComplaint: text(),
+  createdAt: varchar({ length: 100 }),
+});

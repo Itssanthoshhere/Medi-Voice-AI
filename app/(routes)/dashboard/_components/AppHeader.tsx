@@ -37,21 +37,26 @@ const menuOptions = [
   },
   {
     id: 6,
+    name: "Appointments",
+    path: "/appointments",
+  },
+  {
+    id: 7,
     name: "Family Profiles",
     path: "/family",
   },
   {
-    id: 7,
+    id: 8,
     name: "Pricing",
     path: "/billing",
   },
   {
-    id: 8,
+    id: 9,
     name: "Profile",
     path: "/profile",
   },
   {
-    id: 9,
+    id: 10,
     name: "About",
     path: "/about",
   },

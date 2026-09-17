@@ -5,6 +5,7 @@ import HistoryList from "./_components/HistoryList";
 import MentalHealthSection from "./_components/MentalHealthSection";
 import RecentReportsPreview from "./_components/RecentReportsPreview";
 import SymptomCheckerBanner from "./_components/SymptomCheckerBanner";
+import UpcomingAppointmentsWidget from "./_components/UpcomingAppointmentsWidget";
 
 function Dashboard() {
   return (
@@ -22,10 +23,10 @@ function Dashboard() {
 
         <div className="flex items-center gap-3">
           <Link
-            href="/timeline"
+            href="/appointments"
             className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:border-[#a4161a] hover:text-[#a4161a] shadow-xs transition-all"
           >
-            Health Timeline &rarr;
+            Appointments &rarr;
           </Link>
 
           <AddNewSessionDialog
@@ -38,6 +39,11 @@ function Dashboard() {
       {/* Section 2: Smart Symptom Checker Hero Banner */}
       <section>
         <SymptomCheckerBanner />
+      </section>
+
+      {/* Section 2.5: Scheduled Doctor Appointments Widget */}
+      <section>
+        <UpcomingAppointmentsWidget />
       </section>
 
       {/* Section 3: Consultation History Canvas (Soft Slate Shading) */}
