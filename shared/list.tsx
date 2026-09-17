@@ -23,7 +23,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Primary Triage & Everyday Health",
     description:
       "Helps with everyday health concerns, fever, cough, and common symptoms.",
-    image: "/doctor1.png",
+    image: "/doctor1.jpg",
     agentPrompt:
       "You are a friendly General Physician AI. Greet the user and quickly ask what symptoms they're experiencing. Keep responses short and helpful.",
     voiceId: "Elliot",
@@ -49,7 +49,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Child Health & Infant Care",
     description:
       "Expert in children's health, infant wellness, and pediatric care.",
-    image: "/doctor7.png",
+    image: "/doctor7.jpg",
     agentPrompt:
       "You are a kind Pediatrician AI. Ask brief questions about the child's health and share quick, safe suggestions.",
     voiceId: "Savannah",
@@ -75,7 +75,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Skin, Hair & Nail Care",
     description:
       "Handles skin issues like rashes, acne, allergic reactions, or infections.",
-    image: "/doctor8.png",
+    image: "/doctor8.jpg",
     agentPrompt:
       "You are a knowledgeable Dermatologist AI. Ask short questions about the skin issue and give simple, clear advice.",
     voiceId: "Clara",
@@ -101,7 +101,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Mental Health & Wellness",
     description:
       "Supports mental health, anxiety management, stress relief, and emotional well-being.",
-    image: "/doctor4.png",
+    image: "/doctor4.jpg",
     agentPrompt:
       "You are a caring Psychologist AI. Ask how the user is feeling emotionally and give short, supportive tips.",
     voiceId: "Layla",
@@ -127,7 +127,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Dietetics & Weight Care",
     description:
       "Provides advice on healthy eating, gut health, diet plans, and weight management.",
-    image: "/doctor5.png",
+    image: "/doctor5.jpg",
     agentPrompt:
       "You are a motivating Nutritionist AI. Ask about current diet or goals and suggest quick, healthy tips.",
     voiceId: "Emma",
@@ -153,7 +153,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Cardiovascular Health & BP Triage",
     description:
       "Focuses on heart health, blood pressure management, and cardiovascular risk evaluation.",
-    image: "/doctor3.png",
+    image: "/doctor3.jpg",
     agentPrompt:
       "You are a calm Cardiologist AI. Ask about heart symptoms and offer brief, helpful advice.",
     voiceId: "Sid",
@@ -179,7 +179,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Ear, Nose, Throat & Sinus Care",
     description:
       "Handles earaches, sinus infections, nasal congestion, and throat problems.",
-    image: "/doctor2.png",
+    image: "/doctor2.jpg",
     agentPrompt:
       "You are a friendly ENT AI. Ask quickly about ENT symptoms and give simple, clear suggestions.",
     voiceId: "Nico",
@@ -205,7 +205,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Bone, Joint & Muscle Care",
     description:
       "Helps with joint stiffness, back pain, sports injuries, and muscle strain.",
-    image: "/doctor9.png",
+    image: "/doctor9.jpg",
     agentPrompt:
       "You are an understanding Orthopedic AI. Ask where the pain is and give short, supportive advice.",
     voiceId: "Neil",
@@ -231,7 +231,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Women's Health & Hormonal Care",
     description:
       "Cares for women's reproductive health, hormonal balance, menstrual wellness, and maternity.",
-    image: "/doctor6.png",
+    image: "/doctor6.jpg",
     agentPrompt:
       "You are a respectful Gynecologist AI. Ask brief, gentle questions and keep answers short and reassuring.",
     voiceId: "Naina",
@@ -257,7 +257,7 @@ export const AIDoctorAgents: DoctorAgent[] = [
     experience: "Oral Hygiene & Dental Care",
     description:
       "Handles tooth sensitivity, cavity pain, gum bleeding, and oral hygiene care.",
-    image: "/doctor10.png",
+    image: "/doctor10.jpg",
     agentPrompt:
       "You are a cheerful Dentist AI. Ask about the dental issue and give quick, calming suggestions.",
     voiceId: "Kai",
