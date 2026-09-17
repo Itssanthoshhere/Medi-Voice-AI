@@ -47,26 +47,31 @@ const menuOptions = [
   },
   {
     id: 8,
+    name: "Nearby Care",
+    path: "/nearby",
+  },
+  {
+    id: 9,
     name: "Vitals",
     path: "/vitals",
   },
   {
-    id: 9,
+    id: 10,
     name: "Family Profiles",
     path: "/family",
   },
   {
-    id: 10,
+    id: 11,
     name: "Pricing",
     path: "/billing",
   },
   {
-    id: 11,
+    id: 12,
     name: "Profile",
     path: "/profile",
   },
   {
-    id: 12,
+    id: 13,
     name: "About",
     path: "/about",
   },
@@ -99,7 +104,7 @@ function AppHeader() {
             <Link
               key={option.id}
               href={option.path}
-              className={`px-3.5 py-1.5 rounded-full text-xs transition-all duration-200 ${
+              className={`px-2.5 py-1.5 rounded-full text-xs whitespace-nowrap transition-all duration-200 ${
                 isActive
                   ? "bg-[#a4161a] !text-white font-bold shadow-xs"
                   : "text-gray-600 hover:text-[#a4161a] hover:bg-gray-100/70 font-semibold"
@@ -120,8 +125,8 @@ function AppHeader() {
             plan === "clinic"
               ? "bg-amber-50 text-amber-700 border-amber-200"
               : plan === "pro"
-              ? "bg-primary/10 text-primary border-primary/20"
-              : "bg-gray-100 text-gray-700 border-gray-200"
+                ? "bg-primary/10 text-primary border-primary/20"
+                : "bg-gray-100 text-gray-700 border-gray-200"
           }`}
         >
           {plan === "clinic" ? (

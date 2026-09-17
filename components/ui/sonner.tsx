@@ -12,10 +12,11 @@ import {
 const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
-      position="top-center"
+      position="bottom-right"
       richColors
       closeButton
-      duration={4000}
+      duration={3500}
+      visibleToasts={2}
       className="toaster group"
       icons={{
         success: <CircleCheck className="w-4 h-4" />,
