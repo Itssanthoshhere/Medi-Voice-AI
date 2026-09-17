@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { useContext, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -21,6 +21,7 @@ import SuggestedDoctorCard from "./SuggestedDoctorCard";
 import { AIDoctorAgents } from "@/shared/list";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import UpgradeModal from "@/components/UpgradeModal";
+import SymptomTriageWidget from "@/components/SymptomTriageWidget";
 
 type AddNewSessionDialogProps = {
   btnText?: string;
@@ -37,6 +38,7 @@ function AddNewSessionDialog({
   const [selectedDoctor, setSelectedDoctor] = useState<DoctorAgent>();
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [showTriageWidget, setShowTriageWidget] = useState(false);
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeReason, setUpgradeReason] = useState<"credits" | "specialist">("credits");
 
@@ -153,13 +155,44 @@ function AddNewSessionDialog({
           </DialogHeader>
 
           {suggestedDoctors.length === 0 ? (
-            <div className="space-y-2 mt-2">
-              <h2 className="text-sm font-semibold text-gray-700">
-                Add Symptoms or Any Other Details
+            <div className="space-y-3 mt-2">
+              <div className="p-3 rounded-xl bg-rose-50/80 border border-rose-100 flex items-center justify-between">
+                <div>
+                  <h4 className="text-xs font-bold text-gray-900 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5 text-[#a4161a]" />
+                    Not sure which doctor to pick?
+                  </h4>
+                  <p className="text-[11px] text-gray-500">
+                    Use our 3-step interactive AI symptom triage widget.
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  type="button"
+                  onClick={() => {
+                    setDialogOpen(false);
+                    setShowTriageWidget(true);
+                  }}
+                  className="bg-[#a4161a] hover:bg-[#8b1116] text-white text-xs font-bold px-3 py-1 h-8 rounded-lg shadow-2xs"
+                >
+                  Symptom Checker
+                </Button>
+              </div>
+
+              <div className="relative flex py-1 items-center">
+                <div className="flex-grow border-t border-gray-200"></div>
+                <span className="flex-shrink mx-3 text-[11px] text-gray-400 font-semibold uppercase tracking-wider">
+                  or enter notes manually
+                </span>
+                <div className="flex-grow border-t border-gray-200"></div>
+              </div>
+
+              <h2 className="text-xs font-bold text-gray-700">
+                Add Symptoms or Any Other Details:
               </h2>
               <Textarea
-                placeholder="Add detail here..."
-                className="min-h-[120px]"
+                placeholder="Add detail here e.g. sore throat, mild fever for 2 days..."
+                className="min-h-[100px] text-xs"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
@@ -228,6 +261,11 @@ function AddNewSessionDialog({
         open={upgradeModalOpen}
         onOpenChange={setUpgradeModalOpen}
         reason={upgradeReason}
+      />
+
+      <SymptomTriageWidget
+        open={showTriageWidget}
+        onOpenChange={setShowTriageWidget}
       />
     </>
   );
