@@ -11,6 +11,7 @@ import BookAppointmentModal from "@/components/BookAppointmentModal";
 interface Appointment {
   id: number;
   appointmentId: string;
+  familyMemberId?: string;
   patientName: string;
   doctorId: string;
   doctorName: string;
@@ -54,6 +55,43 @@ export default function UpcomingAppointmentsWidget() {
     return matched?.image || "/doctor1.jpg";
   };
 
+  const [startingSessionId, setStartingSessionId] = useState<string | null>(null);
+
+  const handleStartSession = async (apt: Appointment) => {
+    const doctor =
+      AIDoctorAgents.find(
+        (d) => d.specialist.toLowerCase() === apt.specialization.toLowerCase()
+      ) || AIDoctorAgents[0];
+
+    setStartingSessionId(apt.appointmentId);
+    try {
+      const res = await fetch("/api/session-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notes: `Appointment consultation with ${apt.doctorName}`,
+          selectedDoctor: doctor,
+          familyMemberId: apt.familyMemberId || undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data?.sessionId) {
+        router.push("/dashboard/medical-agent/" + data.sessionId);
+      } else if (data?.error === "SUBSCRIPTION_REQUIRED" || data?.error === "INSUFFICIENT_CREDITS") {
+        alert(data.message || "Plan upgrade or consultation credits required.");
+        router.push("/billing");
+      } else {
+        alert(data.error || "Could not start session.");
+      }
+    } catch (err) {
+      console.error("Error starting session:", err);
+      alert("Failed to start session.");
+    } finally {
+      setStartingSessionId(null);
+    }
+  };
+
   return (
     <div className="rounded-3xl bg-[#f8fafc] border border-gray-200/60 p-6 shadow-xs space-y-4 font-sans">
       <div className="flex items-center justify-between">
@@ -81,6 +119,7 @@ export default function UpcomingAppointmentsWidget() {
         <div className="space-y-3">
           {appointments.map((apt) => {
             const avatar = getDoctorAvatar(apt.specialization);
+            const isStarting = startingSessionId === apt.appointmentId;
             return (
               <div
                 key={apt.appointmentId}
@@ -110,10 +149,19 @@ export default function UpcomingAppointmentsWidget() {
                 </div>
 
                 <button
-                  onClick={() => router.push("/dashboard/medical-agent")}
-                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-[11px] transition shadow-xs flex-shrink-0"
+                  disabled={isStarting}
+                  onClick={() => handleStartSession(apt)}
+                  className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-[11px] transition shadow-xs flex-shrink-0 disabled:opacity-50"
                 >
-                  <Sparkles className="w-3 h-3" /> Start Session
+                  {isStarting ? (
+                    <>
+                      <Loader2 className="w-3 h-3 animate-spin" /> Starting...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-3 h-3" /> Start Session
+                    </>
+                  )}
                 </button>
               </div>
             );

@@ -126,11 +126,48 @@ export default function AppointmentsPage() {
     return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${title}&details=${details}&location=${location}&dates=${dateFormatted}T090000Z/${dateFormatted}T093000Z`;
   };
 
+  const [startingSessionId, setStartingSessionId] = useState<string | null>(null);
+
   const getDoctorAvatar = (specialization: string) => {
     const matched = AIDoctorAgents.find(
       (d) => d.specialist.toLowerCase() === specialization.toLowerCase()
     );
     return matched?.image || "/doctor1.jpg";
+  };
+
+  const handleStartSession = async (apt: Appointment) => {
+    const doctor =
+      AIDoctorAgents.find(
+        (d) => d.specialist.toLowerCase() === apt.specialization.toLowerCase()
+      ) || AIDoctorAgents[0];
+
+    setStartingSessionId(apt.appointmentId);
+    try {
+      const res = await fetch("/api/session-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notes: apt.chiefComplaint || `Appointment consultation with ${apt.doctorName}`,
+          selectedDoctor: doctor,
+          familyMemberId: apt.familyMemberId || undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data?.sessionId) {
+        router.push("/dashboard/medical-agent/" + data.sessionId);
+      } else if (data?.error === "SUBSCRIPTION_REQUIRED" || data?.error === "INSUFFICIENT_CREDITS") {
+        alert(data.message || "Plan upgrade or consultation credits required.");
+        router.push("/billing");
+      } else {
+        alert(data.error || "Could not start session. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error starting appointment session:", err);
+      alert("Failed to start session. Please try again.");
+    } finally {
+      setStartingSessionId(null);
+    }
   };
 
   return (
@@ -332,10 +369,19 @@ export default function AppointmentsPage() {
 
                       <div className="flex items-center gap-2">
                         <button
-                          onClick={() => router.push("/dashboard/medical-agent")}
-                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs transition shadow-xs"
+                          disabled={startingSessionId === apt.appointmentId}
+                          onClick={() => handleStartSession(apt)}
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs transition shadow-xs disabled:opacity-50"
                         >
-                          <Sparkles className="w-3.5 h-3.5" /> Start Session
+                          {startingSessionId === apt.appointmentId ? (
+                            <>
+                              <Loader2 className="w-3.5 h-3.5 animate-spin" /> Starting...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-3.5 h-3.5" /> Start Session
+                            </>
+                          )}
                         </button>
 
                         <button

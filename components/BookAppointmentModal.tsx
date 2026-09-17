@@ -63,6 +63,39 @@ export default function BookAppointmentModal({
   const [bookingLoading, setBookingLoading] = useState<boolean>(false);
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [createdAppointment, setCreatedAppointment] = useState<any>(null);
+  const [sessionStarting, setSessionStarting] = useState<boolean>(false);
+
+  const handleStartVoiceConsultation = async () => {
+    if (!createdAppointment || !selectedDoctor) return;
+    setSessionStarting(true);
+    try {
+      const res = await fetch("/api/session-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          notes: createdAppointment.chiefComplaint || `Appointment consultation with ${createdAppointment.doctorName}`,
+          selectedDoctor: selectedDoctor,
+          familyMemberId: createdAppointment.familyMemberId || undefined,
+        }),
+      });
+
+      const data = await res.json();
+      if (res.ok && data?.sessionId) {
+        onClose();
+        router.push("/dashboard/medical-agent/" + data.sessionId);
+      } else if (data?.error === "SUBSCRIPTION_REQUIRED" || data?.error === "INSUFFICIENT_CREDITS") {
+        alert(data.message || "Plan upgrade or consultation credits required.");
+        router.push("/billing");
+      } else {
+        alert(data.error || "Could not start session.");
+      }
+    } catch (err) {
+      console.error("Error starting session:", err);
+      alert("Failed to launch session. Please try again.");
+    } finally {
+      setSessionStarting(false);
+    }
+  };
 
   // Initialize dates (Today + next 6 days)
   const getUpcomingDates = () => {
@@ -623,13 +656,19 @@ export default function BookAppointmentModal({
                 <CalendarPlus className="w-4 h-4 text-[#a4161a]" /> Add to Google Calendar
               </a>
               <button
-                onClick={() => {
-                  onClose();
-                  router.push("/dashboard/medical-agent");
-                }}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs transition shadow-md"
+                disabled={sessionStarting}
+                onClick={handleStartVoiceConsultation}
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs transition shadow-md disabled:opacity-50"
               >
-                <Sparkles className="w-4 h-4" /> Start Voice Consultation Now
+                {sessionStarting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Launching Session...
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="w-4 h-4" /> Start Voice Consultation Now
+                  </>
+                )}
               </button>
             </div>
           </div>
