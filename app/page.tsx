@@ -110,6 +110,7 @@ const CheckIcon = () => (
    ═══════════════════════════════════════════════════════════════ */
 const NAV_LINKS = [
   { label: "Features", href: "#features" },
+  { label: "Capabilities", href: "#capabilities" },
   { label: "How It Works", href: "#how-it-works" },
   { label: "Specialists", href: "#specialists" },
   { label: "Pricing", href: "/billing" },
@@ -429,13 +430,14 @@ function Navbar() {
     );
 
     const onScroll = () => {
-      const scrollPos = window.scrollY + 140;
+      const scrollPos = window.scrollY + 160;
       let current = "";
 
       for (const id of hashLinks) {
         const el = document.getElementById(id);
         if (el) {
-          const top = el.offsetTop;
+          const rect = el.getBoundingClientRect();
+          const top = rect.top + window.pageYOffset;
           const height = el.offsetHeight;
           if (scrollPos >= top && scrollPos < top + height) {
             current = `#${id}`;
@@ -907,7 +909,7 @@ const OutlookCalendarTile = () => (
 
 function LandingClinicalSuite() {
   return (
-    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16 space-y-12">
+    <section id="capabilities" className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16 space-y-12">
       {/* Header */}
       <div className="text-center space-y-3 max-w-2xl mx-auto">
         <p
