@@ -314,6 +314,7 @@ export default function BookAppointmentModal({
                         src={doctor.image}
                         alt={doctor.doctorName || doctor.specialist}
                         fill
+                        sizes="56px"
                         className="object-cover"
                       />
                     </div>

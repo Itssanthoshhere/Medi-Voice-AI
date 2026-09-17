@@ -103,11 +103,10 @@ CRITICAL NOTE FOR MENTAL HEALTH COUNSELLING:
     // 1. Try OpenRouter with multi-model fallback
     if (process.env.OPEN_ROUTER_API_KEY) {
       const modelsToTry = [
+        "openai/gpt-4o-mini",
         "inclusionai/ling-3.0-flash-sante:free",
         "nvidia/nemotron-3.5-lightning:free",
         "liquid/lfm-2.5-2.6b:free",
-        "google/gemini-2.0-flash-lite-001",
-        "google/gemini-2.0-flash-001",
       ];
 
       for (const model of modelsToTry) {

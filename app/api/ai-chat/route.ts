@@ -46,13 +46,10 @@ Instructions:
     // 1. Try OpenRouter with multi-model fallback
     if (process.env.OPEN_ROUTER_API_KEY) {
       const modelsToTry = [
+        "openai/gpt-4o-mini",
         "inclusionai/ling-3.0-flash-sante:free",
         "nvidia/nemotron-3.5-lightning:free",
         "liquid/lfm-2.5-2.6b:free",
-        "z-ai/glm-5.2:free",
-        "dots-studio/dots-3-note-preview:free",
-        "google/gemini-2.0-flash-lite-001",
-        "google/gemini-2.0-flash-001",
       ];
 
       const formattedMessages = [

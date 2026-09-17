@@ -9,8 +9,13 @@ import { usersTable } from "@/config/schema";
 
 export async function POST(req: NextRequest) {
   const { notes, selectedDoctor, familyMemberId } = await req.json();
-  const user = await currentUser();
-  const userEmail = user?.primaryEmailAddress?.emailAddress;
+  let userEmail: string | undefined = undefined;
+  try {
+    const user = await currentUser();
+    userEmail = user?.primaryEmailAddress?.emailAddress;
+  } catch {
+    // unauthenticated
+  }
 
   if (!userEmail) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -101,8 +106,13 @@ export async function GET(req: NextRequest) {
     }
 
     // If no sessionId is provided, fetch all sessions for the current logged-in user
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json(

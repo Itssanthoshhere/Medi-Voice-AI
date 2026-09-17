@@ -267,6 +267,7 @@ export default function AppointmentsPage() {
                           src={avatar}
                           alt={apt.doctorName}
                           fill
+                          sizes="48px"
                           className="object-cover"
                         />
                       </div>

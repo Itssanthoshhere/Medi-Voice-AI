@@ -190,6 +190,7 @@ export default function RescheduleModal({
               src={doctorAvatar}
               alt={appointment.doctorName}
               fill
+              sizes="48px"
               className="object-cover"
             />
           </div>

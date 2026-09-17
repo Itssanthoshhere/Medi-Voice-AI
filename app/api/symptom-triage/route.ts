@@ -70,7 +70,7 @@ Return ONLY a valid JSON object in this exact format with NO markdown wrapper:
 
     try {
       const completion = await openai.chat.completions.create({
-        model: "google/gemini-2.0-flash-001",
+        model: "openai/gpt-4o-mini",
         messages: [
           {
             role: "user",

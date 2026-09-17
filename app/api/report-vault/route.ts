@@ -19,25 +19,22 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    let queryCondition = eq(medicalReportsTable.userEmail, email);
+    const conditions = [eq(medicalReportsTable.userEmail, email)];
     if (familyMemberId && familyMemberId !== "all") {
-      queryCondition = and(
-        eq(medicalReportsTable.userEmail, email),
-        eq(medicalReportsTable.familyMemberId, familyMemberId)
-      ) as any;
+      conditions.push(eq(medicalReportsTable.familyMemberId, familyMemberId));
     }
 
     const reports = await db
       .select()
       .from(medicalReportsTable)
-      .where(queryCondition)
+      .where(and(...conditions))
       .orderBy(desc(medicalReportsTable.id));
 
     return NextResponse.json({ reports });
-  } catch (err) {
-    console.error("Error fetching report vault:", err);
+  } catch (err: any) {
+    console.error("Error fetching report vault:", err?.stack || err);
     return NextResponse.json(
-      { error: "Failed to fetch reports." },
+      { error: err?.message || "Failed to fetch reports." },
       { status: 500 },
     );
   }

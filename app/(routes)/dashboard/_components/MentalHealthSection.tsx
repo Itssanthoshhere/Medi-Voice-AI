@@ -116,6 +116,7 @@ export default function MentalHealthSection() {
                   src={mayaAgent.image || "/doctor11.jpg"}
                   alt="Dr. Maya - Mental Health Counsellor"
                   fill
+                  sizes="112px"
                   className="object-cover object-top"
                 />
               </div>

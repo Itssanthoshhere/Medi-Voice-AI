@@ -131,6 +131,7 @@ export default function UpcomingAppointmentsWidget() {
                       src={avatar}
                       alt={apt.doctorName}
                       fill
+                      sizes="40px"
                       className="object-cover"
                     />
                   </div>

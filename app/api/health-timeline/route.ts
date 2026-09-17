@@ -28,8 +28,12 @@ export async function GET(req: NextRequest) {
     let userEmail = queryEmail;
 
     if (!userEmail) {
-      const user = await currentUser();
-      userEmail = user?.primaryEmailAddress?.emailAddress || null;
+      try {
+        const user = await currentUser();
+        userEmail = user?.primaryEmailAddress?.emailAddress || null;
+      } catch {
+        // Clerk unauthenticated
+      }
     }
 
     if (!userEmail) {

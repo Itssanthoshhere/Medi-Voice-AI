@@ -18,8 +18,14 @@ const formatUser = (userRecord: any, defaultPlan = "free") => ({
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let user: any = null;
+    let userEmail: string | undefined = undefined;
+    try {
+      user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json(
@@ -61,8 +67,13 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json(
@@ -90,8 +101,13 @@ export async function GET(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json(

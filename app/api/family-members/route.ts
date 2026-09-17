@@ -13,10 +13,14 @@ export async function GET(req: NextRequest) {
     let userEmail = queryEmail;
     let userName = "Primary User";
 
-    const user = await currentUser();
-    if (user?.primaryEmailAddress?.emailAddress) {
-      userEmail = user.primaryEmailAddress.emailAddress;
-      userName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || userEmail.split("@")[0];
+    try {
+      const user = await currentUser();
+      if (user?.primaryEmailAddress?.emailAddress) {
+        userEmail = user.primaryEmailAddress.emailAddress;
+        userName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || userEmail.split("@")[0];
+      }
+    } catch {
+      // Clerk unauthenticated
     }
 
     if (!userEmail) {
@@ -61,8 +65,13 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -114,8 +123,13 @@ export async function POST(req: NextRequest) {
 
 export async function PUT(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -170,8 +184,13 @@ export async function PUT(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

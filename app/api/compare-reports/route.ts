@@ -108,7 +108,7 @@ Return ONLY valid JSON matching this schema:
     if (!responseContent && process.env.OPEN_ROUTER_API_KEY) {
       try {
         const completion = await openai.chat.completions.create({
-          model: "google/gemini-2.0-flash-001",
+          model: "openai/gpt-4o-mini",
           messages: [{ role: "user", content: comparisonPrompt }],
           temperature: 0.2,
           max_tokens: 2000,

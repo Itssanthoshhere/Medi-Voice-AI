@@ -13,9 +13,13 @@ export async function GET(req: NextRequest) {
     const status = searchParams.get("status");
 
     let userEmail = queryEmail;
-    const user = await currentUser();
-    if (user?.primaryEmailAddress?.emailAddress) {
-      userEmail = user.primaryEmailAddress.emailAddress;
+    try {
+      const user = await currentUser();
+      if (user?.primaryEmailAddress?.emailAddress) {
+        userEmail = user.primaryEmailAddress.emailAddress;
+      }
+    } catch {
+      // Clerk user unauthenticated or missing
     }
 
     if (!userEmail) {
@@ -53,8 +57,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const user = await currentUser();
-    let userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    let user: any = null;
+    try {
+      user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     const body = await req.json();
     const {
@@ -142,8 +152,13 @@ export async function POST(req: NextRequest) {
 
 export async function PATCH(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -193,8 +208,13 @@ export async function PATCH(req: NextRequest) {
 
 export async function DELETE(req: NextRequest) {
   try {
-    const user = await currentUser();
-    const userEmail = user?.primaryEmailAddress?.emailAddress;
+    let userEmail: string | undefined = undefined;
+    try {
+      const user = await currentUser();
+      userEmail = user?.primaryEmailAddress?.emailAddress;
+    } catch {
+      // Clerk unauthenticated
+    }
 
     if (!userEmail) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
