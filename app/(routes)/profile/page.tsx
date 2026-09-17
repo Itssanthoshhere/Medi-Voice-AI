@@ -29,8 +29,11 @@ import {
   Volume2,
   Clock,
   ChevronRight,
+  Truck,
+  ShoppingBag,
 } from "lucide-react";
 import axios from "axios";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const { user, isLoaded } = useUser();
@@ -40,6 +43,62 @@ export default function ProfilePage() {
   const [consultationCount, setConsultationCount] = useState<number>(0);
   const [reportCount, setReportCount] = useState<number>(0);
   const [loadingStats, setLoadingStats] = useState<boolean>(true);
+  const [activeOrder, setActiveOrder] = useState<{ id: string; pharmacy: string; eta: string } | null>(null);
+  const [orderHistory, setOrderHistory] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const savedActive = localStorage.getItem("medivoice_active_medicine_order");
+      if (savedActive) {
+        setActiveOrder(JSON.parse(savedActive));
+      }
+      const savedHistory = localStorage.getItem("medivoice_medicine_orders_history");
+      if (savedHistory) {
+        setOrderHistory(JSON.parse(savedHistory));
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
+
+  const handleMarkAsDelivered = (orderId: string) => {
+    try {
+      const savedHistory = localStorage.getItem("medivoice_medicine_orders_history");
+      if (savedHistory) {
+        const history = JSON.parse(savedHistory);
+        const updated = history.map((o: any) => {
+          if (o.id === orderId) {
+            return {
+              ...o,
+              status: "Delivered",
+              deliveredAt: new Date().toLocaleDateString("en-IN", {
+                month: "short",
+                day: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+            };
+          }
+          return o;
+        });
+        localStorage.setItem("medivoice_medicine_orders_history", JSON.stringify(updated));
+        setOrderHistory(updated);
+      }
+
+      const active = localStorage.getItem("medivoice_active_medicine_order");
+      if (active) {
+        const parsed = JSON.parse(active);
+        if (parsed.id === orderId) {
+          localStorage.removeItem("medivoice_active_medicine_order");
+          setActiveOrder(null);
+        }
+      }
+
+      toast.success(`Order #${orderId} status updated to Delivered!`);
+    } catch {
+      // ignore
+    }
+  };
 
   // Editable Medical Preferences state
   const [isEditingMedical, setIsEditingMedical] = useState<boolean>(false);
@@ -523,6 +582,123 @@ export default function ProfilePage() {
                 )}
               </div>
             </div>
+          </div>
+
+          {/* Card: Active Medicine Delivery Orders */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+            <div className="flex items-center justify-between border-b border-gray-100 pb-3">
+              <div className="flex items-center gap-3">
+                <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+                  <Truck className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-gray-900">
+                    Medicine Delivery Orders
+                  </h3>
+                  <p className="text-xs text-gray-500">
+                    Track active doorstep medicine requests & refills.
+                  </p>
+                </div>
+              </div>
+              <Link href="/nearby">
+                <Button size="sm" variant="outline" className="text-xs border-emerald-200 text-emerald-800 hover:bg-emerald-50 font-bold">
+                  + New Order
+                </Button>
+              </Link>
+            </div>
+
+            {orderHistory.length > 0 ? (
+              <div className="space-y-3">
+                {orderHistory.map((ord: any, idx: number) => (
+                  <div
+                    key={ord.id || idx}
+                    className="p-4 rounded-xl bg-slate-50 border border-gray-200 flex items-center justify-between gap-4 flex-wrap hover:border-emerald-300 transition-colors"
+                  >
+                    <div className="space-y-1 max-w-md">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="font-bold text-xs text-gray-900">Order #{ord.id}</span>
+                        {ord.status === "Delivered" ? (
+                          <span className="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-[10px] uppercase flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Delivered
+                          </span>
+                        ) : (
+                          <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 font-bold text-[10px] uppercase flex items-center gap-1">
+                            <Truck className="w-3 h-3 text-amber-700" /> {ord.status || "Rider Dispatched"}
+                          </span>
+                        )}
+                        <span className="text-[10px] text-gray-400 font-mono">
+                          {ord.createdAt || "Recent"}
+                        </span>
+                      </div>
+                      <p className="text-xs text-gray-700">
+                        Pharmacy: <strong>{ord.pharmacy}</strong> · Delivery: <span className="font-bold text-emerald-700">{ord.deliverySpeed === "express" ? "Express (20-30m)" : "Standard (45-60m)"}</span>
+                      </p>
+                      {ord.items && ord.items.length > 0 && (
+                        <p className="text-[11px] text-gray-500 line-clamp-1 italic">
+                          Items: {ord.items.join(", ")}
+                        </p>
+                      )}
+                      {ord.totalAmount && (
+                        <p className="text-xs font-bold text-emerald-800">
+                          Total Paid: ₹{Number(ord.totalAmount).toFixed(2)}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      {ord.status !== "Delivered" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleMarkAsDelivered(ord.id)}
+                          className="text-xs border-emerald-300 text-emerald-800 hover:bg-emerald-50 font-semibold"
+                        >
+                          Mark as Delivered
+                        </Button>
+                      )}
+                      <Link href="/nearby">
+                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs">
+                          {ord.status === "Delivered" ? "Order Again" : "Track Delivery"}
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : activeOrder ? (
+              <div className="p-4 rounded-xl bg-emerald-50/70 border border-emerald-200/80 flex items-center justify-between gap-4 flex-wrap">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="font-bold text-xs text-emerald-900">Order #{activeOrder.id}</span>
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-600 text-white font-extrabold text-[10px] uppercase">
+                      Rider Dispatched
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-800">
+                    Partner Pharmacy: <strong>{activeOrder.pharmacy}</strong>
+                  </p>
+                  <p className="text-[11px] text-emerald-700 flex items-center gap-1">
+                    <Clock className="w-3 h-3 text-emerald-600" /> Delivery ETA: <strong className="underline">{activeOrder.eta}</strong>
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Link href="/nearby">
+                    <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-xs">
+                      Track Live Delivery
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            ) : (
+              <div className="p-5 rounded-xl bg-slate-50 border border-dashed border-gray-200 text-center space-y-2">
+                <p className="text-xs text-gray-500">No active medicine delivery orders in progress.</p>
+                <Link href="/nearby">
+                  <Button size="sm" variant="outline" className="text-xs font-semibold">
+                    Order Medicine Nearby (20-30 Mins)
+                  </Button>
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* Quick Actions Bar */}
