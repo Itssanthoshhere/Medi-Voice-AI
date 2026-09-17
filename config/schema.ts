@@ -101,3 +101,23 @@ export const prescriptionsTable = pgTable("prescriptionsTable", {
   lastTakenAt: varchar({ length: 100 }),
   createdAt: varchar({ length: 100 }),
 });
+
+export const vitalsTable = pgTable("vitalsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  vitalId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 })
+    .notNull()
+    .references(() => usersTable.email),
+  familyMemberId: varchar({ length: 100 }),
+  patientName: varchar({ length: 255 }).notNull().default("Primary User"),
+  heartRate: integer(),
+  bpSystolic: integer(),
+  bpDiastolic: integer(),
+  bloodOxygen: integer(),
+  temperature: varchar({ length: 50 }),
+  bloodGlucose: integer(),
+  status: varchar({ length: 50 }).notNull().default("Normal"),
+  notes: text(),
+  recordedAt: varchar({ length: 100 }),
+  createdAt: varchar({ length: 100 }),
+});

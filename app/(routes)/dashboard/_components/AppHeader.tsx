@@ -47,21 +47,26 @@ const menuOptions = [
   },
   {
     id: 8,
+    name: "Vitals",
+    path: "/vitals",
+  },
+  {
+    id: 9,
     name: "Family Profiles",
     path: "/family",
   },
   {
-    id: 9,
+    id: 10,
     name: "Pricing",
     path: "/billing",
   },
   {
-    id: 10,
+    id: 11,
     name: "Profile",
     path: "/profile",
   },
   {
-    id: 11,
+    id: 12,
     name: "About",
     path: "/about",
   },
