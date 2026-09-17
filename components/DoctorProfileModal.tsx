@@ -68,7 +68,7 @@ export default function DoctorProfileModal({
             {/* Avatar */}
             <div className="relative shrink-0">
               <Image
-                src={doctor.image}
+                src={doctor.image || "/doctor1.jpg"}
                 alt={doctor.specialist}
                 width={100}
                 height={100}
