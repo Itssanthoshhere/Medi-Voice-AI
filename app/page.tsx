@@ -504,7 +504,7 @@ function Navbar() {
 
           {/* Desktop centre nav */}
           <nav
-            className="hidden md:flex items-center gap-2 flex-1 justify-center"
+            className="hidden md:flex items-center gap-6 flex-1 justify-center"
             aria-label="Primary"
           >
             {NAV_LINKS.map((l) => {
@@ -514,10 +514,10 @@ function Navbar() {
                   key={l.href}
                   href={l.href}
                   onClick={(e) => handleNavClick(e, l.href)}
-                  className={`text-[0.95rem] font-medium transition-all duration-200 px-3.5 py-1.5 rounded-full ${
+                  className={`text-[0.93rem] font-semibold tracking-tight transition-all duration-200 px-3.5 py-1.5 rounded-full ${
                     isActive
-                      ? "text-primary font-bold bg-rose-50 border border-rose-200/80 shadow-sm"
-                      : "text-gray-600 hover:text-charcoal hover:bg-gray-100/60"
+                      ? "text-[#a4161a] font-bold bg-rose-50 border border-rose-200/80 shadow-2xs"
+                      : "text-[#1e293b] hover:text-[#a4161a] hover:bg-rose-50/50"
                   }`}
                 >
                   {l.label}
