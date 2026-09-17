@@ -32,6 +32,13 @@ import {
   CloudRain,
   Flame,
   Loader2,
+  Truck,
+  Calendar,
+  Pill,
+  Users,
+  FlaskConical,
+  MapPin,
+  CheckCircle2,
 } from "lucide-react";
 
 /* ═══════════════════════════════════════════════════════════════
@@ -235,33 +242,41 @@ const FAQS = [
     a: "Yes. MediVoice is engineered with HIPAA-ready principles. All call recordings, transcripts, and personal profile details are protected with AES-256 encryption at rest and TLS 1.3 in transit.",
   },
   {
-    q: "Which medical specialties are available on MediVoice?",
-    a: "MediVoice features 10+ specialized agents including General Physicians, Pediatricians, Cardiologists, Neurologists, Dermatologists, Psychiatrists, Gynecologists, and more — each with tailored clinical prompts and guidance style.",
+    q: "How does Doorstep Medicine Delivery & Nearby Care work?",
+    a: "Using your live GPS location, MediVoice calculates real-time Haversine distances to hospitals, ICU facilities, and 24/7 pharmacies within 0.5–5.5 km. You can order OTC or prescription refills in ₹ INR with 20-30 min express delivery via Tata 1mg, Apollo 24/7, Fortis, and MedPlus.",
+  },
+  {
+    q: "Can I book doctor appointments and track prescriptions for family members?",
+    a: "Yes! You can book 15-minute voice AI consultation slots with any doctor, manage digital prescriptions with dosage reminders, record vitals, and switch between family dependent profiles (Spouse, Child, Parent, Sibling) under one primary account.",
   },
   {
     q: "Does MediVoice replace an in-person emergency room or doctor?",
-    a: "No. MediVoice is designed for clinical triage, health education, symptom triaging, and documentation. For severe conditions, chest pain, difficulty breathing, or life-threatening emergencies, always call emergency services (like 911) immediately.",
+    a: "No. MediVoice is designed for clinical triage, health education, symptom triaging, and documentation. For severe conditions, chest pain, difficulty breathing, or life-threatening emergencies, always dial national emergency 108 or 911 immediately.",
   },
 ];
 
 const SEO_TERMS = [
   "AI doctor voice consultation",
-  "24/7 symptom triage AI",
+  "doorstep medicine delivery 20-30 mins",
+  "nearby hospitals emergency 108 triage",
+  "doctor appointment booking AI",
+  "digital prescription medication tracker",
+  "real-time vitals monitoring app",
+  "family health dependent profile manager",
   "automated clinical SOAP reports",
-  "pediatric and cardiology AI specialists",
-  "speech-to-speech medical AI",
-  "digital health symptom checker",
-  "AI medical consultation app",
-  "downloadable clinical SOAP notes",
+  "medical lab report OCR biomarker vault",
 ];
 
 const RELATED_LINKS = [
   { label: "AI Doctor Dashboard", href: "/dashboard" },
-  { label: "Specialist Roster", href: "#specialists" },
-  { label: "Consultation History", href: "/history" },
-  { label: "Patient Profile", href: "/profile" },
+  { label: "Nearby Emergency & Pharmacy", href: "/nearby" },
+  { label: "Doctor Appointments", href: "/appointments" },
+  { label: "Prescription Tracker", href: "/prescriptions" },
+  { label: "Vitals Monitor", href: "/vitals" },
+  { label: "Family Profiles", href: "/family" },
+  { label: "Report Vault", href: "/vault" },
+  { label: "Patient Profile & Orders", href: "/profile" },
   { label: "Subscription Plans", href: "/billing" },
-  { label: "About Platform", href: "/about" },
 ];
 
 /* ═══════════════════════════════════════════════════════════════
@@ -854,6 +869,318 @@ function Hero() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   2.5 COMPLETE CLINICAL CARE SUITE (Bento Grid Layout)
+   ═══════════════════════════════════════════════════════════════ */
+const GoogleCalendarTile = () => (
+  <div className="w-5 h-5 rounded-[4px] bg-[#4285F4] text-white font-bold text-[9px] flex items-center justify-center shadow-2xs shrink-0">
+    31
+  </div>
+);
+
+const OutlookCalendarTile = () => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="#0078D4"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="shrink-0"
+  >
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+    <line x1="16" y1="2" x2="16" y2="6" />
+    <line x1="8" y1="2" x2="8" y2="6" />
+    <line x1="3" y1="10" x2="21" y2="10" />
+  </svg>
+);
+
+function LandingClinicalSuite() {
+  return (
+    <section className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-10 xl:px-12 py-16 space-y-12">
+      {/* Header */}
+      <div className="text-center space-y-3 max-w-2xl mx-auto">
+        <p
+          className="text-[11px] font-bold tracking-[0.16em] uppercase"
+          style={{ color: "#a4161a" }}
+        >
+          Platform Capabilities
+        </p>
+        <h2 className="text-3xl md:text-5xl font-extrabold text-charcoal tracking-tight leading-tight">
+          This is how MediVoice manages{" "}
+          <span className="italic font-serif font-normal text-[#a4161a]">
+            your complete health journey
+          </span>
+        </h2>
+        <p className="text-sm text-gray-500 max-w-xl mx-auto">
+          MediVoice reads referrals, triages symptoms, delivers doorstep medicines, schedules doctor appointments, logs vitals, and updates your family record before a case goes cold.
+        </p>
+      </div>
+
+      {/* Bento Grid */}
+      <div className="space-y-6">
+        {/* ROW 1: Large Dark Featured Card (7 cols) + White Card (5 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Featured Card 1: Dark Charcoal Gradient */}
+          <div className="lg:col-span-7 bg-gradient-to-br from-[#18181b] via-[#27272a] to-[#09090b] text-white p-8 md:p-10 rounded-3xl shadow-xl flex flex-col justify-between space-y-8 relative overflow-hidden group">
+            <div className="space-y-6">
+              {/* Top Icon Pill */}
+              <div className="w-11 h-11 rounded-2xl bg-white/10 text-rose-300 flex items-center justify-center border border-white/10 shadow-inner">
+                <PhoneCall className="w-5 h-5" />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-snug text-white">
+                  24/7 Nearby Emergency Care & Doorstep Medicine Express
+                </h3>
+                <p className="text-sm text-gray-300 leading-relaxed max-w-xl">
+                  Locate 24/7 hospitals and ICU trauma centers within 0.5–5.5 km using live GPS & Haversine distance math. One-touch 108 emergency triage dial and 20-30 min doorstep delivery via Tata 1mg & Apollo 24/7.
+                </p>
+              </div>
+            </div>
+
+            {/* Bottom Badges & Action Row */}
+            <div className="space-y-4 pt-4 border-t border-white/10">
+              <div className="flex flex-wrap items-center gap-2">
+                {[
+                  "0.5 - 5.5 km GPS",
+                  "Haversine Math",
+                  "108 Emergency Dial",
+                  "Tata 1mg Express",
+                  "Apollo 24/7",
+                  "20-30 Mins ETA",
+                ].map((badge, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[11px] font-medium bg-white/10 text-white/90 border border-white/15 px-3 py-1 rounded-full backdrop-blur-sm"
+                  >
+                    {badge}
+                  </span>
+                ))}
+              </div>
+
+              <div>
+                <Link
+                  href="/nearby"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-rose-300 hover:text-white transition-colors"
+                >
+                  <span>Explore Nearby Care & Order Medicines</span>
+                  <ArrowRight className="w-4 h-4 text-rose-300 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* White Card 1: Doctor Appointments */}
+          <div className="lg:col-span-5 bg-white border border-gray-200/90 rounded-3xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-6">
+            <div className="space-y-5">
+              <div className="w-11 h-11 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border border-emerald-100 shadow-2xs">
+                <Calendar className="w-5 h-5" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-gray-900 leading-snug">
+                  Books specialist evaluations while you're still on the phone
+                </h3>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Checks provider availability in real time, books 15-minute voice AI consultation slots mid-call, and sends SMS + email confirmations before symptoms escalate.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[11px] font-medium text-gray-500">
+                <GoogleCalendarTile />
+                <OutlookCalendarTile />
+                <span>Google + Outlook calendars</span>
+              </div>
+              <Link
+                href="/appointments"
+                className="text-xs font-bold text-gray-900 hover:text-[#a4161a] transition-colors flex items-center gap-1"
+              >
+                <span>Book Slot</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#a4161a]" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 2: Large Dark Red Featured Card (7 cols) + White Card (5 cols) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+          {/* Featured Card 2: Deep Crimson Red Gradient */}
+          <div className="lg:col-span-7 bg-gradient-to-br from-[#a4161a] via-[#8b1116] to-[#580a0d] text-white p-8 md:p-10 rounded-3xl shadow-xl flex flex-col justify-between space-y-8 relative overflow-hidden group">
+            <div className="space-y-6">
+              {/* Top Icon Pill */}
+              <div className="w-11 h-11 rounded-2xl bg-white/15 text-white flex items-center justify-center border border-white/20 shadow-inner">
+                <MessageSquareHeart className="w-5 h-5" />
+              </div>
+
+              <div className="space-y-3">
+                <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight leading-snug text-white">
+                  Digital prescriptions & persistent follow-ups that get every regimen tracked
+                </h3>
+                <p className="text-sm text-rose-100 leading-relaxed max-w-xl">
+                  After every consultation, MediVoice generates a structured digital prescription with dosage, timing, and duration details. Logs daily dose adherence and automates refill requests.
+                </p>
+              </div>
+            </div>
+
+            {/* Bottom Badges & Action Row */}
+            <div className="space-y-4 pt-4 border-t border-white/15">
+              <div className="flex flex-wrap items-center gap-2">
+                {[
+                  "Auto RX Generator",
+                  "Dosage Timings",
+                  "Adherence Logs",
+                  "1-Click Refills",
+                  "Full Audit Trail",
+                ].map((badge, idx) => (
+                  <span
+                    key={idx}
+                    className="text-[11px] font-medium bg-white/15 text-white border border-white/20 px-3 py-1 rounded-full backdrop-blur-sm"
+                  >
+                    {badge}
+                  </span>
+                ))}
+              </div>
+
+              <div>
+                <Link
+                  href="/prescriptions"
+                  className="inline-flex items-center gap-2 text-xs font-bold text-white hover:text-rose-200 transition-colors"
+                >
+                  <span>Manage Prescriptions & Refills</span>
+                  <ArrowRight className="w-4 h-4 text-white group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* White Card 2: Vitals Monitor */}
+          <div className="lg:col-span-5 bg-white border border-gray-200/90 rounded-3xl p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-6">
+            <div className="space-y-5">
+              <div className="w-11 h-11 rounded-full bg-rose-50 text-[#a4161a] flex items-center justify-center border border-rose-100 shadow-2xs">
+                <HeartPulse className="w-5 h-5" />
+              </div>
+
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-gray-900 leading-snug">
+                  Real-time vitals monitoring & health risk indicator scoring
+                </h3>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  Logs Heart Rate (BPM), Blood Pressure (mmHg), SpO2 (%), Temperature (°F), and Blood Glucose. Automated health risk engine alerts you instantly when vital trends require attention.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[11px] font-medium text-gray-500">
+                <span className="p-1 rounded bg-rose-50 text-[#a4161a] border border-rose-100 font-bold">
+                  🩺
+                </span>
+                <span>Automated BPM & BP anomaly alerts</span>
+              </div>
+              <Link
+                href="/vitals"
+                className="text-xs font-bold text-gray-900 hover:text-[#a4161a] transition-colors flex items-center gap-1"
+              >
+                <span>Track Vitals</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#a4161a]" />
+              </Link>
+            </div>
+          </div>
+        </div>
+
+        {/* ROW 3: Three Equal White Cards (4 cols each) */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
+          {/* Card 1: Family Profiles */}
+          <div className="bg-white border border-gray-200/90 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-5">
+            <div className="space-y-4">
+              <div className="w-11 h-11 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center border border-amber-100">
+                <Sparkles className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-gray-900 leading-snug">
+                  Family dependent health profiles
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed mt-1.5">
+                  Scope consultations, lab vaults, and health timelines for your spouse, children, parents, or siblings under one primary account.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100">
+              <Link
+                href="/family"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 hover:text-[#a4161a] transition-colors"
+              >
+                <span>Manage Family</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#a4161a]" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 2: Report Vault */}
+          <div className="bg-white border border-gray-200/90 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-5">
+            <div className="space-y-4">
+              <div className="w-11 h-11 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center border border-rose-100">
+                <Activity className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-gray-900 leading-snug">
+                  Lab report OCR & biomarker analytics
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed mt-1.5">
+                  Upload PDF lab reports to extract parameters, detect out-of-range deficiencies, and track biomarker trends over time.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100">
+              <Link
+                href="/vault"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 hover:text-[#a4161a] transition-colors"
+              >
+                <span>Open Report Vault</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#a4161a]" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Card 3: SOAP Summary Engine */}
+          <div className="bg-white border border-gray-200/90 rounded-3xl p-7 flex flex-col justify-between shadow-sm hover:shadow-md transition-all space-y-5">
+            <div className="space-y-4">
+              <div className="w-11 h-11 rounded-full bg-rose-50 text-[#a4161a] flex items-center justify-center border border-rose-100">
+                <Clock className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="text-base font-bold text-gray-900 leading-snug">
+                  Never lose another health insight
+                </h4>
+                <p className="text-xs text-gray-500 leading-relaxed mt-1.5">
+                  Every voice call compiles into a hospital-grade SOAP summary (Subjective, Objective, Assessment, Plan) with instant PDF export.
+                </p>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-100">
+              <Link
+                href="/history"
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-gray-900 hover:text-[#a4161a] transition-colors"
+              >
+                <span>View Consultation History</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#a4161a]" />
+              </Link>
             </div>
           </div>
         </div>
@@ -1762,6 +2089,11 @@ export default function Page() {
         {/* 2. Feature Grid - Distinct Soft Slate Canvas */}
         <section className="w-full bg-[#f8fafc] border-b border-gray-200/60 py-4">
           <FeatureGrid />
+        </section>
+
+        {/* 2.5 Complete Clinical Care Suite Canvas */}
+        <section className="w-full bg-gradient-to-b from-white via-rose-50/20 to-gray-50/30 border-b border-gray-200/60 py-4">
+          <LandingClinicalSuite />
         </section>
 
         {/* 3. How It Works - Clean White Canvas */}
