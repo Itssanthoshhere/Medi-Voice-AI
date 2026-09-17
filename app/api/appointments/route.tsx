@@ -158,7 +158,7 @@ export async function PATCH(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { appointmentId, status, chiefComplaint } = await req.json();
+    const { appointmentId, status, chiefComplaint, appointmentDate, timeSlot } = await req.json();
 
     if (!appointmentId) {
       return NextResponse.json(
@@ -167,11 +167,59 @@ export async function PATCH(req: NextRequest) {
       );
     }
 
+    // Fetch target appointment first to verify ownership and doctor ID
+    const existing = await db
+      .select()
+      .from(appointmentsTable)
+      .where(
+        and(
+          eq(appointmentsTable.appointmentId, appointmentId),
+          eq(appointmentsTable.primaryUserEmail, userEmail)
+        )
+      );
+
+    if (!existing.length) {
+      return NextResponse.json(
+        { error: "Appointment not found or unauthorized" },
+        { status: 404 }
+      );
+    }
+
+    const currentApt = existing[0];
+
+    // If rescheduling to a new date/time slot, check for slot conflicts
+    if (appointmentDate && timeSlot) {
+      const targetDoctorId = currentApt.doctorId;
+      const conflicts = await db
+        .select()
+        .from(appointmentsTable)
+        .where(
+          and(
+            eq(appointmentsTable.doctorId, targetDoctorId),
+            eq(appointmentsTable.appointmentDate, appointmentDate),
+            eq(appointmentsTable.timeSlot, timeSlot),
+            eq(appointmentsTable.status, "Scheduled")
+          )
+        );
+
+      // Exclude self from conflict check
+      const actualConflict = conflicts.find((c) => c.appointmentId !== appointmentId);
+
+      if (actualConflict) {
+        return NextResponse.json(
+          { error: "The selected date & time slot is already booked for this doctor. Please pick another slot." },
+          { status: 409 }
+        );
+      }
+    }
+
     const updated = await db
       .update(appointmentsTable)
       .set({
-        status: status || undefined,
-        chiefComplaint: chiefComplaint || undefined,
+        appointmentDate: appointmentDate || undefined,
+        timeSlot: timeSlot || undefined,
+        status: status || (appointmentDate && timeSlot ? "Scheduled" : undefined),
+        chiefComplaint: chiefComplaint !== undefined ? chiefComplaint : undefined,
       })
       .where(
         and(
@@ -180,13 +228,6 @@ export async function PATCH(req: NextRequest) {
         )
       )
       .returning();
-
-    if (!updated.length) {
-      return NextResponse.json(
-        { error: "Appointment not found or unauthorized" },
-        { status: 404 }
-      );
-    }
 
     return NextResponse.json(updated[0]);
   } catch (err: any) {

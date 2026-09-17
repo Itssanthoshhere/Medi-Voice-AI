@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import BookAppointmentModal from "@/components/BookAppointmentModal";
+import RescheduleModal from "@/components/RescheduleModal";
 import { AIDoctorAgents } from "@/shared/list";
 import {
   Calendar,
@@ -55,7 +56,9 @@ export default function AppointmentsPage() {
   const [loading, setLoading] = useState<boolean>(true);
   const [statusFilter, setStatusFilter] = useState<string>("Scheduled");
   const [selectedMemberFilter, setSelectedMemberFilter] = useState<string>("all");
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  
+  const [isBookModalOpen, setIsBookModalOpen] = useState<boolean>(false);
+  const [reschedulingAppointment, setReschedulingAppointment] = useState<Appointment | null>(null);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -143,12 +146,12 @@ export default function AppointmentsPage() {
               Appointments <span className="italic font-serif font-normal text-[#a4161a]">Hub</span>
             </h1>
             <p className="text-gray-500 text-xs sm:text-sm mt-1 max-w-xl">
-              Schedule, track, and manage consultations with 11 specialist AI doctors or partner clinic providers for you and your family members.
+              Schedule, reschedule, track, and manage consultations with 11 specialist AI doctors or partner clinic providers for you and your family members.
             </p>
           </div>
 
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsBookModalOpen(true)}
             className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs sm:text-sm transition shadow-md flex-shrink-0"
           >
             <Plus className="w-4 h-4" /> Book New Appointment
@@ -304,41 +307,54 @@ export default function AppointmentsPage() {
                 </div>
 
                 {/* Actions Bar */}
-                <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-100">
+                <div className="flex items-center justify-between gap-2 pt-3 border-t border-gray-100 flex-wrap">
                   {isScheduled ? (
                     <>
-                      <a
-                        href={generateGoogleCalendarUrl(apt)}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold transition"
-                      >
-                        <CalendarPlus className="w-3.5 h-3.5 text-[#a4161a]" /> Calendar
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={generateGoogleCalendarUrl(apt)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold transition"
+                          title="Add to Google Calendar"
+                        >
+                          <CalendarPlus className="w-3.5 h-3.5 text-[#a4161a]" /> Calendar
+                        </a>
 
-                      <button
-                        onClick={() => router.push("/dashboard/medical-agent")}
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs transition shadow-xs"
-                      >
-                        <Sparkles className="w-3.5 h-3.5" /> Start Session Now
-                      </button>
+                        <button
+                          onClick={() => setReschedulingAppointment(apt)}
+                          className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-800 border border-amber-200 text-xs font-semibold transition"
+                          title="Reschedule Date & Time"
+                        >
+                          <RefreshCw className="w-3.5 h-3.5 text-amber-700" /> Reschedule
+                        </button>
+                      </div>
 
-                      <button
-                        disabled={actionLoadingId === apt.appointmentId}
-                        onClick={() => handleCancelAppointment(apt.appointmentId)}
-                        className="p-2 rounded-xl text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition"
-                        title="Cancel Appointment"
-                      >
-                        {actionLoadingId === apt.appointmentId ? (
-                          <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
-                        ) : (
-                          <Trash2 className="w-4 h-4" />
-                        )}
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => router.push("/dashboard/medical-agent")}
+                          className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-xs transition shadow-xs"
+                        >
+                          <Sparkles className="w-3.5 h-3.5" /> Start Session
+                        </button>
+
+                        <button
+                          disabled={actionLoadingId === apt.appointmentId}
+                          onClick={() => handleCancelAppointment(apt.appointmentId)}
+                          className="p-2 rounded-xl text-gray-400 hover:text-rose-600 hover:bg-rose-50 transition"
+                          title="Cancel Appointment"
+                        >
+                          {actionLoadingId === apt.appointmentId ? (
+                            <Loader2 className="w-4 h-4 animate-spin text-rose-600" />
+                          ) : (
+                            <Trash2 className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
                     </>
                   ) : (
                     <button
-                      onClick={() => setIsModalOpen(true)}
+                      onClick={() => setIsBookModalOpen(true)}
                       className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold transition"
                     >
                       <RefreshCw className="w-3.5 h-3.5 text-[#a4161a]" /> Book Follow-up Consultation
@@ -361,7 +377,7 @@ export default function AppointmentsPage() {
             You don't have any appointments scheduled under this filter. Book a consultation with one of our 11 specialist AI doctors.
           </p>
           <button
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => setIsBookModalOpen(true)}
             className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-[#a4161a] hover:bg-[#8b1116] text-white font-bold text-sm transition shadow-md"
           >
             <Plus className="w-4 h-4" /> Book First Appointment
@@ -371,8 +387,16 @@ export default function AppointmentsPage() {
 
       {/* Appointment Booking Wizard Modal */}
       <BookAppointmentModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isBookModalOpen}
+        onClose={() => setIsBookModalOpen(false)}
+        onSuccess={() => fetchAppointments()}
+      />
+
+      {/* Reschedule Modal */}
+      <RescheduleModal
+        isOpen={!!reschedulingAppointment}
+        onClose={() => setReschedulingAppointment(null)}
+        appointment={reschedulingAppointment}
         onSuccess={() => fetchAppointments()}
       />
     </div>
