@@ -32,16 +32,21 @@ const menuOptions = [
   },
   {
     id: 5,
+    name: "Health Timeline",
+    path: "/timeline",
+  },
+  {
+    id: 6,
     name: "Pricing",
     path: "/billing",
   },
   {
-    id: 6,
+    id: 7,
     name: "Profile",
     path: "/profile",
   },
   {
-    id: 7,
+    id: 8,
     name: "About",
     path: "/about",
   },

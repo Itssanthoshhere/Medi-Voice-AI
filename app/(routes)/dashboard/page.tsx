@@ -1,3 +1,4 @@
+import Link from "next/link";
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import DoctorsAgentList from "./_components/DoctorsAgentList";
 import HistoryList from "./_components/HistoryList";
@@ -18,10 +19,19 @@ function Dashboard() {
           </p>
         </div>
 
-        <AddNewSessionDialog
-          btnText="+ Consult With Doctor"
-          className="!text-white font-bold bg-[#a4161a] hover:bg-[#8b1116] px-5 py-2.5 rounded-xl shadow-md transition-all"
-        />
+        <div className="flex items-center gap-3">
+          <Link
+            href="/timeline"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold text-gray-700 bg-white border border-gray-300 hover:border-[#a4161a] hover:text-[#a4161a] shadow-xs transition-all"
+          >
+            Health Timeline &rarr;
+          </Link>
+
+          <AddNewSessionDialog
+            btnText="+ Consult With Doctor"
+            className="!text-white font-bold bg-[#a4161a] hover:bg-[#8b1116] px-5 py-2.5 rounded-xl shadow-md transition-all"
+          />
+        </div>
       </section>
 
       {/* Section 2: Consultation History Canvas (Soft Slate Shading) */}
