@@ -71,7 +71,7 @@ export default function AboutPage() {
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <Image
-                      src="/doctor1.png"
+                      src="/doctor1.jpg"
                       alt="Dr. Elliot"
                       width={52}
                       height={52}

@@ -72,7 +72,7 @@ export default function MedicalVoiceAgentPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [doctor, setDoctor] = useState<DoctorData>({
     specialist: "AI Medical Specialist",
-    image: "/doctor1.png",
+    image: "/doctor1.jpg",
   });
 
   const [messages, setMessages] = useState<Message[]>([]);
@@ -207,7 +207,7 @@ export default function MedicalVoiceAgentPage() {
             doctorInfo.specialist ||
             matched?.specialist ||
             "AI Medical Specialist",
-          image: doctorInfo.image || matched?.image || "/doctor1.png",
+          image: doctorInfo.image || matched?.image || "/doctor1.jpg",
           agentPrompt: doctorInfo.agentPrompt || matched?.agentPrompt,
           voiceId: resolvedVoice,
         });
@@ -886,7 +886,7 @@ CONVERSATION FLOW:
           </Button>
           <div className="flex items-center gap-3">
             <Image
-              src={doctor.image || "/doctor1.png"}
+              src={doctor.image || "/doctor1.jpg"}
               alt={doctor.specialist || "Doctor Avatar"}
               width={44}
               height={44}
@@ -1106,7 +1106,7 @@ CONVERSATION FLOW:
                 </div>
               ) : (
                 <Image
-                  src={doctor.image || "/doctor1.png"}
+                  src={doctor.image || "/doctor1.jpg"}
                   alt={doctor.specialist || "Doctor"}
                   width={32}
                   height={32}

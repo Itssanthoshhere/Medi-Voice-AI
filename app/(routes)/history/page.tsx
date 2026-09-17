@@ -268,7 +268,7 @@ function HistoryPage() {
           {filteredList.map((item) => {
             const docInfo = item.selectedDoctor || {};
             const specialist = docInfo.specialist || "AI Medical Specialist";
-            const docImage = docInfo.image || "/doctor1.png";
+            const docImage = docInfo.image || "/doctor1.jpg";
             const hasReport = !!item.report;
 
             return (
