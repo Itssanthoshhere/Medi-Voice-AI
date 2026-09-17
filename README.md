@@ -110,9 +110,29 @@ MediVoice AI bridges this gap by providing:
 - Automated detection of crisis keywords (self-harm, depression, severe distress).
 - Triggers a immediate **Mental Health Crisis Modal** displaying nationwide helpline numbers (988 Crisis Lifeline, Tele-MANAS, Crisis Text Line) alongside dedicated consultation with **Dr. Maya** (Mental Health Counsellor).
 
-### 👨‍👩‍👧‍👦 6. Family Profiles & Dependent Care (Phase 4)
+### 👨‍👩‍👧‍👦 6. Family Profiles & Dependent Care
 - Multi-member profile switcher for primary user and dependents (`Self`, `Spouse`, `Child`, `Parent`, `Sibling`).
 - Scopes consultation histories, lab vaults, and health timelines per family member.
+
+### 🚑 7. Nearby Emergency Care & Doorstep Medicine Delivery
+- **Live GPS Geolocation**: Tracks real-time latitude & longitude anywhere in India to locate nearby emergency care (0.5 km – 5.5 km).
+- **Haversine Distance Calculator**: Computes accurate distance to hospitals, ICU facilities, and 24/7 pharmacies.
+- **National Emergency Triage (`108`)**: One-touch direct dial for emergency ambulance and trauma dispatch.
+- **Doorstep Medicine Express**: OTC and prescription medicine cart checkout (in ₹ INR) with 20-30 min delivery through partner pharmacies (Tata 1mg, Apollo 24/7, Fortis, MedPlus).
+- **Profile Order Sync**: Real-time tracking and persistence of medicine delivery orders directly within the User Profile.
+
+### 📅 8. Specialist Doctor Appointment Scheduler
+- Book 15-minute voice AI clinical consultation slots with any of the 11 AI specialist doctors.
+- Dynamic slot availability engine filtering already booked appointments.
+- Interactive booking, rescheduling, and cancellation management tied to specific family members.
+
+### 💊 9. Digital Prescription & Medication Tracker
+- Automated prescription generation following AI consultations with medication name, dosage, frequency, and duration.
+- Track active regimens, log daily doses taken, and request refills.
+
+### 🩺 10. Real-Time Vitals Monitoring & Health Risk Metrics
+- Record and monitor vital signs: Heart Rate (BPM), Blood Pressure (mmHg), SpO2 (%), Temperature (°F), and Blood Sugar (mg/dL).
+- Automated health status indicator (Normal / Attention / Critical) with historical logging for primary users and family dependents.
 
 ---
 
@@ -235,22 +255,30 @@ medi-voice-ai/
 │   │   │   │   └── [sessionId]/page.tsx  # Active Consultation Session
 │   │   │   ├── _components/              # HistoryList, DoctorList, ScoreCard
 │   │   │   └── page.tsx
+│   │   ├── nearby/                       # Nearby Emergency Care & Doorstep Medicine Delivery
+│   │   ├── appointments/                 # Doctor Appointment Scheduler
+│   │   ├── prescriptions/                # Digital Prescription & Med Tracker
+│   │   ├── vitals/                       # Vitals Monitor & Health Risk Tracker
 │   │   ├── family/                       # Family Profiles Management (Phase 4)
 │   │   ├── vault/                        # Medical Report Vault & OCR Analysis
 │   │   ├── timeline/                     # Longitudinal Patient Timeline
-│   │   ├── profile/                      # User Profile & Medical Info
+│   │   ├── profile/                      # User Profile & Order History
 │   │   └── billing/                      # Plan Credits & Subscription
 │   ├── api/                              # REST API Route Handlers
 │   │   ├── ai-chat/                      # Streaming Text Chat Consultation
 │   │   ├── analyze-report/               # Medical Lab Report Biomarker Extractor
+│   │   ├── appointments/                 # Doctor Appointment CRUD API
 │   │   ├── compare-reports/              # Multi-Report Trend Comparison
+│   │   ├── doctor-availability/          # Real-Time Doctor Slot Engine
 │   │   ├── family-members/               # Family Member CRUD API
 │   │   ├── health-timeline/              # Unified Timeline Data Extractor
+│   │   ├── prescriptions/                # Medication & Refills API
 │   │   ├── report-vault/                 # Vault Persistence API
 │   │   ├── session-chat/                 # SOAP Summary Generator
 │   │   ├── suggest-doctors/              # AI Doctor Recommendation Engine
 │   │   ├── symptom-triage/               # Triage & Emergency Red Flag Evaluator
-│   │   └── users/                        # User Account & Credits API
+│   │   ├── users/                        # User Account & Credits API
+│   │   └── vitals/                       # Vitals Logging & Risk Engine API
 │   ├── globals.css                       # Design Tokens, Glassmorphism Styles
 │   ├── layout.tsx                        # Root Layout with Clerk Provider
 │   └── page.tsx                          # Hero Landing Page & Features
@@ -332,6 +360,67 @@ export const medicalReportsTable = pgTable("medicalReportsTable", {
   createdAt: varchar({ length: 100 }),
   familyMemberId: varchar({ length: 100 }),
 });
+
+// 5. Appointments Table
+export const appointmentsTable = pgTable("appointmentsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  appointmentId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 }).notNull().references(() => usersTable.email),
+  familyMemberId: varchar({ length: 100 }),
+  patientName: varchar({ length: 255 }),
+  doctorId: varchar({ length: 100 }).notNull(),
+  doctorName: varchar({ length: 255 }).notNull(),
+  specialization: varchar({ length: 255 }).notNull(),
+  appointmentDate: varchar({ length: 100 }).notNull(),
+  timeSlot: varchar({ length: 50 }).notNull(),
+  consultationType: varchar({ length: 100 }).notNull().default("Voice AI Consultation"),
+  status: varchar({ length: 50 }).notNull().default("Scheduled"),
+  chiefComplaint: text(),
+  createdAt: varchar({ length: 100 }),
+});
+
+// 6. Prescriptions Table
+export const prescriptionsTable = pgTable("prescriptionsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  prescriptionId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 }).notNull().references(() => usersTable.email),
+  familyMemberId: varchar({ length: 100 }),
+  patientName: varchar({ length: 255 }).notNull().default("Primary User"),
+  doctorId: varchar({ length: 100 }),
+  doctorName: varchar({ length: 255 }).default("Dr. Elliot"),
+  specialization: varchar({ length: 255 }).default("General Physician"),
+  medicationName: varchar({ length: 255 }).notNull(),
+  dosage: varchar({ length: 100 }).notNull(),
+  frequency: varchar({ length: 100 }).notNull().default("Twice Daily"),
+  timing: varchar({ length: 100 }).default("After Meals"),
+  startDate: varchar({ length: 100 }).notNull(),
+  endDate: varchar({ length: 100 }),
+  totalDays: integer().default(7),
+  instructions: text(),
+  refillsRemaining: integer().default(0),
+  status: varchar({ length: 50 }).notNull().default("Active"),
+  lastTakenAt: varchar({ length: 100 }),
+  createdAt: varchar({ length: 100 }),
+});
+
+// 7. Vitals Table
+export const vitalsTable = pgTable("vitalsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  vitalId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 }).notNull().references(() => usersTable.email),
+  familyMemberId: varchar({ length: 100 }),
+  patientName: varchar({ length: 255 }).notNull().default("Primary User"),
+  heartRate: integer(),
+  bpSystolic: integer(),
+  bpDiastolic: integer(),
+  bloodOxygen: integer(),
+  temperature: varchar({ length: 50 }),
+  bloodGlucose: integer(),
+  status: varchar({ length: 50 }).notNull().default("Normal"),
+  notes: text(),
+  recordedAt: varchar({ length: 100 }),
+  createdAt: varchar({ length: 100 }),
+});
 ```
 
 ---
@@ -346,7 +435,7 @@ export const medicalReportsTable = pgTable("medicalReportsTable", {
 | `/api/session-chat?userEmail={email}` | `GET` | Retrieve all past consultation sessions |
 | `/api/ai-chat` | `POST` | Process text chat fallback message with multi-model LLM |
 
-### 🧪 Medical Vault & Triage
+### 🧪 Medical Vault, Triage & Vitals
 | Endpoint | Method | Description |
 | :--- | :---: | :--- |
 | `/api/analyze-report` | `POST` | Extract parameters and deficiencies from lab report PDF/Image |
@@ -356,6 +445,10 @@ export const medicalReportsTable = pgTable("medicalReportsTable", {
 | `/api/suggest-doctors` | `POST` | Recommend top specialist doctors based on patient symptoms |
 | `/api/health-timeline` | `GET` | Aggregates user consultations & reports into chronological timeline |
 | `/api/family-members` | `GET/POST/DEL` | Manage dependent family member profiles |
+| `/api/appointments` | `GET/POST/PATCH/DEL` | Schedule, reschedule, or cancel doctor consultations |
+| `/api/doctor-availability` | `GET` | Retrieve real-time available time slots per specialist |
+| `/api/prescriptions` | `GET/POST/PATCH` | Manage active medications, log doses, and request refills |
+| `/api/vitals` | `GET/POST` | Record heart rate, BP, SpO2, blood glucose & temperature |
 
 ---
 
@@ -439,7 +532,8 @@ Ensure you have the following installed on your machine:
 | **Phase 5** | Doctor Availability & Appointment Scheduler | ✅ Shipped |
 | **Phase 6** | Prescription & Medication Tracker | ✅ Shipped |
 | **Phase 7** | Real-Time Health Monitoring & Vitals Tracker | ✅ Shipped |
-| **Phase 8** | Multi-Language Support (i18n) | 📋 Planned |
+| **Phase 8** | Nearby Emergency Care & Doorstep Medicine Delivery | ✅ Shipped |
+| **Phase 9** | Multi-Language Support (i18n) | 📋 Planned |
 
 ---
 
