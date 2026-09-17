@@ -1,6 +1,7 @@
 import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import DoctorsAgentList from "./_components/DoctorsAgentList";
 import HistoryList from "./_components/HistoryList";
+import MentalHealthSection from "./_components/MentalHealthSection";
 
 function Dashboard() {
   return (
@@ -27,9 +28,14 @@ function Dashboard() {
         <HistoryList />
       </section>
 
-      {/* Section 3: AI Specialist Roster Canvas (Soft Tinted Shading) */}
+      {/* Section 3: AI Specialist Roster Canvas (The 10 Specialists) */}
       <section className="bg-gradient-to-b from-white via-red-50/20 to-gray-50/30 p-6 sm:p-8 rounded-3xl border border-gray-200/60 shadow-xs space-y-4">
         <DoctorsAgentList />
+      </section>
+
+      {/* Section 4: Dedicated Mental Health & Emotional Counselling */}
+      <section>
+        <MentalHealthSection />
       </section>
     </div>
   );

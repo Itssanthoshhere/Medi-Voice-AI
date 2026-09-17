@@ -61,6 +61,72 @@ const EMERGENCY_PATTERNS: { pattern: RegExp; term: string }[] = [
   },
 ];
 
+// ── Mental Health Crisis Patterns ──
+const MENTAL_HEALTH_CRISIS_PATTERNS: { pattern: RegExp; term: string }[] = [
+  {
+    pattern:
+      /\b(suicidal|want to die|kill myself|end my life|end it all|better off dead)\b/i,
+    term: "Suicidal Ideation",
+  },
+  {
+    pattern:
+      /\b(self harm|hurting myself|cutting myself|harming myself|hurt myself)\b/i,
+    term: "Self-Harm Risk",
+  },
+  {
+    pattern:
+      /\b(feeling hopeless|no reason to live|worthless|nobody cares|no point in living|can't go on|give up on life)\b/i,
+    term: "Emotional Distress / Crisis Risk",
+  },
+  {
+    pattern:
+      /\b(want to disappear|don't want to exist|wish i was dead|tired of living)\b/i,
+    term: "Passive Suicidal Ideation",
+  },
+];
+
+export interface MentalHealthCrisisResult {
+  isCrisis: boolean;
+  matchedTerms: string[];
+  crisisResources: { label: string; contact: string; type: "call" | "text" }[];
+}
+
+export function checkMentalHealthCrisis(
+  text: string,
+): MentalHealthCrisisResult {
+  if (!text || typeof text !== "string") {
+    return {
+      isCrisis: false,
+      matchedTerms: [],
+      crisisResources: [],
+    };
+  }
+
+  const matchedTerms: string[] = [];
+
+  for (const item of MENTAL_HEALTH_CRISIS_PATTERNS) {
+    if (item.pattern.test(text)) {
+      matchedTerms.push(item.term);
+    }
+  }
+
+  const isCrisis = matchedTerms.length > 0;
+
+  return {
+    isCrisis,
+    matchedTerms,
+    crisisResources: [
+      { label: "988 Suicide & Crisis Lifeline", contact: "988", type: "call" },
+      { label: "iCall (India)", contact: "9152987821", type: "call" },
+      {
+        label: "Crisis Text Line",
+        contact: "Text HOME to 741741",
+        type: "text",
+      },
+    ],
+  };
+}
+
 export function checkEmergencySymptoms(text: string): EmergencyCheckResult {
   if (!text || typeof text !== "string") {
     return {

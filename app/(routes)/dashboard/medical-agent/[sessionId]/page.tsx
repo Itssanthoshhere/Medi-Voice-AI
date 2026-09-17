@@ -32,8 +32,12 @@ import MedicalReportDialog, {
   MedicalReportData,
 } from "../_components/MedicalReportDialog";
 import { toast } from "sonner";
-import { checkEmergencySymptoms } from "../_utils/emergencyDetector";
+import {
+  checkEmergencySymptoms,
+  checkMentalHealthCrisis,
+} from "../_utils/emergencyDetector";
 import EmergencyAlertModal from "../_components/EmergencyAlertModal";
+import MentalHealthCrisisModal from "../_components/MentalHealthCrisisModal";
 import ReportAnalysisCard, {
   AnalyzedReportData,
 } from "../_components/ReportAnalysisCard";
@@ -106,6 +110,11 @@ export default function MedicalVoiceAgentPage() {
   const [emergencyMatchedTerms, setEmergencyMatchedTerms] = useState<string[]>(
     [],
   );
+  const [isMentalHealthCrisisModalOpen, setIsMentalHealthCrisisModalOpen] =
+    useState(false);
+  const [mentalHealthMatchedTerms, setMentalHealthMatchedTerms] = useState<
+    string[]
+  >([]);
   const [isAnalyzingReport, setIsAnalyzingReport] = useState(false);
   const [analyzedReport, setAnalyzedReport] =
     useState<AnalyzedReportData | null>(null);
@@ -204,11 +213,7 @@ export default function MedicalVoiceAgentPage() {
         });
 
         if (res.data.notes) {
-          const notesEmergency = checkEmergencySymptoms(res.data.notes);
-          if (notesEmergency.isEmergency) {
-            setEmergencyMatchedTerms(notesEmergency.matchedTerms);
-            setIsEmergencyModalOpen(true);
-          }
+          runSafetyAndCrisisChecks(res.data.notes);
           checkSymptomsForTests(res.data.notes);
         }
 
@@ -219,11 +224,7 @@ export default function MedicalVoiceAgentPage() {
           setMessages(res.data.conversation);
           res.data.conversation.forEach((m: Message) => {
             if (m.content) {
-              const emergencyCheck = checkEmergencySymptoms(m.content);
-              if (emergencyCheck.isEmergency) {
-                setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
-                setIsEmergencyModalOpen(true);
-              }
+              runSafetyAndCrisisChecks(m.content);
               checkSymptomsForTests(m.content);
             }
           });
@@ -323,7 +324,29 @@ export default function MedicalVoiceAgentPage() {
     }
   };
 
+  const runSafetyAndCrisisChecks = (text: string) => {
+    if (!text || typeof text !== "string") return;
+
+    // 1. Check physical medical emergency symptoms (911 / ER)
+    const emergencyCheck = checkEmergencySymptoms(text);
+    if (emergencyCheck.isEmergency) {
+      setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
+      setIsEmergencyModalOpen(true);
+      return;
+    }
+
+    // 2. Check mental health crisis / self-harm / suicidal thoughts (988 / Helpline)
+    const mentalHealthCheck = checkMentalHealthCrisis(text);
+    if (mentalHealthCheck.isCrisis) {
+      setMentalHealthMatchedTerms(mentalHealthCheck.matchedTerms);
+      setIsMentalHealthCrisisModalOpen(true);
+    }
+  };
+
   const checkSymptomsForTests = (text: string) => {
+    // Skip medical lab test prompts during mental health counselling sessions
+    if (doctor.specialist === "Mental Health Counsellor") return;
+
     const lower = text.toLowerCase();
     const newTests: RecommendedTest[] = [];
 
@@ -478,12 +501,8 @@ export default function MedicalVoiceAgentPage() {
     const textToSend = userText || inputMessage;
     if (!textToSend.trim() || isSending) return;
 
-    // Check emergency keywords immediately
-    const emergencyCheck = checkEmergencySymptoms(textToSend);
-    if (emergencyCheck.isEmergency) {
-      setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
-      setIsEmergencyModalOpen(true);
-    }
+    // Check emergency and mental health crisis keywords immediately
+    runSafetyAndCrisisChecks(textToSend);
 
     // Check symptom-based lab test recommendations
     checkSymptomsForTests(textToSend);
@@ -526,12 +545,8 @@ export default function MedicalVoiceAgentPage() {
 
   const handleVoiceTranscript = (transcriptText: string) => {
     if (transcriptText) {
-      // Check emergency symptoms in live voice transcript
-      const emergencyCheck = checkEmergencySymptoms(transcriptText);
-      if (emergencyCheck.isEmergency) {
-        setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
-        setIsEmergencyModalOpen(true);
-      }
+      // Check emergency symptoms and mental health crisis in live voice transcript
+      runSafetyAndCrisisChecks(transcriptText);
 
       checkSymptomsForTests(transcriptText);
 
@@ -669,12 +684,8 @@ CONVERSATION FLOW:
 
         if (!text) return;
 
-        // Run Emergency & Diagnostic Test Checks on live voice transcripts
-        const emergencyCheck = checkEmergencySymptoms(text);
-        if (emergencyCheck.isEmergency) {
-          setEmergencyMatchedTerms(emergencyCheck.matchedTerms);
-          setIsEmergencyModalOpen(true);
-        }
+        // Run Emergency, Crisis & Diagnostic Test Checks on live voice transcripts
+        runSafetyAndCrisisChecks(text);
         checkSymptomsForTests(text);
 
         if (message.transcriptType === "partial") {
@@ -1209,6 +1220,13 @@ CONVERSATION FLOW:
         isOpen={isEmergencyModalOpen}
         onClose={() => setIsEmergencyModalOpen(false)}
         matchedTerms={emergencyMatchedTerms}
+      />
+
+      {/* Mental Health Crisis Support Modal Overlay */}
+      <MentalHealthCrisisModal
+        isOpen={isMentalHealthCrisisModalOpen}
+        onClose={() => setIsMentalHealthCrisisModalOpen(false)}
+        matchedTerms={mentalHealthMatchedTerms}
       />
     </div>
   );
