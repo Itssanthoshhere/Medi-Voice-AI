@@ -22,3 +22,20 @@ export const SessionChatTable = pgTable("sessionChatTable", {
   createdBy: varchar().references(() => usersTable.email),
   createdOn: varchar(),
 });
+
+export const medicalReportsTable = pgTable("medicalReportsTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  reportId: varchar({ length: 100 }).notNull().unique(),
+  userEmail: varchar({ length: 255 })
+    .notNull()
+    .references(() => usersTable.email),
+  fileName: varchar({ length: 255 }),
+  reportTitle: varchar({ length: 255 }).notNull(),
+  testDate: varchar({ length: 100 }),
+  patientSummary: text(),
+  parameters: json(), // Array of { name, value, referenceRange, status, interpretation, unit }
+  deficienciesOrAbnormalities: json(), // Array of string
+  suggestedNextSteps: json(), // Array of string
+  rawText: text(),
+  createdAt: varchar({ length: 100 }),
+});

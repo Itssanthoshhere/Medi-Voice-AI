@@ -16,29 +16,31 @@ export async function POST(req: NextRequest) {
 Analyze the provided medical lab report image or text and output structured JSON strictly matching this schema:
 
 {
-  "reportTitle": "Name of the medical test/panel (e.g., Throat Swab & Complete Blood Count Report)",
+  "reportTitle": "Name of the medical test/panel (e.g., Complete Blood Count Report)",
+  "testDate": "Date of test or collection if found in report (e.g. 2026-08-15), or null if not mentioned",
+  "labName": "Diagnostic laboratory or hospital name if found, or null",
   "patientSummary": "Brief overview of overall clinical findings",
   "parameters": [
     {
-      "name": "Parameter Name (e.g. Throat Culture / Group A Strep)",
-      "value": "Observed value with unit (e.g. Positive / Reactive)",
-      "referenceRange": "Normal reference range (e.g. Negative)",
+      "name": "Parameter Name (e.g. Vitamin D 25-OH)",
+      "value": "Observed value with unit (e.g. 24.5 ng/mL)",
+      "referenceRange": "Normal reference range (e.g. 30.0 - 100.0 ng/mL)",
       "status": "High" | "Low" | "Normal" | "Critical",
       "interpretation": "Short plain-language explanation of what this level means."
     }
   ],
   "deficienciesOrAbnormalities": [
-    "List key health insights or deficiencies identified (e.g. Acute Bacterial Throat Infection, Vitamin D Deficiency)"
+    "List key health insights or deficiencies identified"
   ],
   "suggestedNextSteps": [
-    "Actionable next steps (e.g., Consult an ENT doctor for targeted antibiotic therapy or gargle regimen)"
+    "Actionable next steps for doctor discussion"
   ],
   "disclaimer": "IMPORTANT NOTICE: This AI analysis is for educational and informational reference only. Any medication, dosage, or dietary supplementation MUST be evaluated and prescribed by a licensed healthcare professional."
 }
 
 Rules:
-- Extract or interpret lab parameters, observed values, reference ranges, and abnormal findings clearly.
-- If parameters show infection or deficiency (e.g. Vitamin D low, WBC high, throat swab positive), explain clearly in patient-friendly terms.
+- Extract observed parameters, values, units, reference ranges, and abnormalities strictly from the provided document.
+- Never invent lab results that are not in the document.
 - Always include the mandatory physician confirmation disclaimer.
 - Return ONLY valid JSON with no markdown formatting.`;
 
@@ -134,98 +136,33 @@ Rules:
       }
     }
 
-    // 3. Smart Clinical Fallback based on File Name & Context
+    // 3. Extraction failed — return honest error instead of fabricated data
     if (
       !responseContent ||
       responseContent.includes("not able to access") ||
       responseContent.includes("just a filename")
     ) {
-      const lowerName = (fileName || reportText || "").toLowerCase();
-
-      if (
-        lowerName.includes("throat") ||
-        lowerName.includes("tonsil") ||
-        lowerName.includes("infection")
-      ) {
-        const throatMock = {
-          reportTitle: "Throat Swab & Infection Pathology Report",
-          patientSummary:
-            "Pathology report indicates acute throat inflammation with elevated inflammatory markers consistent with tonsillitis / pharyngitis.",
-          parameters: [
-            {
-              name: "Rapid Strep A Antigen",
-              value: "Positive (+)",
-              referenceRange: "Negative",
-              status: "High",
-              interpretation:
-                "Presence of Group A Streptococcus antigen, indicating bacterial throat infection.",
-            },
-            {
-              name: "WBC Count (Total Leucocytes)",
-              value: "12,400 /uL",
-              referenceRange: "4,000 - 11,000 /uL",
-              status: "High",
-              interpretation:
-                "Elevated white blood cells indicating an active immune response to infection.",
-            },
-            {
-              name: "C-Reactive Protein (CRP)",
-              value: "18.5 mg/L",
-              referenceRange: "0.0 - 5.0 mg/L",
-              status: "High",
-              interpretation:
-                "Elevated inflammatory marker reflecting acute tissue inflammation in the pharynx/tonsils.",
-            },
-          ],
-          deficienciesOrAbnormalities: [
-            "Acute Streptococcal Tonsillitis / Pharyngitis",
-            "Elevated Inflammatory Markers (Leukocytosis & High CRP)",
-          ],
-          suggestedNextSteps: [
-            "Consult your ENT physician or primary care doctor for targeted prescription antibiotic evaluation.",
-            "Perform warm saltwater gargles 3-4 times daily to reduce tonsillar swelling.",
-            "Maintain warm fluid hydration (warm water, herbal teas) and rest your voice.",
-          ],
-          disclaimer:
-            "IMPORTANT NOTICE: All AI test interpretations and supplementation notes MUST be confirmed with a licensed doctor.",
-        };
-        return NextResponse.json({ report: throatMock });
-      }
-
-      // Default Vitamin / General Lab Fallback
-      const generalMock = {
-        reportTitle: "Comprehensive Diagnostic & Vitamin Panel",
-        patientSummary:
-          "Report analysis reveals low Vitamin D (25-OH) levels requiring clinical attention.",
-        parameters: [
-          {
-            name: "Vitamin D (25-Hydroxy)",
-            value: "14.2 ng/mL",
-            referenceRange: "30.0 - 100.0 ng/mL",
-            status: "Low",
-            interpretation:
-              "Below optimal reference range. Low Vitamin D can cause fatigue, joint stiffness, and reduced immunity.",
+      return NextResponse.json(
+        {
+          error:
+            "Could not clearly parse lab parameters from this document. Please ensure the image is high resolution and well-lit, or paste the report text directly.",
+          report: {
+            reportTitle: "Report Analysis Incomplete",
+            patientSummary:
+              "We were unable to extract clinical parameters from the uploaded document. This may be due to image quality, unsupported format, or unreadable text.",
+            parameters: [],
+            deficienciesOrAbnormalities: [],
+            suggestedNextSteps: [
+              "Re-upload a clearer, higher-resolution image of the lab report.",
+              "If possible, paste the report text directly into the analysis field.",
+              "Ensure the document is a medical lab report with visible test values.",
+            ],
+            disclaimer:
+              "IMPORTANT NOTICE: This AI analysis is for educational and informational reference only. Any medication, dosage, or dietary supplementation MUST be evaluated and prescribed by a licensed healthcare professional.",
           },
-          {
-            name: "Hemoglobin (Hb)",
-            value: "13.8 g/dL",
-            referenceRange: "12.0 - 16.0 g/dL",
-            status: "Normal",
-            interpretation: "Normal red blood cell oxygen carrying capacity.",
-          },
-        ],
-        deficienciesOrAbnormalities: [
-          "Vitamin D Deficiency (Hypovitaminosis D)",
-        ],
-        suggestedNextSteps: [
-          "Consult your doctor regarding Vitamin D3 supplementation.",
-          "Include Vitamin D-rich foods (fortified milk, fatty fish, eggs) in your diet.",
-          "Re-check serum 25(OH)D levels in 8-12 weeks.",
-        ],
-        disclaimer:
-          "IMPORTANT NOTICE: All AI test interpretations and supplementation suggestions are for educational reference only. Any medication or dosage MUST be confirmed with a licensed doctor.",
-      };
-      return NextResponse.json({ report: generalMock });
+        },
+        { status: 422 },
+      );
     }
 
     // Clean JSON response string if wrapped in markdown

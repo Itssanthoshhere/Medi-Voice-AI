@@ -2,6 +2,7 @@ import AddNewSessionDialog from "./_components/AddNewSessionDialog";
 import DoctorsAgentList from "./_components/DoctorsAgentList";
 import HistoryList from "./_components/HistoryList";
 import MentalHealthSection from "./_components/MentalHealthSection";
+import RecentReportsPreview from "./_components/RecentReportsPreview";
 
 function Dashboard() {
   return (
@@ -28,12 +29,17 @@ function Dashboard() {
         <HistoryList />
       </section>
 
-      {/* Section 3: AI Specialist Roster Canvas (The 10 Specialists) */}
+      {/* Section 3: Recent Lab Reports & Biomarker Trends Preview */}
+      <section className="bg-gradient-to-b from-rose-50/30 via-white to-gray-50/20 p-6 sm:p-8 rounded-3xl border border-gray-200/60 shadow-xs space-y-4">
+        <RecentReportsPreview />
+      </section>
+
+      {/* Section 4: AI Specialist Roster Canvas (The 10 Specialists) */}
       <section className="bg-gradient-to-b from-white via-red-50/20 to-gray-50/30 p-6 sm:p-8 rounded-3xl border border-gray-200/60 shadow-xs space-y-4">
         <DoctorsAgentList />
       </section>
 
-      {/* Section 4: Dedicated Mental Health & Emotional Counselling */}
+      {/* Section 5: Dedicated Mental Health & Emotional Counselling */}
       <section>
         <MentalHealthSection />
       </section>
@@ -42,3 +48,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
