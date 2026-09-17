@@ -27,7 +27,7 @@ export default function SuggestedDoctorCard({
       }`}
     >
       <Image
-        src={doctorAgent.image || "/doctor1.png"}
+        src={doctorAgent.image || "/doctor1.jpg"}
         alt={doctorAgent.specialist || "Doctor"}
         width={70}
         height={70}
