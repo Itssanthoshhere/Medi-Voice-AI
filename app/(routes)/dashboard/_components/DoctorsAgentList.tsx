@@ -2,6 +2,10 @@ import { AIDoctorAgents } from "@/shared/list";
 import DoctorAgentCard from "./DoctorAgentCard";
 
 function DoctorsAgentList() {
+  const clinicalDoctors = AIDoctorAgents.filter(
+    (doctor) => doctor.specialist !== "Mental Health Counsellor"
+  );
+
   return (
     <div className="mt-10">
       <div>
@@ -14,7 +18,7 @@ function DoctorsAgentList() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mt-5">
-        {AIDoctorAgents.map((doctor, index) => (
+        {clinicalDoctors.map((doctor, index) => (
           <DoctorAgentCard key={doctor.id ?? index} doctorAgent={doctor} />
         ))}
       </div>

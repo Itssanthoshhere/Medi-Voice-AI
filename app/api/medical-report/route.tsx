@@ -85,6 +85,17 @@ export async function POST(req: NextRequest) {
       )
       .join("\n");
 
+    const isMentalHealth =
+      doctorSpecialist.toLowerCase().includes("mental health") ||
+      doctorSpecialist.toLowerCase().includes("maya");
+
+    const effectiveSystemPrompt = isMentalHealth
+      ? `${REPORT_SYSTEM_PROMPT}
+CRITICAL NOTE FOR MENTAL HEALTH COUNSELLING:
+- The AI never prescribes, recommends, or suggests medications. medicationsMentioned should ONLY contain medications the patient explicitly said they take on their own (if none, return an empty array []).
+- recommendations must focus on emotional wellness, coping strategies (e.g. mindfulness, journaling, deep breathing), social support, and referral to a licensed human therapist or crisis lifeline if distressed.`
+      : REPORT_SYSTEM_PROMPT;
+
     const userPrompt = `Session ID: ${sessionId}\nAgent: ${doctorSpecialist}\nTimestamp: ${new Date().toISOString()}\n\nTranscript:\n---\n${transcriptText}\n---`;
 
     let reportData: MedicalReport | null = null;
@@ -104,7 +115,7 @@ export async function POST(req: NextRequest) {
           const completion = await openai.chat.completions.create({
             model,
             messages: [
-              { role: "system", content: REPORT_SYSTEM_PROMPT },
+              { role: "system", content: effectiveSystemPrompt },
               { role: "user", content: userPrompt },
             ],
             temperature: 0.3,
@@ -139,7 +150,7 @@ export async function POST(req: NextRequest) {
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 systemInstruction: {
-                  parts: [{ text: REPORT_SYSTEM_PROMPT }],
+                  parts: [{ text: effectiveSystemPrompt }],
                 },
                 contents: [
                   {
@@ -157,10 +168,13 @@ export async function POST(req: NextRequest) {
 
           if (response.ok) {
             const data = await response.json();
-            const rawText =
-              data.candidates?.[0]?.content?.parts?.[0]?.text;
+            const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text;
             if (rawText) {
-              reportData = parseReportJSON(rawText, sessionId, doctorSpecialist);
+              reportData = parseReportJSON(
+                rawText,
+                sessionId,
+                doctorSpecialist,
+              );
             }
           }
         } catch (err) {
