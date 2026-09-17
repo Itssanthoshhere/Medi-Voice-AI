@@ -1,0 +1,22 @@
+import AppHeader from "../dashboard/_components/AppHeader";
+import AppFooter from "@/components/AppFooter";
+
+export const metadata = {
+  title: "Family Health Profiles | MediVoice AI",
+  description:
+    "Manage health profiles, medical histories, consultations, and lab reports for your family members and dependents.",
+};
+
+function FamilyLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50/50">
+      <AppHeader />
+      <main className="flex-1 px-4 sm:px-6 lg:px-10 xl:px-12 py-10 w-full max-w-[1440px] mx-auto">
+        {children}
+      </main>
+      <AppFooter />
+    </div>
+  );
+}
+
+export default FamilyLayout;

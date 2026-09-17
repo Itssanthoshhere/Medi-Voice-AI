@@ -27,16 +27,31 @@ const menuOptions = [
   },
   {
     id: 4,
+    name: "Report Vault",
+    path: "/vault",
+  },
+  {
+    id: 5,
+    name: "Health Timeline",
+    path: "/timeline",
+  },
+  {
+    id: 6,
+    name: "Family Profiles",
+    path: "/family",
+  },
+  {
+    id: 7,
     name: "Pricing",
     path: "/billing",
   },
   {
-    id: 5,
+    id: 8,
     name: "Profile",
     path: "/profile",
   },
   {
-    id: 6,
+    id: 9,
     name: "About",
     path: "/about",
   },
