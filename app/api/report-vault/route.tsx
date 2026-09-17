@@ -1,15 +1,16 @@
 import { db } from "@/config/db";
 import { medicalReportsTable } from "@/config/schema";
 import { NextRequest, NextResponse } from "next/server";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
 /**
- * GET /api/report-vault?email=user@example.com
+ * GET /api/report-vault?email=user@example.com&familyMemberId=xxx
  * Fetch all saved medical reports for the authenticated user, ordered by date descending.
  */
 export async function GET(req: NextRequest) {
   try {
     const email = req.nextUrl.searchParams.get("email");
+    const familyMemberId = req.nextUrl.searchParams.get("familyMemberId");
 
     if (!email) {
       return NextResponse.json(
@@ -18,10 +19,18 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    let queryCondition = eq(medicalReportsTable.userEmail, email);
+    if (familyMemberId && familyMemberId !== "all") {
+      queryCondition = and(
+        eq(medicalReportsTable.userEmail, email),
+        eq(medicalReportsTable.familyMemberId, familyMemberId)
+      ) as any;
+    }
+
     const reports = await db
       .select()
       .from(medicalReportsTable)
-      .where(eq(medicalReportsTable.userEmail, email))
+      .where(queryCondition)
       .orderBy(desc(medicalReportsTable.id));
 
     return NextResponse.json({ reports });
@@ -37,7 +46,7 @@ export async function GET(req: NextRequest) {
 /**
  * POST /api/report-vault
  * Save an analyzed report to the user's permanent vault.
- * Body: { email, reportId, fileName, reportTitle, testDate, patientSummary, parameters, deficienciesOrAbnormalities, suggestedNextSteps, rawText }
+ * Body: { email, reportId, fileName, reportTitle, testDate, patientSummary, parameters, deficienciesOrAbnormalities, suggestedNextSteps, rawText, familyMemberId }
  */
 export async function POST(req: NextRequest) {
   try {
@@ -53,6 +62,7 @@ export async function POST(req: NextRequest) {
       deficienciesOrAbnormalities,
       suggestedNextSteps,
       rawText,
+      familyMemberId,
     } = body;
 
     if (!email || !reportId || !reportTitle) {
@@ -76,6 +86,7 @@ export async function POST(req: NextRequest) {
         suggestedNextSteps: suggestedNextSteps || [],
         rawText: rawText || null,
         createdAt: new Date().toISOString(),
+        familyMemberId: familyMemberId || null,
       })
       .returning();
 

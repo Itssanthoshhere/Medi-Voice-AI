@@ -12,6 +12,22 @@ export const usersTable = pgTable("users", {
   preferredVoice: varchar({ length: 100 }).default("Elliot (Male - Warm)"),
 });
 
+export const familyMembersTable = pgTable("familyMembersTable", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  memberId: varchar({ length: 100 }).notNull().unique(),
+  primaryUserEmail: varchar({ length: 255 })
+    .notNull()
+    .references(() => usersTable.email),
+  name: varchar({ length: 255 }).notNull(),
+  relationship: varchar({ length: 50 }).notNull().default("Self"), // Self, Spouse, Child, Parent, Sibling, Other
+  age: integer(),
+  gender: varchar({ length: 50 }),
+  bloodGroup: varchar({ length: 20 }).default("O+"),
+  allergies: text().default("None"),
+  medicalHistory: text().default("None"),
+  createdAt: varchar({ length: 100 }),
+});
+
 export const SessionChatTable = pgTable("sessionChatTable", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   sessionId: varchar().notNull(),
@@ -21,6 +37,7 @@ export const SessionChatTable = pgTable("sessionChatTable", {
   report: json(),
   createdBy: varchar().references(() => usersTable.email),
   createdOn: varchar(),
+  familyMemberId: varchar({ length: 100 }),
 });
 
 export const medicalReportsTable = pgTable("medicalReportsTable", {
@@ -38,4 +55,5 @@ export const medicalReportsTable = pgTable("medicalReportsTable", {
   suggestedNextSteps: json(), // Array of string
   rawText: text(),
   createdAt: varchar({ length: 100 }),
+  familyMemberId: varchar({ length: 100 }),
 });

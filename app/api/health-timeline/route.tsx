@@ -1,7 +1,7 @@
 import { db } from "@/config/db";
 import { medicalReportsTable, SessionChatTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export type TimelineEvent = {
@@ -23,6 +23,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const queryEmail = searchParams.get("email");
+    const familyMemberId = searchParams.get("familyMemberId");
 
     let userEmail = queryEmail;
 
@@ -38,18 +39,33 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    let sessionCondition = eq(SessionChatTable.createdBy, userEmail);
+    let reportCondition = eq(medicalReportsTable.userEmail, userEmail);
+
+    if (familyMemberId && familyMemberId !== "all") {
+      sessionCondition = and(
+        eq(SessionChatTable.createdBy, userEmail),
+        eq(SessionChatTable.familyMemberId, familyMemberId)
+      ) as any;
+
+      reportCondition = and(
+        eq(medicalReportsTable.userEmail, userEmail),
+        eq(medicalReportsTable.familyMemberId, familyMemberId)
+      ) as any;
+    }
+
     // 1. Fetch Session Chat Consultations
     const sessions = await db
       .select()
       .from(SessionChatTable)
-      .where(eq(SessionChatTable.createdBy, userEmail))
+      .where(sessionCondition)
       .orderBy(desc(SessionChatTable.id));
 
     // 2. Fetch Saved Medical Lab Reports
     const labReports = await db
       .select()
       .from(medicalReportsTable)
-      .where(eq(medicalReportsTable.userEmail, userEmail))
+      .where(reportCondition)
       .orderBy(desc(medicalReportsTable.id));
 
     // 3. Normalize Session Consultations to Timeline Events

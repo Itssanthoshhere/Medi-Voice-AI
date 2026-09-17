@@ -3,12 +3,12 @@ import { SessionChatTable } from "@/config/schema";
 import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, and } from "drizzle-orm";
 
 import { usersTable } from "@/config/schema";
 
 export async function POST(req: NextRequest) {
-  const { notes, selectedDoctor } = await req.json();
+  const { notes, selectedDoctor, familyMemberId } = await req.json();
   const user = await currentUser();
   const userEmail = user?.primaryEmailAddress?.emailAddress;
 
@@ -61,6 +61,7 @@ export async function POST(req: NextRequest) {
         notes: notes,
         selectedDoctor: selectedDoctor,
         createdOn: new Date().toString(),
+        familyMemberId: familyMemberId || null,
       })
       .returning();
 
@@ -88,6 +89,7 @@ export async function GET(req: NextRequest) {
   try {
     const { searchParams } = new URL(req.url);
     const sessionId = searchParams.get("sessionId");
+    const familyMemberId = searchParams.get("familyMemberId");
 
     if (sessionId) {
       const result = await db
@@ -109,10 +111,18 @@ export async function GET(req: NextRequest) {
       );
     }
 
+    let queryCondition = eq(SessionChatTable.createdBy, userEmail);
+    if (familyMemberId && familyMemberId !== "all") {
+      queryCondition = and(
+        eq(SessionChatTable.createdBy, userEmail),
+        eq(SessionChatTable.familyMemberId, familyMemberId)
+      ) as any;
+    }
+
     const sessions = await db
       .select()
       .from(SessionChatTable)
-      .where(eq(SessionChatTable.createdBy, userEmail))
+      .where(queryCondition)
       .orderBy(desc(SessionChatTable.id));
 
     return NextResponse.json(sessions);
