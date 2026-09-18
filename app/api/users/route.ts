@@ -40,7 +40,10 @@ export async function POST(req: NextRequest) {
       .where(eq(users.email, userEmail));
 
     if (existingUsers.length > 0) {
-      return NextResponse.json(formatUser(existingUsers[0]));
+      return NextResponse.json({
+        ...formatUser(existingUsers[0]),
+        isNewUser: false,
+      });
     }
 
     const result = await db
@@ -57,7 +60,10 @@ export async function POST(req: NextRequest) {
       })
       .returning();
 
-    return NextResponse.json(formatUser(result[0]));
+    return NextResponse.json({
+      ...formatUser(result[0]),
+      isNewUser: true,
+    });
   } catch (e) {
     console.error("POST /api/users error:", e);
     const message = e instanceof Error ? e.message : "Unknown error";
